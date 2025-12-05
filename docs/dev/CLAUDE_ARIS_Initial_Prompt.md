@@ -114,7 +114,7 @@ These describe the **order of implementation**. At minimum, you should expect:
   Create the solution structure:
   - `src/ARIS.Core/` (domain primitives and shared types; core business rules not tied to any single tool)
   - `src/ARIS.UI/` (C# host with WebView2 that embeds the React frontend and talks to `Aris.Hosting` over IPC/HTTP)
-  - `tests/ARIS.Core.Tests/` ((xUnit tests for domain-layer logic; other backend layers have their own test projects)
+  - `tests/ARIS.Core.Tests/` (xUnit tests for domain-layer logic; other backend layers have their own test projects)
   - `tests/ARIS.UI.Tests/` (xUnit tests for UI wiring, IPC glue, message handlers)
   - `frontend/` (React/TS/Tailwind application, build pipeline, dist output)
   Also: logging, configuration, tool extraction subsystem, verify single-file publishing at least once.
