@@ -19,11 +19,11 @@ Turn Retoc from a theoretical tool in the SDD into a **working, testable integra
 
 By the end of Phase 1, ARIS should be able to:
 
-- Package and extract the Retoc CLI and its dependencies as part of the normal tool lifecycle. :contentReference[oaicite:0]{index=0}  
-- Expose a strongly-typed `IRetocAdapter` API in the backend. :contentReference[oaicite:1]{index=1}  
-- Build and execute `RetocCommand` instances via `IProcessRunner`. :contentReference[oaicite:2]{index=2}  
-- Produce typed `RetocResult` values and meaningful error types for failures. :contentReference[oaicite:3]{index=3}  
-- Respect workspace flows (input/output/temp), key handling, and configuration described in the SDD. :contentReference[oaicite:4]{index=4}  
+- Package and extract the Retoc CLI and its dependencies as part of the normal tool lifecycle.
+- Expose a strongly-typed `IRetocAdapter` API in the backend.
+- Build and execute `RetocCommand` instances via `IProcessRunner`.
+- Produce typed `RetocResult` values and meaningful error types for failures.
+- Respect workspace flows (input/output/temp), key handling, and configuration described in the SDD.
 
 UI wiring and full UX around Retoc happen in later phases; here we focus on **backend behavior plus tests**.
 
@@ -50,22 +50,22 @@ If any of these are missing, return to Phase 0.
 By the end of this phase, we want:
 
 1. **Retoc packaged & extracted**
-   - Retoc binaries and supporting DLLs are defined in the tools manifest with `id=retoc`, `version`, `sha256`, `relativePath`, `executable=true`. :contentReference[oaicite:5]{index=5}  
-   - They are extracted to `%LOCALAPPDATA%/ARIS/tools/{version}/retoc/` with hash verification, lock file, and repair support. :contentReference[oaicite:6]{index=6}  
+   - Retoc binaries and supporting DLLs are defined in the tools manifest with `id=retoc`, `version`, `sha256`, `relativePath`, `executable=true`.
+   - They are extracted to `%LOCALAPPDATA%/ARIS/tools/{version}/retoc/` with hash verification, lock file, and repair support.
 
 2. **Adapter + command DTOs implemented**
-   - `IRetocAdapter` and `RetocAdapter` implemented as per SDD with `ConvertAsync` and `ValidateAsync`. :contentReference[oaicite:7]{index=7}  
+   - `IRetocAdapter` and `RetocAdapter` implemented as per SDD with `ConvertAsync` and `ValidateAsync`.
    - `RetocCommand`, `RetocMode`, and supporting DTOs/enums exist and are validated.
 
 3. **Process execution via shared wrapper**
-   - Retoc is invoked via `IProcessRunner` with proper working directory, timeout, and output capture. :contentReference[oaicite:8]{index=8}  
+   - Retoc is invoked via `IProcessRunner` with proper working directory, timeout, and output capture.
 
 4. **Typed results + errors**
-   - `RetocResult` and the error types (`ValidationError`, `DependencyMissingError`, `ToolExecutionError`, `ChecksumMismatchError`) are wired and used properly. :contentReference[oaicite:9]{index=9}  
+   - `RetocResult` and the error types (`ValidationError`, `DependencyMissingError`, `ToolExecutionError`, `ChecksumMismatchError`) are wired and used properly.
 
 5. **Configuration + workspace usage**
-   - `RetocOptions` bound from configuration and validated at startup. :contentReference[oaicite:10]{index=10}  
-   - Retoc operations respect workspace input/output/temp folder conventions and key management rules. :contentReference[oaicite:11]{index=11}  
+   - `RetocOptions` bound from configuration and validated at startup.
+   - Retoc operations respect workspace input/output/temp folder conventions and key management rules.
 
 6. **Tests**
    - Unit tests for command validation, options binding, and error mapping.
@@ -102,7 +102,7 @@ By the end of this phase, we want:
    - Implement:
      - Manifest hash lock file to detect changes.
      - Skip identical files and write via temp-then-move for atomicity.
-     - Hash verification during extraction and on demand. :contentReference[oaicite:12]{index=12}  
+     - Hash verification during extraction and on demand.
 
 3. **Validator hook**
 
@@ -137,7 +137,7 @@ By the end of this phase, we want:
      - `Filters` (include/exclude globs)
      - `AdditionalArgs` (allowlist-based)
      - `WorkingDirectory` (optional; default to workspace `temp/retoc-{operationId}/`)
-     - `Timeout` (per-invocation) :contentReference[oaicite:13]{index=13}  
+     - `Timeout` (per-invocation)
 
 2. **Validation rules (in a builder or validator class)**
 
@@ -151,7 +151,7 @@ By the end of this phase, we want:
    - Map `Filters` to repeated `--include/--exclude` arguments.
      - Validate globs to prevent injection.
    - Enforce `AdditionalArgs` allowlist:
-     - Reject commands with disallowed extra args and return a `ValidationError`. :contentReference[oaicite:14]{index=14}  
+     - Reject commands with disallowed extra args and return a `ValidationError`.  
 
 3. **Command line construction**
 
@@ -182,28 +182,28 @@ By the end of this phase, we want:
    - Methods (as per SDD):
 
      - `Task<RetocResult> ConvertAsync(RetocCommand command, CancellationToken ct, IProgress<ProgressEvent> progress)`
-     - `Task<DependencyStatus> ValidateAsync(CancellationToken ct)` :contentReference[oaicite:15]{index=15}  
+     - `Task<DependencyStatus> ValidateAsync(CancellationToken ct)`
 
 2. **Implement `RetocAdapter`**
 
    - Responsibilities:
      - Use `DependencyValidator` to ensure Retoc is present and valid before each run.
      - Build `ProcessStartInfo` for `retoc.exe` based on `RetocCommand`.
-     - Set working directory to operation-specific staging folder under `workspace/temp/retoc-{operationId}/`. :contentReference[oaicite:16]{index=16}  
+     - Set working directory to operation-specific staging folder under `workspace/temp/retoc-{operationId}/`.
      - Use `IProcessRunner` to:
        - Start the process with given timeout.
        - Capture stdout/stderr (bounded buffers).
-       - Optionally tee logs to `workspace/logs/retoc-{operationId}.log`. :contentReference[oaicite:17]{index=17}  
+       - Optionally tee logs to `workspace/logs/retoc-{operationId}.log`.
 
    - Environment:
-     - Optionally set `REToc_LOG_JSON=1` if structured logging is supported and enabled via `RetocOptions`. :contentReference[oaicite:18]{index=18}  
+     - Optionally set `REToc_LOG_JSON=1` if structured logging is supported and enabled via `RetocOptions`.
 
 3. **Exit and error handling**
 
    - Non-zero exit codes => `ToolExecutionError` including:
      - Exit code.
      - Command line (with keys redacted).
-     - Captured output (truncated). :contentReference[oaicite:19]{index=19}  
+     - Captured output (truncated).
 
    - Missing binary or hash mismatch => `DependencyMissingError`.
    - Validation failures before execution => `ValidationError`.
@@ -215,7 +215,7 @@ By the end of this phase, we want:
      - Decrypting
      - Converting
      - Re-encrypting
-     - Finalizing :contentReference[oaicite:20]{index=20}  
+     - Finalizing 
 
    - Map process output or phases in the adapter into these step-level events.
 
@@ -245,7 +245,7 @@ By the end of this phase, we want:
      - `Duration`
      - `Warnings` (collection)
      - `ProducedFiles` (metadata + hashes)
-     - `LogExcerpt` (truncated) :contentReference[oaicite:21]{index=21}  
+     - `LogExcerpt` (truncated)
 
 2. **Progress model**
 
@@ -254,7 +254,7 @@ By the end of this phase, we want:
      - `Step` (enum/string: staging/decrypt/convert/re-encrypt/finalize)
      - `Message`
      - `Percent?` (optional)
-     - `Detail` (optional) :contentReference[oaicite:22]{index=22}  
+     - `Detail` (optional) 
 
    - Ensure `IRetocAdapter` publishes progress in a way that downstream layers (application/front-end) can map to UI steps later.
 
@@ -265,7 +265,7 @@ By the end of this phase, we want:
      - `ValidationError`
      - `DependencyMissingError`
      - `ToolExecutionError`
-     - `ChecksumMismatchError` :contentReference[oaicite:23]{index=23}  
+     - `ChecksumMismatchError`  
 
    - Decide whether these live in a shared error namespace (e.g., `Aris.Core.Errors`) or a Retoc-specific namespace, but keep them consistent with the Backend SDD’s error model.
 
@@ -297,7 +297,7 @@ By the end of this phase, we want:
      - `AllowedAdditionalArgs`
      - `MaxLogBytes`
      - `StagingRoot` (override)
-     - `EnableStructuredLogs` :contentReference[oaicite:24]{index=24}  
+     - `EnableStructuredLogs`
 
 2. **Configuration binding**
 
@@ -338,7 +338,7 @@ By the end of this phase, we want:
 
      - Inputs: `workspace/input/`
      - Outputs: `workspace/output/retoc/{operationId}/`
-     - Temp/staging: `workspace/temp/retoc-{operationId}/` :contentReference[oaicite:25]{index=25}  
+     - Temp/staging: `workspace/temp/retoc-{operationId}/` 
 
    - Any paths in `RetocCommand` that fall outside the workspace should be rejected or normalized, enforcing allowlisting.
 
@@ -347,14 +347,14 @@ By the end of this phase, we want:
    - Integrate `RetocCommand` with `KeyStore`:
 
      - Mount keys resolved by game/UE version.
-     - AES keys never logged in plaintext; redact in command logs/error payloads. :contentReference[oaicite:26]{index=26}  
+     - AES keys never logged in plaintext; redact in command logs/error payloads.
 
 3. **Post-operation validation**
 
    - Implement (or stub with clear TODO, depending on scope) post-checks:
 
      - Verify expected combos: `pak/utoc/ucas` relationships.
-     - Hash outputs if the SDD mandates it; else design the hook so it can be filled later. :contentReference[oaicite:27]{index=27}  
+     - Hash outputs if the SDD mandates it; else design the hook so it can be filled later.
 
 **Acceptance criteria:**
 
@@ -377,17 +377,17 @@ By the end of this phase, we want:
      - Mode.
      - UE/Game version.
      - Input/output path hashes (not raw paths if that’s the chosen policy).
-     - Exit code. :contentReference[oaicite:28]{index=28}  
+     - Exit code.
 
    - Write `logs/retoc-{operationId}.log` within the workspace with:
      - Command line (keys redacted).
-     - First and last N lines of stderr on failure. :contentReference[oaicite:29]{index=29}  
+     - First and last N lines of stderr on failure.
 
 2. **Error payloads**
 
    - Error objects sent up to the application/frontend layer should include:
      - High-level failure reason.
-     - Human-readable remediation hints (e.g., “verify AES key / game selection”). :contentReference[oaicite:30]{index=30}  
+     - Human-readable remediation hints (e.g., “verify AES key / game selection”).
 
 **Acceptance criteria:**
 

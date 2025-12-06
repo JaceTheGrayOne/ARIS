@@ -30,7 +30,7 @@ Audience: Engineering leads, stakeholders, integrators
 - **Determinism**: Idempotent dependency extraction; atomic writes; hash-based validation of outputs.
 - **Observability**: Structured logs, progress events, correlation ids; per-operation logs persisted in workspace.
 - **Separation of concerns**: Clear layers (presentation, application, domain, infrastructure) and explicit contracts for tool adapters.
-- **User experience**: Preserve existing visual feel while simplifying the tech stack; consistent progress and log visibility; fast startup.
+- **User experience**: Provide a dark, high-contrast, panelized UI with consistent progress and log visibility and fast startup, without trying to preserve the exact visual feel of the legacy app.
 - **Extensibility**: Module-specific SDDs define adapters; contracts generated for the frontend; new tools can register via DI extensions and manifests.
 
 ## 5. Major Components (Summary)

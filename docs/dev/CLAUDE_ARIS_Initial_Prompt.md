@@ -53,7 +53,14 @@ Your responsibilities in this repo are:
 - **Backend**
   - Language: **C#**
   - Runtime: **.NET 8**
-  - Main backend assembly: `ARIS.Core` (class library)
+  - Backend projects (layered):
+    - `Aris.Core` (domain primitives, value objects, core rules)
+    - `Aris.Application` (use-cases, orchestration, progress/operations)
+    - `Aris.Infrastructure` (filesystem, process, logging, settings, crypto, compression)
+    - `Aris.Adapters` (tool-specific adapters for Retoc, UAssetAPI, UWPDumper, DLL injector)
+    - `Aris.Contracts` (DTOs shared with the frontend)
+    - `Aris.Tools` (embedded tool binaries/resources + extraction helpers)
+    - `Aris.Hosting` (composition root, DI, IPC/HTTP host)
 - **Host/UI Shell**
   - Language: **C#**
   - Project: `ARIS.UI` (desktop host)
@@ -111,13 +118,19 @@ These describe the intended system in a stable way:
 These describe the **order of implementation**. At minimum, you should expect:
 
 - **Phase 0 – Environment and Scaffolding**  
-  Create the solution structure:
-  - `src/ARIS.Core/` (domain primitives and shared types; core business rules not tied to any single tool)
-  - `src/ARIS.UI/` (C# host with WebView2 that embeds the React frontend and talks to `Aris.Hosting` over IPC/HTTP)
-  - `tests/ARIS.Core.Tests/` (xUnit tests for domain-layer logic; other backend layers have their own test projects)
-  - `tests/ARIS.UI.Tests/` (xUnit tests for UI wiring, IPC glue, message handlers)
-  - `frontend/` (React/TS/Tailwind application, build pipeline, dist output)
-  Also: logging, configuration, tool extraction subsystem, verify single-file publishing at least once.
+  Create the layered solution structure (see `docs/dev/Phase_0_Environment_And_Scaffolding.md`):
+  - `src/Aris.Core/`           (domain primitives, value objects, core rules)
+  - `src/Aris.Application/`    (use-cases, orchestrations, operation/progress handling)
+  - `src/Aris.Infrastructure/` (filesystem, process, logging, settings, crypto/compression)
+  - `src/Aris.Adapters/`       (tool-specific adapters; initially empty skeletons)
+  - `src/Aris.Hosting/`        (composition root, DI, configuration, IPC/HTTP host)
+  - `src/Aris.Contracts/`      (DTOs shared with the frontend)
+  - `src/Aris.Tools/`          (embedded tool binaries/resources + extraction helpers)
+  - `src/ARIS.UI/`             (WebView2 desktop host for the frontend)
+  - `tests/Aris.Core.Tests/`   (xUnit tests for core/application behavior)
+  - `tests/ARIS.UI.Tests/`     (xUnit tests for host/UI wiring/IPC)
+  - `frontend/`                (React/TS/Tailwind app + build pipeline)
+  Also: establish logging/configuration and a stub tool extraction subsystem; verify single-file publishing at least once.
 
 - **Phase 1 – Retoc Integration**  
 - **Phase 2 – UAssetAPI Integration**  

@@ -3,8 +3,8 @@
 Status: Draft  
 Audience: ARIS Frontend Engineers, UX Designers, Backend Integrators  
 Related docs:  
-- ARIS_Frontend_SDD.md :contentReference[oaicite:0]{index=0}  
-- ARIS_Backend_SDD.md :contentReference[oaicite:1]{index=1}  
+- ARIS_Frontend_SDD.md 
+- ARIS_Backend_SDD.md
 - Phase_5_Minimal_UI_And_Wiring.md  
 
 ---
@@ -16,9 +16,9 @@ This document defines **Phase 6 – Frontend UI Integration & UX Refinement** fo
 **Goal of this phase:**  
 Evolve the Phase 5 “minimal but working” UI into a **fully integrated, user-ready frontend** that:
 
-- Preserves the **current ARIS visual feel** (dark, high-contrast, sidebar, panelized UI) while being implemented as a clean, modern, single-stack frontend. :contentReference[oaicite:2]{index=2}  
+- Provides a coherent dark, high-contrast UI suitable for everyday use, implemented as a single-stack frontend, without trying to clone the legacy ARIS layout.
 - Fully leverages the backend IPC/HTTP bridge and DTO contracts for all tools, logs, and settings.   
-- Provides robust validation, progress/log visualization, workspace-aware workflows, and persistent user preferences. :contentReference[oaicite:4]{index=4}  
+- Provides robust validation, progress/log visualization, workspace-aware workflows, and persistent user preferences.
 
 Phase 6 focuses on **UX completeness, polish, and behavior**, not new backend features.
 
@@ -29,8 +29,8 @@ Phase 6 focuses on **UX completeness, polish, and behavior**, not new backend fe
 Do **not** start Phase 6 until:
 
 - Phase 5 is complete:
-  - Backend HTTP/JSON bridge and progress endpoints are implemented and stable. :contentReference[oaicite:5]{index=5}  
-  - WebView2 host + frontend shell + minimal tool flows are working end-to-end. :contentReference[oaicite:6]{index=6}  
+  - Backend HTTP/JSON bridge and progress endpoints are implemented and stable.
+  - WebView2 host + frontend shell + minimal tool flows are working end-to-end.
 
 - The following are in place:
   - Basic API client wrappers for `/health`, `/info`, `/operations/*`, and per-tool endpoints.   
@@ -45,18 +45,18 @@ If these conditions are not met, complete Phase 5 first.
 By the end of this phase, we want:
 
 1. **Visual + Layout Parity**
-   - Dark, high-contrast UI with **sidebar navigation**, **panelized content**, and compact controls that align with the Frontend SDD’s target experience. :contentReference[oaicite:8]{index=8}  
+   - Dark, high-contrast UI with **sidebar navigation**, **panelized content**, and compact controls that align with the Frontend SDD’s target experience.
 
 2. **Rich Tool Workflows**
-   - Each tool page (IoStore/Retoc, UAsset, DLL Injector, UWP Dumper) exposes **all core inputs and options** from the SDD (modes, filters, keys, toggles) with grouped forms, helper text, and inline validation. :contentReference[oaicite:9]{index=9}  
+   - Each tool page (IoStore/Retoc, UAsset, DLL Injector, UWP Dumper) exposes **all core inputs and options** from the SDD (modes, filters, keys, toggles) with grouped forms, helper text, and inline validation.
 
 3. **Workspace-Aware File & Path Handling**
    - Integrated file picker dialogs (for workspace, assets, output folders, payloads).
-   - Path controls respect the workspace model and backend expectations. :contentReference[oaicite:10]{index=10}  
+   - Path controls respect the workspace model and backend expectations.
 
 4. **Progress, Logs, and Operations Timeline**
    - Per-operation **progress panels** with step timeline, live log tail, and status chips.
-   - Logs page shows recent operations with filters and per-operation log viewer. :contentReference[oaicite:11]{index=11}  
+   - Logs page shows recent operations with filters and per-operation log viewer.
 
 5. **Settings & Persistence**
    - User preferences (theme, last workspace, defaults per tool, logging verbosity, temp retention) persisted to a user-scoped settings store and restored at startup.   
@@ -66,10 +66,10 @@ By the end of this phase, we want:
    - Basic client-side diagnostics and “support bundle” export path wired, even if partially stubbed.   
 
 7. **Accessibility and Keyboard Flows**
-   - Reasonable keyboard navigation, focus outlines, and high-contrast defaults across primary workflows. :contentReference[oaicite:14]{index=14}  
+   - Reasonable keyboard navigation, focus outlines, and high-contrast defaults across primary workflows.
 
 8. **Testing**
-   - Frontend validation tests, API integration tests with mocked responses, and basic visual regression/screenshot tests to preserve the look and feel. :contentReference[oaicite:15]{index=15}  
+- Frontend validation tests, API integration tests with mocked responses, and snapshot/visual regression tests to catch unintended changes to behavior and layout. 
 
 ---
 
@@ -77,7 +77,7 @@ By the end of this phase, we want:
 
 ### 4.1 Visual Structure, Panels, and Styling
 
-**Objective:** Bring the UI in line with the visual/layout guidelines in the Frontend SDD. :contentReference[oaicite:16]{index=16}  
+**Objective:** Bring the UI in line with the visual/layout guidelines in the Frontend SDD.
 
 **Steps:**
 
@@ -104,7 +104,7 @@ By the end of this phase, we want:
 **Acceptance criteria:**
 
 - All primary pages follow the shell + panel structure.
-- The UI visually matches the described layout and density (dark, panelized, compact). :contentReference[oaicite:17]{index=17}  
+- The UI visually matches the described layout and density (dark, panelized, compact).
 
 ---
 
@@ -139,26 +139,26 @@ By the end of this phase, we want:
 **Tool-specific details:**
 
 - **IoStore / Retoc**
-  - Inputs: mode, source files (multi), output destination, UE version, AES keys, include/exclude filters, compression options. :contentReference[oaicite:19]{index=19}  
+  - Inputs: mode, source files (multi), output destination, UE version, AES keys, include/exclude filters, compression options.
   - Provide:
     - Add/remove for multiple source paths.
     - Small “Advanced options” section for filters and compression.
     - “Validate inputs” button that calls a backend dry-run/validate endpoint or uses `ValidationError` path.
 
 - **UAsset**
-  - Inputs: asset/JSON path, output path, UE version, schema version, include bulk data toggle, mode (Serialize/Deserialize/Inspect). :contentReference[oaicite:20]{index=20}  
+  - Inputs: asset/JSON path, output path, UE version, schema version, include bulk data toggle, mode (Serialize/Deserialize/Inspect).  
   - Provide:
     - Clear explanation snippets for each mode.
     - Simple schema version selector with common defaults.
 
 - **DLL Injector**
-  - Inputs: process selector, payload selector, method, optional arguments, elevation toggle. :contentReference[oaicite:21]{index=21}  
+  - Inputs: process selector, payload selector, method, optional arguments, elevation toggle.
   - Provide:
     - Process list dialog (PID + name) with filter box.
     - Warnings for elevation-required actions.
 
 - **UWP Dumper**
-  - Inputs: PFN/AppId, mode, output folder, include symbols, elevation toggle. :contentReference[oaicite:22]{index=22}  
+  - Inputs: PFN/AppId, mode, output folder, include symbols, elevation toggle.
   - Provide:
     - PFN lookup helper (optional stub in Phase 6: show basic validation hints).
     - “Validate target” action separate from “Run dump”.
@@ -180,7 +180,7 @@ By the end of this phase, we want:
 1. **Workspace model in UI**
    - Represent the current workspace as:
      - A root path.
-     - Derived standard subfolders: `input/`, `output/`, `temp/`, `logs/`, `backups/`. :contentReference[oaicite:24]{index=24}  
+     - Derived standard subfolders: `input/`, `output/`, `temp/`, `logs/`, `backups/`.  
 
 2. **File/folder pickers**
    - Implement shared file/folder picker dialogs via:
@@ -193,7 +193,7 @@ By the end of this phase, we want:
    - Display both:
      - A friendly, workspace-relative path (e.g., `input/paks/Game.pak`).
      - A tooltip or expandable “full path” view when needed.
-   - Ensure values posted to the backend match the workspace model expected by it (`WorkspacePath` semantics). :contentReference[oaicite:25]{index=25}  
+   - Ensure values posted to the backend match the workspace model expected by it (`WorkspacePath` semantics).
 
 4. **Recent paths**
    - Maintain small caches of:
@@ -217,7 +217,7 @@ By the end of this phase, we want:
 
 1. **Per-operation progress panel**
    - For each tool page:
-     - Show a **timeline** of steps, driven by `ProgressEvent` data (step, message, percent?). :contentReference[oaicite:27]{index=27}  
+     - Show a **timeline** of steps, driven by `ProgressEvent` data (step, message, percent?).
      - Use status chips/tracks: Pending, Running, Succeeded, Failed.
    - Display:
      - Current step.
@@ -317,7 +317,7 @@ By the end of this phase, we want:
    - On change:
      - Persist settings back through the same mechanism.
    - Keep in sync with backend:
-     - For options that have backend equivalents (e.g., temp retention, logging verbosity), call appropriate backend endpoints or reload configuration as needed. :contentReference[oaicite:32]{index=32}  
+     - For options that have backend equivalents (e.g., temp retention, logging verbosity), call appropriate backend endpoints or reload configuration as needed.
 
 3. **Settings UI**
    - For each setting:
@@ -333,7 +333,7 @@ By the end of this phase, we want:
 
 ### 4.7 Accessibility, Keyboard Navigation, and Internationalization Readiness
 
-**Objective:** Improve basic accessibility and set up for future localization. :contentReference[oaicite:33]{index=33}  
+**Objective:** Improve basic accessibility and set up for future localization. 
 
 **Steps:**
 
@@ -353,7 +353,7 @@ By the end of this phase, we want:
 
 3. **Internationalization readiness**
    - Centralize user-facing strings into a simple message map or i18n solution.
-   - Avoid hard-coded English in the JSX/TSX where possible; use a `t()`-like helper, even if only English is shipped at first. :contentReference[oaicite:34]{index=34}  
+   - Avoid hard-coded English in the JSX/TSX where possible; use a `t()`-like helper, even if only English is shipped at first.
 
 4. **High-contrast and font scaling**
    - Verify contrast ratios for text vs background.
@@ -368,7 +368,7 @@ By the end of this phase, we want:
 
 ### 4.8 Frontend Testing & Visual Regression
 
-**Objective:** Add tests that keep UI behavior and appearance stable as the implementation evolves. :contentReference[oaicite:35]{index=35}  
+**Objective:** Add tests that keep UI behavior and appearance stable as the implementation evolves.
 
 **Steps:**
 
@@ -379,7 +379,7 @@ By the end of this phase, we want:
      - DLL injector: PID/process selection + payload path basics.
      - UWP dumper: PFN format basics.
    - DTO shaping:
-     - Ensure commands sent to the backend match `Aris.Contracts` expectations (modes, enums, fields). :contentReference[oaicite:36]{index=36}  
+     - Ensure commands sent to the backend match `Aris.Contracts` expectations (modes, enums, fields).
 
 2. **API client integration tests (mocked backend)**
    - Mock HTTP responses for:
@@ -417,13 +417,13 @@ By the end of this phase, we want:
 Phase 6 is complete when:
 
 1. **Visual + Layout**
-   - UI matches the **dark, high-contrast, panelized** design with sidebar navigation, header, and card-based tool pages. :contentReference[oaicite:37]{index=37}  
+   - UI matches the **dark, high-contrast, panelized** design with sidebar navigation, header, and card-based tool pages.
 
 2. **Tool Workflows**
-   - IoStore/Retoc, UAsset, DLL Injector, and UWP Dumper pages expose all primary inputs and options from the Frontend SDD with helpful grouping and validation. :contentReference[oaicite:38]{index=38}  
+   - IoStore/Retoc, UAsset, DLL Injector, and UWP Dumper pages expose all primary inputs and options from the Frontend SDD with helpful grouping and validation.
 
 3. **Workspace Integration**
-   - File pickers respect workspace structure and produce paths accepted by the backend workspace model. :contentReference[oaicite:39]{index=39}  
+   - File pickers respect workspace structure and produce paths accepted by the backend workspace model.
 
 4. **Progress & Logs**
    - Every operation has a usable progress timeline, live log tail, and results panel.
@@ -447,7 +447,7 @@ Phase 6 is complete when:
    - Manual smoke flows documented and passing.
 
 9. **Code Quality**
-   - Frontend code remains a **single cohesive stack** (no reintroduction of hybrid legacy structure). :contentReference[oaicite:40]{index=40}  
+   - Frontend code remains a **single cohesive stack** (no reintroduction of hybrid legacy structure).
    - No AI/meta comments; comments focus on explaining non-obvious behavior or constraints.
 
 At this point, ARIS has a **fully integrated, user-ready frontend** that respects the SDDs and is ready for final refinement phases (telemetry tuning, advanced diagnostics, and future features).

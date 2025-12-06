@@ -22,11 +22,11 @@ Integrate the custom **DLL injector** as a controlled, audited external tool tha
 
 By the end of Phase 4, ARIS should be able to:
 
-- Package and extract the **DLL injector** binary (`dllinjector.exe`) and its dependencies with hashing and manifest-based validation. :contentReference[oaicite:0]{index=0}  
-- Expose a strongly-typed `IDllInjectorAdapter` interface for injection and ejection operations. :contentReference[oaicite:1]{index=1}  
-- Build, validate, and execute `DllInjectCommand` and `DllEjectCommand` instances via the shared `IProcessRunner` with optional elevation. :contentReference[oaicite:2]{index=2}  
-- Enforce allowlist/denylist policies for targets, payload hashing, and safe argument handling. :contentReference[oaicite:3]{index=3}  
-- Return typed results and errors with sufficient logging and diagnostics for audits and debugging. :contentReference[oaicite:4]{index=4}  
+- Package and extract the **DLL injector** binary (`dllinjector.exe`) and its dependencies with hashing and manifest-based validation. 
+- Expose a strongly-typed `IDllInjectorAdapter` interface for injection and ejection operations. 
+- Build, validate, and execute `DllInjectCommand` and `DllEjectCommand` instances via the shared `IProcessRunner` with optional elevation. 
+- Enforce allowlist/denylist policies for targets, payload hashing, and safe argument handling. 
+- Return typed results and errors with sufficient logging and diagnostics for audits and debugging. 
 
 UI workflows for selecting targets and managing payloads will be handled in later phases.
 
@@ -41,7 +41,7 @@ Do **not** start Phase 4 until:
   - Logging, configuration, and workspace conventions are in place.
   - `IProcessRunner` abstraction exists and is used by other external tools.
 
-- `ARIS_DLLInjector_Integration_SDD.md` is present in `docs/` and has been read at least once. :contentReference[oaicite:5]{index=5}  
+- `ARIS_DLLInjector_Integration_SDD.md` is present in `docs/` and has been read at least once. 
 
 - Development environment:
   - Windows x64.
@@ -57,16 +57,16 @@ By the end of this phase, we want:
 
 1. **Dependency handling**
    - DLL injector and support DLLs are embedded with manifest entries:
-     - `id = "dllinjector"`, `version`, `sha256`, `relativePath`, `executable = true`. :contentReference[oaicite:6]{index=6}  
+     - `id = "dllinjector"`, `version`, `sha256`, `relativePath`, `executable = true`. 
    - Extracted to `%LOCALAPPDATA%/ARIS/tools/{version}/dllinjector/` with hash verification and lock file.
 
 2. **Adapter + commands**
-   - `IDllInjectorAdapter` interface and `DllInjectorAdapter` implementation exist. :contentReference[oaicite:7]{index=7}  
+   - `IDllInjectorAdapter` interface and `DllInjectorAdapter` implementation exist. 
    - `DllInjectCommand` and `DllEjectCommand` DTOs implemented with strict validation.
 
 3. **Process execution**
    - Injector runs via `IProcessRunner`, using `dllinjector.exe inject|eject {args}`.
-   - Per-operation working directory, bounded stdout/stderr, optional elevation, strict environment. :contentReference[oaicite:8]{index=8}  
+   - Per-operation working directory, bounded stdout/stderr, optional elevation, strict environment. 
 
 4. **Typed results & errors**
    - `DllInjectResult` and `DllEjectResult` are returned on success.
@@ -75,21 +75,21 @@ By the end of this phase, we want:
      - `DependencyMissingError`
      - `ElevationRequiredError`
      - `ToolExecutionError`
-     - `ChecksumMismatchError` (for payload hash mismatches). :contentReference[oaicite:9]{index=9}  
+     - `ChecksumMismatchError` (for payload hash mismatches). 
 
 5. **Configuration**
    - `DllInjectorOptions` bound from configuration and validated at startup.
-   - Policies for allowed/denied targets, allowed methods, timeouts, elevation, and max log size enforced. :contentReference[oaicite:10]{index=10}  
+   - Policies for allowed/denied targets, allowed methods, timeouts, elevation, and max log size enforced. 
 
 6. **Workspace & project usage**
    - Payload DLLs and logs live under defined workspace paths:
      - Payloads: `workspace/input/payloads/` (or shipped dependencies).
      - Temp: `workspace/temp/inject-{operationId}/`.
-     - Logs: `workspace/logs/dllinjector-{operationId}.log`. :contentReference[oaicite:11]{index=11}  
+     - Logs: `workspace/logs/dllinjector-{operationId}.log`. 
 
 7. **Testing**
    - Unit tests for DTO validation, target allowlist/denylist, hash checks, and elevation logic.
-   - Integration/fault tests using a test harness process and benign DLL payload. :contentReference[oaicite:12]{index=12}  
+   - Integration/fault tests using a test harness process and benign DLL payload. 
 
 ---
 
@@ -111,7 +111,7 @@ By the end of this phase, we want:
    - `relativePath` (e.g., `dllinjector/dllinjector.exe`)
    - `executable = true`  
 
-   Include any supporting DLLs with their own hashes and paths. :contentReference[oaicite:13]{index=13}  
+   Include any supporting DLLs with their own hashes and paths. 
 
 2. **Extraction behavior**
 
@@ -119,14 +119,14 @@ By the end of this phase, we want:
      - Extracts injector files into `%LOCALAPPDATA%/ARIS/tools/{version}/dllinjector/`.
      - Uses temp-then-move semantics for atomic writes.
      - Hash-verifies each extracted file.
-     - Writes a lock file containing manifest hash to detect changes. :contentReference[oaicite:14]{index=14}  
+     - Writes a lock file containing manifest hash to detect changes. 
 
 3. **Pre-run checks**
 
    - Before each injector run:
      - Re-verify `dllinjector.exe` hash against manifest.
      - Validate payload DLL presence and hash (see 4.2).
-     - Ensure architecture compatibility (x64 only). :contentReference[oaicite:15]{index=15}  
+     - Ensure architecture compatibility (x64 only). 
 
 **Acceptance criteria:**
 
@@ -141,7 +141,7 @@ By the end of this phase, we want:
 
 **Steps:**
 
-1. **Define `DllInjectCommand`** :contentReference[oaicite:16]{index=16}  
+1. **Define `DllInjectCommand`** 
 
    Fields should include:
 
@@ -154,7 +154,7 @@ By the end of this phase, we want:
    - `bool? RequireElevation` (optional override; default from options)
    - `IReadOnlyList<string> Arguments` (for DLL entrypoint; allowlist-based)
 
-2. **Define `DllEjectCommand`** :contentReference[oaicite:17]{index=17}  
+2. **Define `DllEjectCommand`** 
 
    Fields should include:
 
@@ -173,14 +173,14 @@ By the end of this phase, we want:
        - Running.
        - x64.
        - Not in `DllInjectorOptions.DeniedTargets`.
-       - In `AllowedTargets` if allowlist is used. :contentReference[oaicite:18]{index=18}  
+       - In `AllowedTargets` if allowlist is used. 
 
    - **Payload validation:**
      - Ensure `DllPath` is absolute and under an allowed root:
        - `workspace/input/payloads/` or a read-only `dependencies/payloads/` directory.
      - Check payload DLL exists.
      - Validate hash against:
-       - Manifest entry or expected hash provided alongside payload. :contentReference[oaicite:19]{index=19}  
+       - Manifest entry or expected hash provided alongside payload. 
      - Optionally, check code signing if/when policy is decided (open decision).
 
    - **Method + arguments:**
@@ -206,7 +206,7 @@ By the end of this phase, we want:
 
 **Steps:**
 
-1. **Define interface** :contentReference[oaicite:20]{index=20}  
+1. **Define interface** 
 
    ```
    public interface IDllInjectorAdapter

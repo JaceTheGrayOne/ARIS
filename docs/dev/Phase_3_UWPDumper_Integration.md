@@ -5,7 +5,7 @@ Audience: ARIS C# Implementation Engineer (Claude Code), human reviewers
 Related docs:  
 - ARIS_High_Level_Design_SDD.md  
 - ARIS_Backend_SDD.md  
-- ARIS_UWPDumper_Integration_SDD.md :contentReference[oaicite:0]{index=0}  
+- ARIS_UWPDumper_Integration_SDD.md 
 - Phase_0_Environment_And_Scaffolding.md  
 - Phase_1_Retoc_Integration.md  
 - Phase_2_UAssetAPI_Integration.md  
@@ -17,15 +17,15 @@ Related docs:
 This document defines **Phase 3 – UWPDumper Integration** for the ARIS C# rewrite.
 
 **Goal of this phase:**  
-Integrate **UWPDumper** as an external, elevated tool for dumping UWP app packages and extracting SDK-like artifacts (headers/mappings) used by other ARIS workflows. :contentReference[oaicite:1]{index=1}  
+Integrate **UWPDumper** as an external, elevated tool for dumping UWP app packages and extracting SDK-like artifacts (headers/mappings) used by other ARIS workflows. 
 
 By the end of Phase 3, ARIS should be able to:
 
-- Package and extract the **UWPDumper** binary and its dependencies in a validated, hash-checked way. :contentReference[oaicite:2]{index=2}  
-- Expose a strongly-typed `IUwpDumperAdapter` interface that runs UWPDumper via the shared `IProcessRunner` abstraction with optional elevation. :contentReference[oaicite:3]{index=3}  
-- Construct and validate `UwpDumpCommand` instances with safe, allowlisted command-line arguments. :contentReference[oaicite:4]{index=4}  
+- Package and extract the **UWPDumper** binary and its dependencies in a validated, hash-checked way. 
+- Expose a strongly-typed `IUwpDumperAdapter` interface that runs UWPDumper via the shared `IProcessRunner` abstraction with optional elevation. 
+- Construct and validate `UwpDumpCommand` instances with safe, allowlisted command-line arguments. 
 - Produce `UwpDumpResult` with metadata about produced artifacts and logs.
-- Enforce configuration-based policies for elevation, timeouts, modes, and logging. :contentReference[oaicite:5]{index=5}  
+- Enforce configuration-based policies for elevation, timeouts, modes, and logging. 
 - Run basic unit, integration, and fault-injection tests around UWPDumper behavior.
 
 UI/UX for invoking UWPDumper and consuming its outputs will be handled in later phases.
@@ -41,7 +41,7 @@ Do **not** start Phase 3 until:
   - Logging, configuration, and tool extraction subsystems exist.
   - Retoc and UAssetAPI integrations are implemented and tested.
 
-- `ARIS_UWPDumper_Integration_SDD.md` is present in `docs/` and has been read at least once. :contentReference[oaicite:6]{index=6}  
+- `ARIS_UWPDumper_Integration_SDD.md` is present in `docs/` and has been read at least once. 
 
 - Development environment:
   - Windows 10 or 11 with UWP subsystem present.
@@ -57,39 +57,39 @@ By the end of this phase, we want:
 
 1. **Dependency handling**
    - UWPDumper binaries are embedded/packaged with a manifest entry: `id=uwpdumper`, `version`, `sha256`, `relativePath`, `executable=true`.  
-   - Extraction to `%LOCALAPPDATA%/ARIS/tools/{version}/uwpdumper/` with hash verification and lock file. :contentReference[oaicite:7]{index=7}  
+   - Extraction to `%LOCALAPPDATA%/ARIS/tools/{version}/uwpdumper/` with hash verification and lock file. 
 
 2. **Adapter and DTO**
-   - `UwpDumpCommand` and `IUwpDumperAdapter` / `UwpDumperAdapter` implemented as per SDD. :contentReference[oaicite:8]{index=8}  
+   - `UwpDumpCommand` and `IUwpDumperAdapter` / `UwpDumperAdapter` implemented as per SDD. 
    - Command-line construction is allowlisted and validated (no arbitrary args).
 
 3. **Process execution**
    - UWPDumper runs through `IProcessRunner` with:
      - Per-operation working directory.
      - Bounded stdout/stderr capture.
-     - Optional elevation and strict environment. :contentReference[oaicite:9]{index=9}  
+     - Optional elevation and strict environment. 
 
 4. **Typed results & errors**
-   - `UwpDumpResult` implemented with artifacts metadata, duration, logs, warnings. :contentReference[oaicite:10]{index=10}  
+   - `UwpDumpResult` implemented with artifacts metadata, duration, logs, warnings. 
    - Error types:
      - `ValidationError`
      - `DependencyMissingError`
      - `ElevationRequiredError`
      - `ToolExecutionError`
      - `ChecksumMismatchError`  
-     are used consistently. :contentReference[oaicite:11]{index=11}  
+     are used consistently. 
 
 5. **Configuration**
    - `UwpDumperOptions` bound from configuration, validated at startup.
-   - Policies for `RequireElevation`, modes, timeouts, and max log size enforced. :contentReference[oaicite:12]{index=12}  
+   - Policies for `RequireElevation`, modes, timeouts, and max log size enforced. 
 
 6. **Workspace & downstream use**
-   - Dumps written under `workspace/output/uwp/{operationId}/`, with temp under `workspace/temp/uwp-{operationId}/`. :contentReference[oaicite:13]{index=13}  
+   - Dumps written under `workspace/output/uwp/{operationId}/`, with temp under `workspace/temp/uwp-{operationId}/`. 
    - Basic post-run validation and hashes are recorded for downstream tools.
 
 7. **Tests**
    - Unit tests for DTO validation, elevation logic, allowlist enforcement.
-   - Integration and fault-injection tests using a real or fake UWPDumper binary. :contentReference[oaicite:14]{index=14}  
+   - Integration and fault-injection tests using a real or fake UWPDumper binary. 
 
 ---
 
@@ -103,7 +103,7 @@ By the end of this phase, we want:
 
 1. **Manifest entry (in `Aris.Tools`)**
 
-   - Add an entry for UWPDumper in the tools manifest with: :contentReference[oaicite:15]{index=15}  
+   - Add an entry for UWPDumper in the tools manifest with: 
 
      - `id = "uwpdumper"`
      - `version` (string)
@@ -119,14 +119,14 @@ By the end of this phase, we want:
      - Extract UWPDumper files into `%LOCALAPPDATA%/ARIS/tools/{version}/uwpdumper/`.
      - Use temp-then-move semantics for atomic writes.
      - Hash-verify each file post-extraction.
-     - Create lock file containing the manifest hash, so changes trigger re-extraction. :contentReference[oaicite:16]{index=16}  
+     - Create lock file containing the manifest hash, so changes trigger re-extraction. 
 
 3. **Execution prerequisites**
 
    - Implement a UWPDumper-specific validation step that:
      - Confirms hashes match the manifest.
      - Confirms OS supports UWP (if detectable).
-   - Refuse to run UWPDumper if hash mismatches occur (`DependencyMissingError`). :contentReference[oaicite:17]{index=17}  
+   - Refuse to run UWPDumper if hash mismatches occur (`DependencyMissingError`). 
 
 **Acceptance criteria:**
 
@@ -141,7 +141,7 @@ By the end of this phase, we want:
 
 **Steps:**
 
-1. **Define `UwpDumpCommand`** :contentReference[oaicite:18]{index=18}  
+1. **Define `UwpDumpCommand`** 
 
    Fields should include:
 
@@ -160,14 +160,14 @@ By the end of this phase, we want:
      - If both provided, ensure they refer to the same app (where resolvable).
      - If partial data provided (friendly name, etc.), resolution code (or stub) should either:
        - Resolve unambiguously, or
-       - Fail with `ValidationError` if ambiguous. :contentReference[oaicite:19]{index=19}  
+       - Fail with `ValidationError` if ambiguous. 
    - Ensure:
      - `OutputPath` is under `workspace/output/uwp/` by default.
      - Output directory exists or is created.
    - Enforce `UwpDumperOptions.AllowedModes`:
-     - Reject modes not in allowlist. :contentReference[oaicite:20]{index=20}  
+     - Reject modes not in allowlist. 
    - Validate `Timeout` against `UwpDumperOptions.DefaultTimeoutSeconds` and acceptable bounds.
-   - Check workspace free space if estimable (optional but preferred; log warnings if low). :contentReference[oaicite:21]{index=21}  
+   - Check workspace free space if estimable (optional but preferred; log warnings if low). 
 
 3. **Implementation details**
 
@@ -184,7 +184,7 @@ By the end of this phase, we want:
 
 ### 4.3 Adapter and Process Wrapper Integration
 
-**Objective:** Implement `IUwpDumperAdapter` and `UwpDumperAdapter` using `IProcessRunner` with elevation support. :contentReference[oaicite:22]{index=22}  
+**Objective:** Implement `IUwpDumperAdapter` and `UwpDumperAdapter` using `IProcessRunner` with elevation support. 
 
 **Steps:**
 
@@ -211,7 +211,7 @@ By the end of this phase, we want:
      - Map `Mode` → known switches.
      - Add PFN/AppId arguments as documented.
      - Add `IncludeSymbols` flag when true.
-     - Reject any unsupported args; no free-form extras. :contentReference[oaicite:23]{index=23}  
+     - Reject any unsupported args; no free-form extras. 
    - Configure `IProcessRunner`:
 
      - Command: path to extracted `uwpdumper.exe` + vetted args.
@@ -219,19 +219,19 @@ By the end of this phase, we want:
      - Environment: minimal; add logging flags only if supported and configured.
      - Timeout: from command or `UwpDumperOptions.DefaultTimeoutSeconds`.
      - Capture stdout/stderr to bounded buffers.
-     - Tee output to `logs/uwpdumper-{operationId}.log`. :contentReference[oaicite:24]{index=24}  
+     - Tee output to `logs/uwpdumper-{operationId}.log`. 
 
 3. **Elevation handling**
 
-   - Use `UwpDumperOptions.RequireElevation` as the policy flag (default `true`). :contentReference[oaicite:25]{index=25}  
+   - Use `UwpDumperOptions.RequireElevation` as the policy flag (default `true`). 
    - If elevation is required:
      - Configure `IProcessRunner` to request elevation (UAC prompt).
-     - If elevation is denied or unavailable, return `ElevationRequiredError` without attempting to run. :contentReference[oaicite:26]{index=26}  
+     - If elevation is denied or unavailable, return `ElevationRequiredError` without attempting to run. 
    - Support an explicitly configured **non-elevated diagnostics mode** (e.g., `MetadataOnly` in a lab environment) if allowed by options.
 
 4. **Progress events**
 
-   - Emit `ProgressEvent` milestones: :contentReference[oaicite:27]{index=27}  
+   - Emit `ProgressEvent` milestones: 
 
      - `"Locating package"`
      - `"Preparing"`
@@ -251,7 +251,7 @@ By the end of this phase, we want:
 
 ### 4.4 Result Model and Error Handling
 
-**Objective:** Implement result and error types and wire them into the adapter behavior. :contentReference[oaicite:28]{index=28}  
+**Objective:** Implement result and error types and wire them into the adapter behavior. 
 
 **Steps:**
 
@@ -284,12 +284,12 @@ By the end of this phase, we want:
    - `DependencyMissingError` – UWPDumper binary missing or hash mismatch.
    - `ElevationRequiredError` – required elevation unavailable or denied.
    - `ToolExecutionError` – non-zero exit with captured stdout/stderr.
-   - `ChecksumMismatchError` – post-dump hash verification failed. :contentReference[oaicite:29]{index=29}  
+   - `ChecksumMismatchError` – post-dump hash verification failed. 
 
 4. **Surface to higher layers**
 
    - Ensure errors can be surfaced as Problem Details with remediation hints:
-     - e.g., “Run ARIS as administrator”, “Verify package family name or AppId”, “Check free space in workspace output path.” :contentReference[oaicite:30]{index=30}  
+     - e.g., “Run ARIS as administrator”, “Verify package family name or AppId”, “Check free space in workspace output path.” 
 
 **Acceptance criteria:**
 
@@ -300,7 +300,7 @@ By the end of this phase, we want:
 
 ### 4.5 Configuration and UwpDumperOptions
 
-**Objective:** Implement `UwpDumperOptions` and enforce configuration-driven behavior. :contentReference[oaicite:31]{index=31}  
+**Objective:** Implement `UwpDumperOptions` and enforce configuration-driven behavior. 
 
 **Steps:**
 
@@ -326,7 +326,7 @@ By the end of this phase, we want:
      - `DefaultTimeoutSeconds` > 0 and within sane bounds.
      - `MaxLogBytes` > 0 and capped reasonably.
      - `AllowedModes` is non-empty, and only contains known enum values.
-   - Fail-fast or clearly log misconfiguration (do not silently ignore). :contentReference[oaicite:32]{index=32}  
+   - Fail-fast or clearly log misconfiguration (do not silently ignore). 
 
 4. **Usage**
 
@@ -346,7 +346,7 @@ By the end of this phase, we want:
 
 ### 4.6 Workspace Flow and Downstream Use
 
-**Objective:** Align UWPDumper I/O with ARIS workspace conventions and downstream workflows. :contentReference[oaicite:33]{index=33}  
+**Objective:** Align UWPDumper I/O with ARIS workspace conventions and downstream workflows. 
 
 **Steps:**
 
@@ -363,7 +363,7 @@ By the end of this phase, we want:
 
      - Hash key artifacts and populate `UwpDumpResult.Artifacts`.
      - Check that expected directories/files (SDK headers, mappings, etc.) are present.
-     - Optionally enforce minimal size thresholds to catch empty/failed dumps. :contentReference[oaicite:34]{index=34}  
+     - Optionally enforce minimal size thresholds to catch empty/failed dumps. 
 
 3. **Downstream metadata**
 
@@ -383,7 +383,7 @@ By the end of this phase, we want:
 
 ### 4.7 Logging and Diagnostics
 
-**Objective:** Make UWPDumper runs observable and diagnosable, especially given elevation and external-process risk. :contentReference[oaicite:35]{index=35}  
+**Objective:** Make UWPDumper runs observable and diagnosable, especially given elevation and external-process risk. 
 
 **Steps:**
 
@@ -394,7 +394,7 @@ By the end of this phase, we want:
      - Redacted command line.
      - Exit code.
      - Duration.
-     - Selected stdout/stderr excerpts (tail/head), subject to `MaxLogBytes`. :contentReference[oaicite:36]{index=36}  
+     - Selected stdout/stderr excerpts (tail/head), subject to `MaxLogBytes`. 
 
 2. **Structured logs**
 
@@ -404,7 +404,7 @@ By the end of this phase, we want:
      - `appId` (where applicable)
      - `mode`
      - `elevated` (true/false)
-     - `exitCode` :contentReference[oaicite:37]{index=37}  
+     - `exitCode` 
 
 3. **Verbose diagnostics (optional)**
 
@@ -421,7 +421,7 @@ By the end of this phase, we want:
 
 ### 4.8 Testing Strategy
 
-**Objective:** Test UWPDumper integration via unit, integration, and fault-injection tests. :contentReference[oaicite:38]{index=38}  
+**Objective:** Test UWPDumper integration via unit, integration, and fault-injection tests. 
 
 **Steps:**
 

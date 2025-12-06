@@ -3,12 +3,12 @@ Last updated: 2025-12-04
 Audience: Frontend engineers, UX designers, integrators
 
 ## 1. Purpose and Scope
-- Define a clean, modern frontend for ARIS that preserves the current UI appearance and user flows without reproducing the legacy hybrid (vanilla HTML/JS/CSS + React/TypeScript/Tailwind) structure.
+- Define a clean, modern frontend for ARIS without trying to replicate the existing UI, built as a single cohesive stack instead of the previous hybrid (vanilla HTML/JS/CSS + React/TypeScript/Tailwind) structure.
 - Describe user-facing functions, layout, navigation, and backend wiring at a high level so the UI can be rebuilt cleanly.
 - Avoid prescribing specific framework markup/stylesheet implementation details; focus on structure, behavior, and integration.
 
 ## 2. Target Experience
-- Windows desktop UI presented in a single application window with a dark, high-contrast aesthetic similar to the current ARIS look: sidebar navigation, panelized content areas, card-like operation sections, accent highlights, and compact controls.
+- Windows desktop UI presented in a single application window with a dark, high-contrast aesthetic, sidebar navigation, panelized content areas, card-like operation sections, accent highlights, and compact controls.
 - Fast startup, responsive interactions, and consistent status/progress feedback for long-running operations.
 - Clear separation between global status (extraction, readiness), workspace context, and tool-specific workflows.
 
@@ -74,11 +74,11 @@ Audience: Frontend engineers, UX designers, integrators
 - Client subscribes to progress stream → updates progress/log panels → on completion, fetches result summary → shows produced files with links to open folder.
 - Logs page pulls recent operation metadata from backend and displays summaries; allows opening full log per operation id.
 
-## 8. UX Guidelines (Preserve Appearance, Simplify Implementation)
+## 8. UX Guidelines (Cohesive Dark UI, Simplify Implementation)
 - Maintain dark, high-contrast palette with a single accent color for primary buttons and highlights.
-- Use consistent panel shapes, spacing, and typography scale to mirror current visual feel without duplicating the legacy styling code.
-- Keep controls compact and information-dense (as in current UI) but apply consistent vertical rhythm and alignment.
-- Use icons in the sidebar and in status chips to mirror existing cues; avoid mixing multiple component libraries.
+- Use consistent panel shapes, spacing, and typography scale to create a clear, readable layout, without tying the design to the legacy styling code.
+- Keep controls compact and information-dense while maintaining consistent vertical rhythm and alignment.
+- Use icons in the sidebar and in status chips to clearly communicate status; avoid mixing multiple component libraries.
 - Provide clear status indicators for elevation-required actions (DLL injection, UWP dump) with confirmation prompts.
 
 ## 9. Accessibility and Internationalization
@@ -99,13 +99,13 @@ Audience: Frontend engineers, UX designers, integrators
 ## 12. Testing Strategy (Frontend)
 - Unit tests for form validation, DTO shaping, and error mapping.
 - Integration tests for API client against mocked backend responses and progress streams.
-- Visual regression (screenshot) tests to preserve current appearance while refactoring the stack.
+- Visual regression (screenshot) tests to catch unintended UI regressions as the stack evolves.
 - Manual smoke flows per tool: configure, run, observe progress, view results, open logs.
 
-## 13. Migration Notes (What Not to Recreate)
+## 13. Implementation Notes (What Not to Recreate)
 - Do not split between vanilla HTML/JS and React/TypeScript/Tailwind; rebuild as a single cohesive stack of your choice.
 - Avoid legacy build artifacts (mixed bundlers, duplicate stylesheets). Use one build pipeline and one component system.
-- Preserve visual layout and UX patterns, not the legacy DOM structure or CSS class naming.
+- Do not attempt to reproduce the legacy visual layout or DOM/CSS structure; treat this as a fresh UI with its own layout and styling.
 
 ---
-This SDD defines the desired frontend structure, behaviors, and backend wiring while retaining the existing ARIS visual feel and user flows, without recreating the hybrid implementation.***
+This SDD defines the desired frontend structure, behaviors, and user flows for the new ARIS UI, without recreating the previous hybrid implementation.***

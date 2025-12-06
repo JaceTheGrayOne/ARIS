@@ -20,12 +20,12 @@ Integrate **UAssetAPI** as an in-process Unreal asset serialization/inspection e
 
 By the end of Phase 2, ARIS should be able to:
 
-- Use **UAssetAPI** directly from C# to serialize (`JSON → uasset`) and deserialize (`uasset → JSON`) Unreal asset files. :contentReference[oaicite:0]{index=0}  
-- Inspect asset metadata with a typed `UAssetInspection` model. :contentReference[oaicite:1]{index=1}  
-- Expose a strongly typed `IUAssetService` to the application layer, with well-defined DTOs and result models. :contentReference[oaicite:2]{index=2}  
+- Use **UAssetAPI** directly from C# to serialize (`JSON → uasset`) and deserialize (`uasset → JSON`) Unreal asset files. 
+- Inspect asset metadata with a typed `UAssetInspection` model. 
+- Expose a strongly typed `IUAssetService` to the application layer, with well-defined DTOs and result models. 
 - Handle configuration, workspace paths, and error mapping in a way consistent with the rest of the ARIS backend (Retoc, future tools).
 
-The **default integration is in-process**. The optional CLI fallback is implemented behind configuration and off by default. :contentReference[oaicite:3]{index=3}  
+The **default integration is in-process**. The optional CLI fallback is implemented behind configuration and off by default. 
 
 ---
 
@@ -39,7 +39,7 @@ Do **not** start Phase 2 until:
   - Tool extraction/validation system exists (for external tools like Retoc).
   - Retoc integration is implemented and tested.
 
-- `ARIS_UAssetAPI_Integration_SDD.md` is present in `docs/` and has been read at least once. :contentReference[oaicite:4]{index=4}  
+- `ARIS_UAssetAPI_Integration_SDD.md` is present in `docs/` and has been read at least once. 
 
 If any of these are missing, go back and complete the earlier phases before proceeding.
 
@@ -50,21 +50,21 @@ If any of these are missing, go back and complete the earlier phases before proc
 By the end of this phase, we want:
 
 1. **Dependency integration**
-   - UAssetAPI is referenced via **NuGet** (preferred) and pinned to a specific version. :contentReference[oaicite:5]{index=5}  
+   - UAssetAPI is referenced via **NuGet** (preferred) and pinned to a specific version. 
    - Optional embedding/extraction path exists for offline installers, using the same tool/dependency pattern as other components.
 
 2. **Command DTOs & validation**
-   - `UAssetSerializeCommand`, `UAssetDeserializeCommand`, and `UAssetInspectCommand` implemented with validation rules for paths, UE versions, schema versions, and workspace boundaries. :contentReference[oaicite:6]{index=6}  
+   - `UAssetSerializeCommand`, `UAssetDeserializeCommand`, and `UAssetInspectCommand` implemented with validation rules for paths, UE versions, schema versions, and workspace boundaries. 
 
 3. **Service implementation**
    - `IUAssetService` interface and implementation provide:
      - `SerializeAsync`
      - `DeserializeAsync`
      - `InspectAsync`  
-     using **in-process** UAssetAPI. :contentReference[oaicite:7]{index=7}  
+     using **in-process** UAssetAPI. 
 
 4. **Optional CLI fallback**
-   - CLI wrapper mode (`uassetbridge.exe` or equivalent) can be used **only if configured**, using `IProcessRunner` and JSON-stdout contracts. Default remains in-process. :contentReference[oaicite:8]{index=8}  
+   - CLI wrapper mode (`uassetbridge.exe` or equivalent) can be used **only if configured**, using `IProcessRunner` and JSON-stdout contracts. Default remains in-process. 
 
 5. **Result models & errors**
    - `UAssetResult` and `UAssetInspection` implemented, with errors mapped to:
@@ -72,17 +72,17 @@ By the end of this phase, we want:
      - `DependencyMissingError`
      - `ToolExecutionError` (for CLI mode)
      - `SerializationError` / `DeserializationError`
-     - `ChecksumMismatchError` (for hash failures) :contentReference[oaicite:9]{index=9}  
+     - `ChecksumMismatchError` (for hash failures) 
 
 6. **Configuration**
-   - `UAssetOptions` bound and validated at startup; used to control schema defaults, UE version, limits, timeout, and optional CLI mode. :contentReference[oaicite:10]{index=10}  
+   - `UAssetOptions` bound and validated at startup; used to control schema defaults, UE version, limits, timeout, and optional CLI mode. 
 
 7. **Workspace usage**
-   - Inputs/outputs/temp follow the workspace conventions for asset operations (`input/assets`, `output/uasset`, `temp/uasset-{operationId}`) with atomic writes and hash verification. :contentReference[oaicite:11]{index=11}  
+   - Inputs/outputs/temp follow the workspace conventions for asset operations (`input/assets`, `output/uasset`, `temp/uasset-{operationId}`) with atomic writes and hash verification. 
 
 8. **Testing**
    - Unit tests cover DTO validation, path normalization, options binding, and error mapping.  
-   - Integration tests perform round-trip operations on fixtures and exercise CLI fallback if enabled. :contentReference[oaicite:12]{index=12}  
+   - Integration tests perform round-trip operations on fixtures and exercise CLI fallback if enabled. 
 
 ---
 
@@ -98,7 +98,7 @@ By the end of this phase, we want:
 
    - In `Aris.Infrastructure` (or an appropriate backend assembly), add a NuGet reference to UAssetAPI:
      - Pin to a specific version as defined in the SDD.
-   - Confirm that the assembly is copied into the publish output under normal `dotnet publish` operations. :contentReference[oaicite:13]{index=13}  
+   - Confirm that the assembly is copied into the publish output under normal `dotnet publish` operations. 
 
 2. **Optional embedded/manifest-based packaging**
 
@@ -107,16 +107,16 @@ By the end of this phase, we want:
        - `id = "uassetapi"`
        - `version`
        - `sha256`
-       - path for the assembly or NuGet package payload. :contentReference[oaicite:14]{index=14}  
+       - path for the assembly or NuGet package payload. 
      - Extend the dependency extraction system to:
        - Extract the assembly (or package contents) to `%LOCALAPPDATA%/ARIS/tools/{version}/uassetapi/`.
        - Hash-verify the assembly.
-     - Load the assembly using a dedicated `AssemblyLoadContext` when needed. :contentReference[oaicite:15]{index=15}  
+     - Load the assembly using a dedicated `AssemblyLoadContext` when needed. 
 
 3. **Versioning**
 
    - Ensure only one pinned version of UAssetAPI is used per release.
-   - If binding redirects are needed (multi-assembly references), ensure they are configured and tested in publish output. :contentReference[oaicite:16]{index=16}  
+   - If binding redirects are needed (multi-assembly references), ensure they are configured and tested in publish output. 
 
 **Acceptance criteria:**
 
@@ -142,30 +142,30 @@ By the end of this phase, we want:
      - `Game` / `UEVersion` (enum/string)
      - `SchemaVersion`
      - `Compression` options (if supported)
-     - `WorkingDirectory` (defaults to workspace temp staging) :contentReference[oaicite:17]{index=17}  
+     - `WorkingDirectory` (defaults to workspace temp staging) 
 
    - `UAssetDeserializeCommand`
      - `InputAssetPath` (required – `*.uasset`/`*.uexp`)
      - `OutputJsonPath` (required)
      - `Game` / `UEVersion`
      - `SchemaVersion`
-     - `IncludeBulkData` flag :contentReference[oaicite:18]{index=18}  
+     - `IncludeBulkData` flag 
 
    - `UAssetInspectCommand`
      - `InputAssetPath`
-     - `Fields` (optional list of sections: exports, imports, names, etc.) :contentReference[oaicite:19]{index=19}  
+     - `Fields` (optional list of sections: exports, imports, names, etc.) 
 
 2. **Validation rules**
 
    - Require **absolute paths**:
      - Normalize to absolute.
-     - Reject or normalize non-workspace paths unless explicitly allowed. :contentReference[oaicite:20]{index=20}  
+     - Reject or normalize non-workspace paths unless explicitly allowed. 
    - Enforce file presence:
      - Input JSON/asset paths must exist.
      - Output parents must exist or be created.
    - Validate Unreal/Schema:
      - Ensure UE version and schema version are recognized.
-     - Validate compatibility against `UAssetOptions` default and supported versions. :contentReference[oaicite:21]{index=21}  
+     - Validate compatibility against `UAssetOptions` default and supported versions. 
    - Guard rails:
      - Ensure assets respect size limits (`MaxAssetSizeMB`).
 
@@ -195,15 +195,15 @@ By the end of this phase, we want:
 
    - `Task<UAssetResult> SerializeAsync(UAssetSerializeCommand cmd, CancellationToken ct, IProgress<ProgressEvent> progress)`
    - `Task<UAssetResult> DeserializeAsync(UAssetDeserializeCommand cmd, CancellationToken ct, IProgress<ProgressEvent> progress)`
-   - `Task<UAssetInspection> InspectAsync(UAssetInspectCommand cmd, CancellationToken ct)` :contentReference[oaicite:22]{index=22}  
+   - `Task<UAssetInspection> InspectAsync(UAssetInspectCommand cmd, CancellationToken ct)` 
 
 2. **Implement `UAssetService` (in-process path)**
 
    - In the implementation:
 
      - **Common flow (all methods):**
-       1. Validate command + options (using the validators from 4.2 and `UAssetOptions`). :contentReference[oaicite:23]{index=23}  
-       2. Create operation-specific staging folder under `workspace/temp/uasset-{operationId}/`. :contentReference[oaicite:24]{index=24}  
+       1. Validate command + options (using the validators from 4.2 and `UAssetOptions`). 
+       2. Create operation-specific staging folder under `workspace/temp/uasset-{operationId}/`. 
        3. Start timer/stopwatch for duration tracking.
        4. Use UAssetAPI to open/serialize/inspect the asset.
        5. Write outputs atomically (temp-then-move).
@@ -212,7 +212,7 @@ By the end of this phase, we want:
      - **Deserialize flow:**
        - Open `*.uasset` (+ `*.uexp`/`*.ubulk` if present).
        - Normalize to ARIS JSON schema.
-       - Emit progress: Opening → Parsing → Converting → Writing → Hashing → Finalizing. :contentReference[oaicite:25]{index=25}  
+       - Emit progress: Opening → Parsing → Converting → Writing → Hashing → Finalizing. 
        - Write JSON to `OutputJsonPath` atomically.
 
      - **Serialize flow:**
@@ -220,13 +220,13 @@ By the end of this phase, we want:
        - Validate JSON against the expected schema version (structural checks as feasible).
        - Construct asset objects with UAssetAPI.
        - Write `*.uasset` (and sidecar files) to staging, then move to `OutputAssetPath`.
-       - Hash outputs and fill `ProducedFiles` metadata. :contentReference[oaicite:26]{index=26}  
+       - Hash outputs and fill `ProducedFiles` metadata. 
 
      - **Inspect flow:**
        - Open asset.
        - Populate `UAssetInspection` with:
          - Summary (versions, counts, etc.).
-         - Optional exports/imports/names based on `Fields`. :contentReference[oaicite:27]{index=27}  
+         - Optional exports/imports/names based on `Fields`. 
 
 3. **DI registration**
 
@@ -248,7 +248,7 @@ By the end of this phase, we want:
 
 1. **Configuration switch**
 
-   - Add `UAssetOptions.EnableCliFallback` (default `false`). :contentReference[oaicite:28]{index=28}  
+   - Add `UAssetOptions.EnableCliFallback` (default `false`). 
    - When `true`, `IUAssetService` should route work through the CLI wrapper instead of direct in-process calls.
 
 2. **CLI wrapper definition**
@@ -257,7 +257,7 @@ By the end of this phase, we want:
      - `serialize`
      - `deserialize`
      - `inspect`  
-     and communicates via JSON on stdout. :contentReference[oaicite:29]{index=29}  
+     and communicates via JSON on stdout. 
 
 3. **Process integration**
 
@@ -267,7 +267,7 @@ By the end of this phase, we want:
      - Cancellation support.
    - Build CLI arguments from the same command DTOs (or adapted versions).
    - Parse JSON stdout into `UAssetResult` or `UAssetInspection`.
-   - Map non-zero exit codes to `ToolExecutionError`, with log excerpts. :contentReference[oaicite:30]{index=30}  
+   - Map non-zero exit codes to `ToolExecutionError`, with log excerpts. 
 
 4. **Error handling**
 
@@ -290,7 +290,7 @@ By the end of this phase, we want:
 
 1. **Result types**
 
-   - `UAssetResult` with fields: :contentReference[oaicite:31]{index=31}  
+   - `UAssetResult` with fields: 
 
      - `Operation` (Serialize | Deserialize)
      - `InputPath`
@@ -301,7 +301,7 @@ By the end of this phase, we want:
      - `SchemaVersion`
      - `UEVersion`
 
-   - `UAssetInspection` with fields: :contentReference[oaicite:32]{index=32}  
+   - `UAssetInspection` with fields: 
 
      - `InputPath`
      - `Summary` (name table size, export count, import count, versions)
@@ -315,12 +315,12 @@ By the end of this phase, we want:
    - `ValidationError` – command options and path issues.
    - `DependencyMissingError` – missing assembly or CLI binary.
    - `ToolExecutionError` – CLI fallback non-zero exit.
-   - `SerializationError` / `DeserializationError` – thrown from UAssetAPI, wrapped with context. :contentReference[oaicite:33]{index=33}  
-   - `ChecksumMismatchError` – post-write hash mismatch (assets or JSON). :contentReference[oaicite:34]{index=34}  
+   - `SerializationError` / `DeserializationError` – thrown from UAssetAPI, wrapped with context. 
+   - `ChecksumMismatchError` – post-write hash mismatch (assets or JSON). 
 
 3. **Frontend-facing errors**
 
-   - Make sure errors can be translated into Problem Details for the UI with remediation hints (e.g., “UE version mismatch”, “Asset exceeds configured max size”, “Schema mismatch; update mappings”). :contentReference[oaicite:35]{index=35}  
+   - Make sure errors can be translated into Problem Details for the UI with remediation hints (e.g., “UE version mismatch”, “Asset exceeds configured max size”, “Schema mismatch; update mappings”). 
 
 **Acceptance criteria:**
 
@@ -338,7 +338,7 @@ By the end of this phase, we want:
 
 1. **Define `UAssetOptions`**
 
-   Include at least: :contentReference[oaicite:36]{index=36}  
+   Include at least: 
 
    - `DefaultSchemaVersion`
    - `DefaultUEVersion`
@@ -387,7 +387,7 @@ By the end of this phase, we want:
 
 1. **Workspace conventions**
 
-   Follow the conventions from the SDD: :contentReference[oaicite:37]{index=37}  
+   Follow the conventions from the SDD: 
 
    - Inputs:
      - Typically under `workspace/input/assets/`
@@ -410,13 +410,13 @@ By the end of this phase, we want:
    - When serializing:
      - Keep related files in sync (same UE version/configuration).
    - When deserializing:
-     - Ensure all necessary sidecar files are present or fail with a meaningful error. :contentReference[oaicite:38]{index=38}  
+     - Ensure all necessary sidecar files are present or fail with a meaningful error. 
 
 4. **Security**
 
    - Restrict operations to workspace paths by default.
    - Reject inputs outside workspace unless explicitly allowed (and logged).
-   - Enforce `MaxAssetSizeMB` based on actual file size before full processing. :contentReference[oaicite:39]{index=39}  
+   - Enforce `MaxAssetSizeMB` based on actual file size before full processing. 
 
 **Acceptance criteria:**
 
@@ -434,7 +434,7 @@ By the end of this phase, we want:
 
 1. **Progress events**
 
-   - For serialize/deserialize, emit progress events: :contentReference[oaicite:40]{index=40}  
+   - For serialize/deserialize, emit progress events: 
 
      - `Opening`
      - `Parsing`
@@ -457,7 +457,7 @@ By the end of this phase, we want:
      - UE version
      - Schema version
      - Duration
-     - Warnings count :contentReference[oaicite:41]{index=41}  
+     - Warnings count 
 
    - Respect redaction options:
      - Paths may be redacted or normalized when configured.
@@ -489,7 +489,7 @@ By the end of this phase, we want:
      - `UAssetOptions` binding and validation.
    - Error mapping:
      - Simulated UAssetAPI exceptions → `SerializationError`/`DeserializationError`.
-     - Invalid paths → `ValidationError`. :contentReference[oaicite:42]{index=42}  
+     - Invalid paths → `ValidationError`. 
 
 2. **Integration tests (in-process)**
 
@@ -509,7 +509,7 @@ By the end of this phase, we want:
        - Non-zero exit.
        - Timeout.
        - Malformed JSON.
-     - Confirm error mapping and logging. :contentReference[oaicite:43]{index=43}  
+     - Confirm error mapping and logging. 
 
 4. **Property/round-trip tests (optional)**
 

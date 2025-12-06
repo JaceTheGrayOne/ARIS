@@ -3,8 +3,8 @@
 Status: Draft  
 Audience: ARIS C# Implementation Engineer (Claude Code), Frontend Engineers, human reviewers  
 Related docs:  
-- ARIS_Frontend_SDD.md :contentReference[oaicite:0]{index=0}  
-- ARIS_Backend_SDD.md :contentReference[oaicite:1]{index=1}  
+- ARIS_Frontend_SDD.md 
+- ARIS_Backend_SDD.md 
 - Phase_0_Environment_And_Scaffolding.md  
 - Phase_1_Retoc_Integration.md  
 - Phase_2_UAssetAPI_Integration.md  
@@ -20,9 +20,9 @@ This document defines **Phase 5 – Minimal UI + Wiring** for the ARIS C# rewrit
 **Goal of this phase:**  
 Stand up a **functional, minimal frontend** and backend IPC surface so that:
 
-- Each major backend capability (Retoc, UAssetAPI, DLL Injector, UWPDumper) can be invoked from the UI **end-to-end**, using real commands, operations, and progress. :contentReference[oaicite:2]{index=2}  
-- The **basic layout** (shell, sidebar, main content, per-tool views) matches the Frontend SDD at a coarse level without full UX polish. :contentReference[oaicite:3]{index=3}  
-- Backend **HTTP/JSON endpoints** and **progress streaming** are wired up according to the Backend SDD’s IPC/HTTP bridge. :contentReference[oaicite:4]{index=4}  
+- Each major backend capability (Retoc, UAssetAPI, DLL Injector, UWPDumper) can be invoked from the UI **end-to-end**, using real commands, operations, and progress. 
+- The **basic layout** (shell, sidebar, main content, per-tool views) matches the Frontend SDD at a coarse level without full UX polish. 
+- Backend **HTTP/JSON endpoints** and **progress streaming** are wired up according to the Backend SDD’s IPC/HTTP bridge. 
 
 Phase 5 focuses on **plumbing and minimal flows**, not full styling or all advanced options. Detailed UX, settings, logs view, and advanced validation are Phase 6 concerns.
 
@@ -33,11 +33,11 @@ Phase 5 focuses on **plumbing and minimal flows**, not full styling or all advan
 Do **not** start Phase 5 until:
 
 - Phases 0–4 are complete:
-  - Backend layering, DI, logging, configuration, workspace handling are in place. :contentReference[oaicite:5]{index=5}  
+  - Backend layering, DI, logging, configuration, workspace handling are in place. 
   - Tool adapters for Retoc, UAssetAPI, UWPDumper, and DLL injector exist and are tested at the backend level.
   - WebView2 host (`ARIS.UI`) loads the static frontend bundle (Phase 0) but may not yet be wired to backend.
 
-- `ARIS_Frontend_SDD.md` and `ARIS_Backend_SDD.md` are present in `docs/` and have been read at least once. :contentReference[oaicite:6]{index=6} :contentReference[oaicite:7]{index=7}  
+- `ARIS_Frontend_SDD.md` and `ARIS_Backend_SDD.md` are present in `docs/` and have been read at least once. 
 
 ---
 
@@ -47,9 +47,9 @@ By the end of this phase, we want:
 
 1. **Backend IPC Surface**
    - Kestrel-hosted HTTP/JSON running on localhost with:
-     - Health + info endpoints: `GET /health`, `GET /info`. :contentReference[oaicite:8]{index=8}  
-     - Tool operation endpoints: `POST /retoc`, `POST /uasset`, `POST /dll`, `POST /uwp`. :contentReference[oaicite:9]{index=9}  
-     - Operation result and progress endpoints: `GET /operations/{id}`, `GET /operations/{id}/events` (SSE or WebSocket). :contentReference[oaicite:10]{index=10}  
+     - Health + info endpoints: `GET /health`, `GET /info`. 
+     - Tool operation endpoints: `POST /retoc`, `POST /uasset`, `POST /dll`, `POST /uwp`. 
+     - Operation result and progress endpoints: `GET /operations/{id}`, `GET /operations/{id}/events` (SSE or WebSocket). 
    - DTOs for commands/results in `Aris.Contracts`, consistent with the tool SDDs.
 
 2. **Frontend Shell + Navigation**
@@ -60,21 +60,21 @@ By the end of this phase, we want:
      - DLL Injector
      - UWP Dumper
      - Settings (minimal stub)
-     - Logs (minimal stub) :contentReference[oaicite:11]{index=11}  
+     - Logs (minimal stub) 
 
 3. **Minimal Tool Flows**
    - Each major tool has a **simple, working form** that:
      - Collects minimum required inputs.
      - Calls the corresponding backend endpoint.
      - Subscribes to progress events.
-     - Shows basic progress + completion status + summary. :contentReference[oaicite:12]{index=12}  
+     - Shows basic progress + completion status + summary. 
 
 4. **Workspace & Status Wiring**
    - Global workspace selector in the shell (reads/writes workspace path to backend).
-   - Global backend status indicator (ready/extracting/error) from `/health`/`/info`. :contentReference[oaicite:13]{index=13}  
+   - Global backend status indicator (ready/extracting/error) from `/health`/`/info`. 
 
 5. **Error Handling**
-   - Problem Details responses mapped to inline form errors and a simple global toast/banner. :contentReference[oaicite:14]{index=14} :contentReference[oaicite:15]{index=15}  
+   - Problem Details responses mapped to inline form errors and a simple global toast/banner. 
 
 6. **Basic Testing**
    - Lightweight automated tests for the API client and routing.
@@ -93,7 +93,7 @@ By the end of this phase, we want:
 1. **Configure Kestrel host**
 
    - In `Aris.Hosting`:
-     - Use the Backend SDD’s IPC strategy: Kestrel HTTP/JSON on a random localhost port with an auth token. :contentReference[oaicite:16]{index=16}  
+     - Use the Backend SDD’s IPC strategy: Kestrel HTTP/JSON on a random localhost port with an auth token. 
      - Expose:
        - `GET /health` → reports readiness, dependency preparation status, current workspace (if any).
        - `GET /info` → returns version, tool versions, IPC token, and `operationsBaseUrl`.
@@ -103,13 +103,13 @@ By the end of this phase, we want:
    - Implement the following minimal endpoints, using DTOs from `Aris.Contracts`:
 
      - `POST /retoc` → starts an IoStore/PAK conversion; returns `{ operationId }`.
-     - `POST /uasset` → starts serialize/deserialize/inspect based on a `mode` field and the UAsset command DTOs. :contentReference[oaicite:17]{index=17}  
-     - `POST /dll` → inject/eject based on `mode` (`inject`/`eject`) and DLL command DTOs. :contentReference[oaicite:18]{index=18}  
-     - `POST /uwp` → starts a UWP dump job. :contentReference[oaicite:19]{index=19}  
+     - `POST /uasset` → starts serialize/deserialize/inspect based on a `mode` field and the UAsset command DTOs. 
+     - `POST /dll` → inject/eject based on `mode` (`inject`/`eject`) and DLL command DTOs. 
+     - `POST /uwp` → starts a UWP dump job. 
 
    - Each endpoint:
      - Validates the request body (basic checks).
-     - Dispatches to the corresponding application command handler (`ConvertPackage`, `SerializeAsset`, `InjectDll`, `DumpUwpSdk`, etc.). :contentReference[oaicite:20]{index=20}  
+     - Dispatches to the corresponding application command handler (`ConvertPackage`, `SerializeAsset`, `InjectDll`, `DumpUwpSdk`, etc.). 
      - Creates an operation record with a unique `operationId`.
      - Returns 202/201 with `{ operationId }` (plus maybe a simple status URL).
 
@@ -117,7 +117,7 @@ By the end of this phase, we want:
 
    - Implement:
      - `GET /operations/{id}` → returns current status + final result when complete.
-     - `GET /operations/{id}/events` → SSE or WebSocket stream of `ProgressEvent` objects from the backend pipelines. :contentReference[oaicite:21]{index=21}  
+     - `GET /operations/{id}/events` → SSE or WebSocket stream of `ProgressEvent` objects from the backend pipelines. 
 
    - Map from the existing backend `ProgressEvent` model to a JSON envelope suitable for the frontend (step name, message, percent, timestamp).
 
@@ -125,7 +125,7 @@ By the end of this phase, we want:
 
    - For all tool endpoints:
      - On validation failure, dependency issues, tool errors, etc., return RFC-9457 Problem Details with:
-       - `type`, `title`, `status`, `detail`, and `extensions.operationId`. :contentReference[oaicite:22]{index=22}  
+       - `type`, `title`, `status`, `detail`, and `extensions.operationId`. 
      - Keep the shape consistent across tools so the frontend can handle them uniformly.
 
 **Acceptance criteria:**
@@ -157,7 +157,7 @@ By the end of this phase, we want:
 
    - Provide backend config to the WebView2 instance via:
      - Query string parameters (e.g., `index.html?baseUrl=...&token=...`), **or**
-     - A `window.external`/`postMessage`-based bridge that sends a configuration object after WebView2 loads. :contentReference[oaicite:23]{index=23}  
+     - A `window.external`/`postMessage`-based bridge that sends a configuration object after WebView2 loads. 
 
    - The frontend should read this configuration once at boot and store it in a central app config store.
 
@@ -179,7 +179,7 @@ By the end of this phase, we want:
 
 ### 4.3 Frontend Shell, Routing, and Global State
 
-**Objective:** Implement the basic app shell, routing, and global state containers described in the Frontend SDD. :contentReference[oaicite:24]{index=24}  
+**Objective:** Implement the basic app shell, routing, and global state containers described in the Frontend SDD. 
 
 **Steps:**
 
@@ -191,7 +191,7 @@ By the end of this phase, we want:
        - Top bar/header with:
          - Active workspace indicator.
          - Backend status indicator (Ready / Starting / Error).
-         - “Open Workspace” and “Refresh status” buttons. :contentReference[oaicite:25]{index=25}  
+         - “Open Workspace” and “Refresh status” buttons. 
        - Main routed content area.
 
    - Use Tailwind for layout and dark theme, but keep styling minimal in this phase.
@@ -205,7 +205,7 @@ By the end of this phase, we want:
      - `/dll`
      - `/uwp`
      - `/settings`
-     - `/logs` :contentReference[oaicite:26]{index=26}  
+     - `/logs` 
 
 3. **Global state**
 
@@ -213,7 +213,7 @@ By the end of this phase, we want:
      - `backendConfig` (base URL, token).
      - `backendStatus` (enum + last checked time).
      - `currentWorkspacePath`.
-     - `recentOperations` (small in-memory cache for Phase 5). :contentReference[oaicite:27]{index=27}  
+     - `recentOperations` (small in-memory cache for Phase 5). 
 
 **Acceptance criteria:**
 
@@ -225,7 +225,7 @@ By the end of this phase, we want:
 
 ### 4.4 Frontend API Client and Progress Wiring
 
-**Objective:** Implement a thin API client that matches the backend endpoints and supports progress streams. :contentReference[oaicite:28]{index=28} :contentReference[oaicite:29]{index=29}  
+**Objective:** Implement a thin API client that matches the backend endpoints and supports progress streams. 
 
 **Steps:**
 
@@ -250,7 +250,7 @@ By the end of this phase, we want:
 
    - Implement `subscribeToOperationEvents` using:
      - **SSE** via `EventSource`, or
-     - WebSocket (if the backend is configured that way). :contentReference[oaicite:30]{index=30} :contentReference[oaicite:31]{index=31}  
+     - WebSocket (if the backend is configured that way). 
    - Normalize progress messages to a shape like:
      - `{ operationId, step, message, percent?, timestamp }`.
 
@@ -259,7 +259,7 @@ By the end of this phase, we want:
    - Define a small `AppError` type for the frontend with:
      - `kind` (validation, dependency, tool, network, unknown).
      - `title`, `detail`, and optional `operationId`.
-   - Map Problem Details (type/title/status/detail) to `AppError`. :contentReference[oaicite:32]{index=32}  
+   - Map Problem Details (type/title/status/detail) to `AppError`. 
 
 **Acceptance criteria:**
 
@@ -271,7 +271,7 @@ By the end of this phase, we want:
 
 ### 4.5 Minimal Per-Tool UI Flows
 
-**Objective:** For each tool, implement a simple but functional form + progress display that exercises the full backend path. :contentReference[oaicite:33]{index=33}  
+**Objective:** For each tool, implement a simple but functional form + progress display that exercises the full backend path. 
 
 > Note: In Phase 5, **only required fields** and essential behaviors are implemented. Advanced options, rich validation, and UX refinements are Phase 6 work.
 
@@ -283,7 +283,7 @@ By the end of this phase, we want:
   - Source path(s) (text field for now; later, integrate file picker).
   - Output baseline folder (defaults from workspace).
   - UE version (simple dropdown).
-  - AES key (single text input; later integrate key store UI). :contentReference[oaicite:34]{index=34}  
+  - AES key (single text input; later integrate key store UI). 
 
 - Behavior:
   - On submit:
@@ -303,7 +303,7 @@ By the end of this phase, we want:
   - Input path (asset for deserialize/inspect; JSON for serialize).
   - Output path (JSON for deserialize; asset for serialize).
   - UE version (dropdown).
-  - Schema version (dropdown or free text with defaults). :contentReference[oaicite:35]{index=35}  
+  - Schema version (dropdown or free text with defaults). 
 
 - Behavior:
   - On submit:
@@ -322,7 +322,7 @@ By the end of this phase, we want:
   - Payload DLL path (under workspace payloads).
   - Action: `Inject` or `Eject`.
   - Injection method (basic dropdown – one or two safe defaults).
-  - Elevation required (checkbox reflecting backend options). :contentReference[oaicite:36]{index=36}  
+  - Elevation required (checkbox reflecting backend options). 
 
 - Behavior:
   - On submit:
@@ -337,7 +337,7 @@ By the end of this phase, we want:
   - Package family name (PFN).
   - Mode: `Full dump` / `Metadata only`.
   - Output folder (within workspace).
-  - Elevation required (checkbox, default on). :contentReference[oaicite:37]{index=37}  
+  - Elevation required (checkbox, default on). 
 
 - Behavior:
   - On submit:
@@ -358,7 +358,7 @@ By the end of this phase, we want:
 
 ### 4.6 Dashboard, Settings, and Logs (Minimal Stubs)
 
-**Objective:** Provide minimal but useful versions of Dashboard, Settings, and Logs pages that match the SDD’s intent without full feature depth. :contentReference[oaicite:38]{index=38}  
+**Objective:** Provide minimal but useful versions of Dashboard, Settings, and Logs pages that match the SDD’s intent without full feature depth. 
 
 1. **Dashboard (`/`)**
 
@@ -376,7 +376,7 @@ By the end of this phase, we want:
    - Minimal controls:
      - Theme toggle (dark only vs dark+slightly-brighter variant).
      - Logging verbosity (low/normal/high – maps to a setting in user config but can be stubbed).
-     - Keep temp on failure (checkbox mapping to backend options). :contentReference[oaicite:39]{index=39}  
+     - Keep temp on failure (checkbox mapping to backend options). 
 
    - In Phase 5, updating settings may just update local state and log to console; real persistence is Phase 6.
 
@@ -397,7 +397,7 @@ By the end of this phase, we want:
 
 ### 4.7 Error Handling, Toasts, and Basic UX Glue
 
-**Objective:** Provide a minimal but coherent error/notification experience across the app. :contentReference[oaicite:40]{index=40}  
+**Objective:** Provide a minimal but coherent error/notification experience across the app. 
 
 **Steps:**
 
@@ -467,13 +467,13 @@ Phase 5 is complete when **all** of the following are true:
 
 1. **Backend IPC**
    - Kestrel HTTP/JSON host is running and exposes:
-     - `/health`, `/info`, `/operations/*`, and per-tool endpoints as described. :contentReference[oaicite:41]{index=41}  
+     - `/health`, `/info`, `/operations/*`, and per-tool endpoints as described. 
    - Operations can be started, monitored, and queried via HTTP.
 
 2. **Frontend Shell & Routing**
    - WebView2 host starts the backend and passes configuration to the frontend.
    - Frontend shell (sidebar + header + main area) renders correctly.
-   - All main routes (Dashboard, IoStore, UAsset, DLL, UWP, Settings, Logs) are reachable. :contentReference[oaicite:42]{index=42}  
+   - All main routes (Dashboard, IoStore, UAsset, DLL, UWP, Settings, Logs) are reachable. 
 
 3. **Minimal Tool Flows**
    - Each tool page (Retoc, UAsset, DLL, UWP):

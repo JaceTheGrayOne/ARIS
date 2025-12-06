@@ -1,0 +1,25 @@
+﻿<Window x:Class="ARIS.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ARIS.UI"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        mc:Ignorable="d"
+        Title="ARIS" Height="768" Width="1024" WindowState="Maximized">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <wv2:WebView2 x:Name="webView" Grid.Row="1"/>
+
+        <StatusBar Grid.Row="2" Background="#1a1a1a">
+            <StatusBarItem>
+                <TextBlock x:Name="statusText" Text="Backend: not connected (Phase 0)" Foreground="#888"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

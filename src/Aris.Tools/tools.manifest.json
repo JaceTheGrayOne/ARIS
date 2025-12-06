@@ -1,0 +1,23 @@
+{
+  "version": "0.1.0",
+  "tools": [
+    {
+      "id": "retoc",
+      "version": "0.0.0",
+      "platform": "win-x64",
+      "sha256": "placeholder",
+      "size": 0,
+      "relativePath": "retoc/retoc.exe",
+      "executable": true
+    },
+    {
+      "id": "uassetapi",
+      "version": "0.0.0",
+      "platform": "win-x64",
+      "sha256": "placeholder",
+      "size": 0,
+      "relativePath": "uassetapi/UAssetAPI.dll",
+      "executable": false
+    }
+  ]
+}
