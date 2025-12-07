@@ -23,6 +23,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Aris.Core\Aris.Core.csproj" />
     <ProjectReference Include="..\..\src\Aris.Application\Aris.Application.csproj" />
+    <ProjectReference Include="..\..\src\Aris.Infrastructure\Aris.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Aris.Adapters\Aris.Adapters.csproj" />
   </ItemGroup>
 
 </Project>

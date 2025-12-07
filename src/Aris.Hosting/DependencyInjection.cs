@@ -10,6 +10,7 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddInfrastructure(configuration);
+        services.AddAdapters();
 
         return services;
     }
@@ -19,5 +20,10 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         return Aris.Infrastructure.DependencyInjection.AddInfrastructure(services, configuration);
+    }
+
+    private static IServiceCollection AddAdapters(this IServiceCollection services)
+    {
+        return Aris.Adapters.DependencyInjection.AddAdapters(services);
     }
 }

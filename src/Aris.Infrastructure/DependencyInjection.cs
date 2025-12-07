@@ -1,7 +1,9 @@
 using Aris.Infrastructure.Configuration;
+using Aris.Infrastructure.Process;
 using Aris.Infrastructure.Tools;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Aris.Infrastructure;
 
@@ -13,8 +15,13 @@ public static class DependencyInjection
     {
         services.Configure<ToolingOptions>(configuration.GetSection(nameof(ToolingOptions)));
         services.Configure<WorkspaceOptions>(configuration.GetSection(nameof(WorkspaceOptions)));
+        services.Configure<RetocOptions>(configuration.GetSection("Retoc"));
+
+        services.AddSingleton<IValidateOptions<RetocOptions>, RetocOptionsValidator>();
 
         services.AddSingleton<IDependencyExtractor, DependencyExtractor>();
+        services.AddSingleton<IDependencyValidator, DependencyValidator>();
+        services.AddSingleton<IProcessRunner, ProcessRunner>();
 
         return services;
     }
