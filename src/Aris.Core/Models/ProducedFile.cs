@@ -1,7 +1,7 @@
-namespace Aris.Core.Retoc;
+namespace Aris.Core.Models;
 
 /// <summary>
-/// Metadata for a file produced by a Retoc operation.
+/// Metadata for a file produced by an operation.
 /// </summary>
 public class ProducedFile
 {
@@ -21,7 +21,7 @@ public class ProducedFile
     public string? Sha256 { get; init; }
 
     /// <summary>
-    /// File type or role (e.g., "pak", "utoc", "ucas").
+    /// File type or role (e.g., "pak", "utoc", "ucas", "uasset", "uexp").
     /// </summary>
     public string? FileType { get; init; }
 

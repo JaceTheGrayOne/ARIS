@@ -1,3 +1,5 @@
+using Aris.Core.Models;
+
 namespace Aris.Core.Retoc;
 
 /// <summary>

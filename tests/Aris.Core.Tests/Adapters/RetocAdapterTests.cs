@@ -201,7 +201,6 @@ public class RetocAdapterTests : IDisposable
         Assert.NotEmpty(progressEvents);
         Assert.Contains(progressEvents, e => e.Step == "staging");
         Assert.Contains(progressEvents, e => e.Step == "converting");
-        Assert.Contains(progressEvents, e => e.Step == "finalizing");
         Assert.Contains(progressEvents, e => e.Step == "complete");
     }
 

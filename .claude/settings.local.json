@@ -10,7 +10,9 @@
       "Bash(npm run build:*)",
       "Bash(dotnet publish:*)",
       "Bash(dir:*)",
-      "Bash(dotnet test)"
+      "Bash(dotnet test)",
+      "Bash(del \"G:\\Development\\ARIS(CS)\\ARIS\\src\\Aris.Core\\Retoc\\ProducedFile.cs\")",
+      "Bash(dotnet test:*)"
     ],
     "deny": [],
     "ask": []
