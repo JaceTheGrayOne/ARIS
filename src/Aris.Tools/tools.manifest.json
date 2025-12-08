@@ -18,6 +18,15 @@
       "size": 0,
       "relativePath": "uassetapi/UAssetAPI.dll",
       "executable": false
+    },
+    {
+      "id": "uwpdumper",
+      "version": "0.0.0",
+      "platform": "win-x64",
+      "sha256": "placeholder",
+      "size": 0,
+      "relativePath": "uwpdumper/uwpdumper.exe",
+      "executable": true
     }
   ]
 }
