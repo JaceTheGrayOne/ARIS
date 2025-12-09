@@ -27,6 +27,15 @@
       "size": 0,
       "relativePath": "uwpdumper/uwpdumper.exe",
       "executable": true
+    },
+    {
+      "id": "dllinjector",
+      "version": "0.0.0",
+      "platform": "win-x64",
+      "sha256": "placeholder",
+      "size": 0,
+      "relativePath": "dllinjector/dllinjector.exe",
+      "executable": true
     }
   ]
 }

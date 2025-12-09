@@ -1,3 +1,4 @@
+using Aris.Adapters.DllInjector;
 using Aris.Adapters.Retoc;
 using Aris.Adapters.UAsset;
 using Aris.Adapters.UwpDumper;
@@ -15,6 +16,9 @@ public static class DependencyInjection
         services.AddSingleton<IUAssetService, UAssetService>();
 
         services.AddSingleton<IUwpDumperAdapter, UwpDumperAdapter>();
+
+        services.AddSingleton<IProcessResolver, ProcessResolver>();
+        services.AddSingleton<IDllInjectorAdapter, DllInjectorAdapter>();
 
         return services;
     }

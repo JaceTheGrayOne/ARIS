@@ -18,10 +18,12 @@ public static class DependencyInjection
         services.Configure<RetocOptions>(configuration.GetSection("Retoc"));
         services.Configure<UAssetOptions>(configuration.GetSection("UAsset"));
         services.Configure<UwpDumperOptions>(configuration.GetSection("UwpDumper"));
+        services.Configure<DllInjectorOptions>(configuration.GetSection("DllInjector"));
 
         services.AddSingleton<IValidateOptions<RetocOptions>, RetocOptionsValidator>();
         services.AddSingleton<IValidateOptions<UAssetOptions>, UAssetOptionsValidator>();
         services.AddSingleton<IValidateOptions<UwpDumperOptions>, UwpDumperOptionsValidator>();
+        services.AddSingleton<IValidateOptions<DllInjectorOptions>, DllInjectorOptionsValidator>();
 
         services.AddSingleton<IDependencyExtractor, DependencyExtractor>();
         services.AddSingleton<IDependencyValidator, DependencyValidator>();
