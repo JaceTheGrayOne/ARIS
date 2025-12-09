@@ -1,5 +1,6 @@
 using Aris.Hosting;
 using Aris.Hosting.Endpoints;
+using Aris.Hosting.Infrastructure;
 using Aris.Infrastructure.Configuration;
 using Serilog;
 
@@ -26,6 +27,9 @@ builder.Services.AddArisBackend(builder.Configuration);
 
 builder.Services.Configure<WorkspaceOptions>(
     builder.Configuration.GetSection("Workspace"));
+
+builder.Services.AddSingleton<BackendHealthState>();
+builder.Services.AddHostedService<ToolingStartupHostedService>();
 
 var app = builder.Build();
 

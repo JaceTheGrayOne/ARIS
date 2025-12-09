@@ -1,5 +1,6 @@
 using System.Reflection;
 using Aris.Contracts;
+using Aris.Hosting.Infrastructure;
 using Aris.Infrastructure.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -16,17 +17,16 @@ public static class HealthEndpoints
     {
         endpoints.MapGet("/health", async (
             HttpContext httpContext,
+            BackendHealthState healthState,
             IOptions<WorkspaceOptions> workspaceOptions
         ) =>
         {
-            // NOTE: For Phase 5 Chunk 1 we keep this simple and optimistic.
-            // Later phases can wire real dependency validation and startup states.
             var workspacePath = workspaceOptions.Value.DefaultWorkspacePath;
             var response = new HealthResponse(
-                Status: "Ready",
-                DependenciesReady: true,
+                Status: healthState.Status,
+                DependenciesReady: healthState.DependenciesReady,
                 CurrentWorkspace: string.IsNullOrWhiteSpace(workspacePath) ? null : workspacePath,
-                Message: "ARIS backend is running."
+                Message: healthState.Message
             );
 
             await httpContext.Response.WriteAsJsonAsync(response);
