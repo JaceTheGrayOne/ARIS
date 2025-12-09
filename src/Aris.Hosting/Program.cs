@@ -1,7 +1,9 @@
 using Aris.Hosting;
+using Aris.Hosting.Endpoints;
+using Aris.Infrastructure.Configuration;
 using Serilog;
 
-var builder = Host.CreateApplicationBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 var logsPath = Path.Combine(
     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -21,14 +23,18 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Services.AddSerilog();
 builder.Services.AddArisBackend(builder.Configuration);
-builder.Services.AddHostedService<Worker>();
 
-var host = builder.Build();
+builder.Services.Configure<WorkspaceOptions>(
+    builder.Configuration.GetSection("Workspace"));
+
+var app = builder.Build();
+
+app.MapHealthAndInfoEndpoints();
 
 try
 {
     Log.Information("ARIS backend starting");
-    await host.RunAsync();
+    await app.RunAsync();
 }
 catch (Exception ex)
 {
