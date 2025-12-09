@@ -34,6 +34,7 @@ builder.Services.AddHostedService<ToolingStartupHostedService>();
 var app = builder.Build();
 
 app.MapHealthAndInfoEndpoints();
+app.MapRetocEndpoints();
 
 try
 {
