@@ -1,39 +1,7 @@
 import { useState } from 'react';
 import { getBackendBaseUrl } from '../config/backend';
-
-interface ProducedFile {
-  path: string;
-  sizeBytes: number;
-  sha256?: string | null;
-  fileType?: string | null;
-}
-
-interface RetocResult {
-  exitCode: number;
-  outputPath: string;
-  outputFormat?: string | null;
-  duration: string;
-  warnings: string[];
-  producedFiles: ProducedFile[];
-  schemaVersion?: string | null;
-  ueVersion?: string | null;
-  logExcerpt?: string | null;
-}
-
-interface ErrorInfo {
-  code: string;
-  message: string;
-  remediationHint?: string | null;
-}
-
-interface RetocConvertResponse {
-  operationId: string;
-  status: number;
-  result?: RetocResult | null;
-  error?: ErrorInfo | null;
-  startedAt: string;
-  completedAt: string;
-}
+import type { RetocConvertResponse } from '../types/contracts';
+import { OperationStatus } from '../types/contracts';
 
 export function RetocTestPanel() {
   const [inputPath, setInputPath] = useState('C:/fake/input.pak');
@@ -144,9 +112,9 @@ export function RetocTestPanel() {
 
                 <span className="text-gray-400">Status:</span>
                 <span className={
-                  response.status === 1 ? 'text-green-400' : 'text-red-400'
+                  response.status === OperationStatus.Succeeded ? 'text-green-400' : 'text-red-400'
                 }>
-                  {response.status === 1 ? 'Succeeded' : 'Failed'}
+                  {response.status === OperationStatus.Succeeded ? 'Succeeded' : 'Failed'}
                 </span>
 
                 {response.result && (

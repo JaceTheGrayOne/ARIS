@@ -1,12 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getBackendBaseUrl } from '../config/backend';
-
-interface HealthResponse {
-  status: string;
-  dependenciesReady: boolean;
-  currentWorkspace?: string | null;
-  message?: string | null;
-}
+import type { HealthResponse } from '../types/contracts';
 
 export function HealthPanel() {
   const [health, setHealth] = useState<HealthResponse | null>(null);
