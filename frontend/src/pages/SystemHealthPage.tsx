@@ -1,4 +1,5 @@
 import { HealthPanel } from '../components/HealthPanel';
+import { SystemDiagnosticsPanel } from '../components/SystemDiagnosticsPanel';
 
 export function SystemHealthPage() {
   return (
@@ -8,13 +9,14 @@ export function SystemHealthPage() {
         <p className="text-gray-400 mt-2">Backend status and diagnostics</p>
       </div>
 
-      <HealthPanel />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <SystemDiagnosticsPanel />
+        </div>
 
-      <div className="border border-gray-700 rounded p-6 bg-gray-800">
-        <h2 className="text-xl font-semibold mb-4">System Information</h2>
-        <p className="text-gray-400 text-sm">
-          Additional diagnostics and system information will be available here.
-        </p>
+        <div>
+          <HealthPanel />
+        </div>
       </div>
     </div>
   );
