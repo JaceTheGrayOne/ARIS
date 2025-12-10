@@ -2,6 +2,7 @@ using System.Reflection;
 using Aris.Contracts;
 using Aris.Hosting.Infrastructure;
 using Aris.Infrastructure.Configuration;
+using Aris.Tools.Manifest;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -42,9 +43,9 @@ public static class HealthEndpoints
             var request = httpContext.Request;
             var baseUrl = $"{request.Scheme}://{request.Host.ToUriComponent()}";
 
-            // Phase 5 Chunk 1: keep ToolVersions simple.
-            // Later we can hydrate from the tools manifest if desired.
-            var toolVersions = new Dictionary<string, string>();
+            var manifest = ToolManifestLoader.Load();
+            var toolVersions = manifest.Tools
+                .ToDictionary(t => t.Id, t => t.Version);
 
             var info = new InfoResponse(
                 Version: version,
