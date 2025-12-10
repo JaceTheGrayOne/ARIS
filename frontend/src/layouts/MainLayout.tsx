@@ -1,4 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom';
+import { useBackendStatus } from '../hooks/useBackendStatus';
 
 interface NavItem {
   to: string;
@@ -20,6 +21,38 @@ const navItems: NavItem[] = [
 ];
 
 export function MainLayout() {
+  const backendStatus = useBackendStatus();
+
+  const getStatusColor = () => {
+    switch (backendStatus.effectiveStatus) {
+      case 'ready':
+        return 'bg-green-500';
+      case 'starting':
+        return 'bg-amber-500';
+      case 'error':
+        return 'bg-red-500';
+      default:
+        return 'bg-gray-500';
+    }
+  };
+
+  const getStatusText = () => {
+    if (backendStatus.loading && !backendStatus.health) {
+      return 'Checking backend...';
+    }
+
+    switch (backendStatus.effectiveStatus) {
+      case 'ready':
+        return 'Backend: Ready';
+      case 'starting':
+        return 'Backend: Starting...';
+      case 'error':
+        return 'Backend: Error';
+      default:
+        return 'Backend: Unknown';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex">
       <aside className="w-64 bg-gray-800 border-r border-gray-700 flex flex-col">
@@ -67,15 +100,30 @@ export function MainLayout() {
             <div className="flex items-center space-x-4">
               <div>
                 <span className="text-sm text-gray-400">Workspace:</span>
-                <span className="ml-2 text-sm text-white">Not configured</span>
+                <span className="ml-2 text-sm text-white">
+                  {backendStatus.health?.currentWorkspace || 'Not configured'}
+                </span>
               </div>
             </div>
 
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-sm text-gray-300">Backend Ready</span>
+            <div className="flex items-center space-x-4">
+              <div className="flex flex-col items-end">
+                <div className="flex items-center space-x-2">
+                  <div className={`w-2 h-2 rounded-full ${getStatusColor()}`}></div>
+                  <span className="text-sm text-gray-300">{getStatusText()}</span>
+                </div>
+                {backendStatus.error && backendStatus.effectiveStatus === 'error' && (
+                  <span className="text-xs text-red-400 mt-1">
+                    Status may be stale (check system health)
+                  </span>
+                )}
               </div>
+
+              {backendStatus.info && (
+                <div className="text-sm text-gray-400">
+                  v{backendStatus.info.version}
+                </div>
+              )}
             </div>
           </div>
         </header>
