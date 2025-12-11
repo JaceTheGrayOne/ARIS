@@ -145,3 +145,40 @@ export interface UAssetInspectResponse {
   startedAt: string;
   completedAt: string;
 }
+
+export type UwpDumpMode = 'FullDump' | 'MetadataOnly' | 'ValidateOnly';
+
+export interface UwpDumpCommandDto {
+  packageFamilyName: string;
+  applicationId?: string | null;
+  outputPath: string;
+  mode: UwpDumpMode;
+  includeSymbols?: boolean;
+}
+
+export interface UwpDumpResultDto {
+  packageFamilyName: string;
+  applicationId?: string | null;
+  mode: UwpDumpMode;
+  outputPath: string;
+  duration: string;
+  filesExtracted: number;
+  totalSizeBytes: number;
+  warnings: string[];
+  producedFiles: ProducedFileDto[];
+  metadata?: {
+    packageFullName?: string | null;
+    version?: string | null;
+    architecture?: string | null;
+    publisher?: string | null;
+  } | null;
+}
+
+export interface UwpDumpResponse {
+  operationId: string;
+  status: OperationStatus;
+  result?: UwpDumpResultDto | null;
+  error?: ErrorInfo | null;
+  startedAt: string;
+  completedAt: string;
+}
