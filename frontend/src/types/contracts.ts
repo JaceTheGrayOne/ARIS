@@ -182,3 +182,61 @@ export interface UwpDumpResponse {
   startedAt: string;
   completedAt: string;
 }
+
+export type DllInjectionMethod = 'CreateRemoteThread' | 'ApcQueue' | 'ManualMap';
+
+export interface DllInjectCommandDto {
+  processId?: number;
+  processName?: string;
+  dllPath: string;
+  method: DllInjectionMethod;
+  requireElevation?: boolean;
+  arguments?: string[];
+}
+
+export interface DllEjectCommandDto {
+  processId?: number;
+  processName?: string;
+  moduleName: string;
+  requireElevation?: boolean;
+}
+
+export interface DllInjectResultDto {
+  processId: number;
+  processName: string;
+  dllPath: string;
+  method: DllInjectionMethod;
+  elevationUsed: boolean;
+  duration: string;
+  warnings: string[];
+  logExcerpt?: string | null;
+}
+
+export interface DllEjectResultDto {
+  processId: number;
+  processName: string;
+  moduleName: string;
+  wasLoadedBefore: boolean;
+  isUnloaded: boolean;
+  duration: string;
+  warnings: string[];
+  logExcerpt?: string | null;
+}
+
+export interface DllInjectResponse {
+  operationId: string;
+  status: OperationStatus;
+  result?: DllInjectResultDto | null;
+  error?: ErrorInfo | null;
+  startedAt: string;
+  completedAt: string;
+}
+
+export interface DllEjectResponse {
+  operationId: string;
+  status: OperationStatus;
+  result?: DllEjectResultDto | null;
+  error?: ErrorInfo | null;
+  startedAt: string;
+  completedAt: string;
+}
