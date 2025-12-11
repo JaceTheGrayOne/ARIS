@@ -1,62 +1,142 @@
+import { useState } from 'react';
+import { UAssetForm, type UAssetFormSubmit } from '../../components/uasset/UAssetForm';
+import { UAssetResultPanel } from '../../components/uasset/UAssetResultPanel';
+import {
+  runSerialize,
+  runDeserialize,
+  runInspect,
+} from '../../api/uassetMockClient';
+import type {
+  UAssetSerializeResponse,
+  UAssetDeserializeResponse,
+  UAssetInspectResponse,
+} from '../../types/contracts';
+import { OperationStatus } from '../../types/contracts';
+
+const MAX_HISTORY_SIZE = 10;
+
+type UAssetResponse =
+  | UAssetSerializeResponse
+  | UAssetDeserializeResponse
+  | UAssetInspectResponse;
+
 export function UAssetPage() {
+  const [currentResponse, setCurrentResponse] = useState<UAssetResponse | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [history, setHistory] = useState<UAssetResponse[]>([]);
+
+  const handleSubmit = async (payload: UAssetFormSubmit) => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      let response: UAssetResponse;
+
+      if (payload.kind === 'serialize') {
+        response = await runSerialize(payload.request);
+      } else if (payload.kind === 'deserialize') {
+        response = await runDeserialize(payload.request);
+      } else {
+        response = await runInspect(payload.request);
+      }
+
+      setCurrentResponse(response);
+
+      setHistory((prev) => {
+        const newHistory = [response, ...prev];
+        return newHistory.slice(0, MAX_HISTORY_SIZE);
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      setSubmitError(`Failed to submit operation: ${message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleHistoryClick = (response: UAssetResponse) => {
+    setCurrentResponse(response);
+    setSubmitError(null);
+  };
+
+  const getOperationKind = (response: UAssetResponse): string => {
+    if ('result' in response && response.result) {
+      if ('operation' in response.result) {
+        return response.result.operation;
+      }
+      if ('summary' in response.result) {
+        return 'Inspect';
+      }
+    }
+    return 'Unknown';
+  };
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">UAsset</h1>
-        <p className="text-gray-400 mt-2">Serialize and deserialize UAsset files</p>
-      </div>
-
-      <div className="border border-gray-700 rounded p-6 bg-gray-800">
-        <h2 className="text-xl font-semibold mb-4">Configuration</h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-2">Mode</label>
-            <select className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded text-white">
-              <option>Deserialize (Asset to JSON)</option>
-              <option>Serialize (JSON to Asset)</option>
-              <option>Inspect</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-400 mb-2">Input Path</label>
-            <input
-              type="text"
-              placeholder="Select asset or JSON file"
-              className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded text-white"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-400 mb-2">Output Path</label>
-            <input
-              type="text"
-              placeholder="Select output location"
-              className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded text-white"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-400 mb-2">UE Version</label>
-            <input
-              type="text"
-              placeholder="5.3"
-              className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded text-white"
-            />
-          </div>
-
-          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded">
-            Run Operation
-          </button>
-        </div>
-      </div>
-
-      <div className="border border-gray-700 rounded p-6 bg-gray-800">
-        <h2 className="text-xl font-semibold mb-4">About UAsset</h2>
-        <p className="text-gray-400 text-sm">
-          UAsset tools allow you to serialize Unreal Engine assets to JSON for inspection or modification,
-          and deserialize them back to binary format.
+        <h1 className="text-3xl font-bold">UAsset Inspector / Converter</h1>
+        <p className="text-gray-400 mt-2">
+          Serialize and deserialize Unreal Engine asset files using UAssetAPI (in-process)
         </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="border border-gray-700 rounded-lg p-6 bg-gray-800">
+          <h2 className="text-xl font-semibold mb-4">Operation Settings</h2>
+          <UAssetForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
+        </div>
+
+        <div className="space-y-4">
+          {submitError && (
+            <div className="border border-red-700 rounded-lg p-4 bg-red-900/20">
+              <p className="text-red-400 text-sm font-medium">Error</p>
+              <p className="text-red-300 text-sm mt-1">{submitError}</p>
+            </div>
+          )}
+
+          <UAssetResultPanel response={currentResponse} />
+
+          {history.length > 0 && (
+            <div className="border border-gray-700 rounded-lg p-6 bg-gray-800">
+              <h3 className="text-lg font-semibold mb-4">Recent Operations</h3>
+              <div className="space-y-2">
+                {history.map((item) => (
+                  <button
+                    key={item.operationId}
+                    onClick={() => handleHistoryClick(item)}
+                    className={`w-full text-left p-3 rounded transition-colors ${
+                      currentResponse?.operationId === item.operationId
+                        ? 'bg-blue-900/30 border border-blue-700'
+                        : 'bg-gray-900 hover:bg-gray-700 border border-gray-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <span
+                          className={`px-2 py-1 rounded text-xs font-medium ${
+                            item.status === OperationStatus.Succeeded
+                              ? 'bg-green-900/30 text-green-400'
+                              : 'bg-red-900/30 text-red-400'
+                          }`}
+                        >
+                          {item.status === OperationStatus.Succeeded ? 'Success' : 'Failed'}
+                        </span>
+                        <span className="text-white text-xs">{getOperationKind(item)}</span>
+                        <span className="text-gray-400 font-mono text-xs">
+                          {item.operationId.substring(0, 8)}...
+                        </span>
+                      </div>
+                      <span className="text-gray-400 text-xs">
+                        {new Date(item.startedAt).toLocaleTimeString()}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

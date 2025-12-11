@@ -67,3 +67,81 @@ export interface RetocConvertResponse {
   startedAt: string;
   completedAt: string;
 }
+
+export type UAssetOperation = 'Serialize' | 'Deserialize' | 'Inspect';
+
+export interface UAssetSerializeRequest {
+  inputJsonPath: string;
+  outputAssetPath: string;
+  game?: string | null;
+  ueVersion?: string | null;
+  schemaVersion?: string | null;
+}
+
+export interface UAssetDeserializeRequest {
+  inputAssetPath: string;
+  outputJsonPath: string;
+  game?: string | null;
+  ueVersion?: string | null;
+  schemaVersion?: string | null;
+  includeBulkData?: boolean;
+}
+
+export interface UAssetInspectRequest {
+  inputAssetPath: string;
+  fields?: string[] | null;
+}
+
+export interface UAssetResultDto {
+  operation: UAssetOperation;
+  inputPath: string;
+  outputPath: string;
+  duration: string;
+  warnings: string[];
+  producedFiles: ProducedFileDto[];
+  schemaVersion?: string | null;
+  ueVersion?: string | null;
+  logExcerpt?: string | null;
+}
+
+export interface UAssetInspectionDto {
+  inputPath: string;
+  summary: {
+    ueVersion?: string | null;
+    licenseeVersion: number;
+    customVersionCount: number;
+    nameCount: number;
+    exportCount: number;
+    importCount: number;
+  };
+  exports?: string[] | null;
+  imports?: string[] | null;
+  names?: string[] | null;
+}
+
+export interface UAssetSerializeResponse {
+  operationId: string;
+  status: OperationStatus;
+  result?: UAssetResultDto | null;
+  error?: ErrorInfo | null;
+  startedAt: string;
+  completedAt: string;
+}
+
+export interface UAssetDeserializeResponse {
+  operationId: string;
+  status: OperationStatus;
+  result?: UAssetResultDto | null;
+  error?: ErrorInfo | null;
+  startedAt: string;
+  completedAt: string;
+}
+
+export interface UAssetInspectResponse {
+  operationId: string;
+  status: OperationStatus;
+  result?: UAssetInspectionDto | null;
+  error?: ErrorInfo | null;
+  startedAt: string;
+  completedAt: string;
+}
