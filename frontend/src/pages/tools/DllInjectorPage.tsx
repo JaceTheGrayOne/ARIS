@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { DllInjectorForm } from '../../components/dllinjector/DllInjectorForm';
 import { DllInjectorResultPanel } from '../../components/dllinjector/DllInjectorResultPanel';
-import { runInject, runEject } from '../../api/dllInjectorMockClient';
+import { runInject, runEject } from '../../api/dllInjectorClient';
 import type {
   DllInjectCommandDto,
   DllEjectCommandDto,

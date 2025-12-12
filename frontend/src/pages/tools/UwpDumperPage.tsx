@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { UwpDumperForm } from '../../components/uwpdumper/UwpDumperForm';
 import { UwpDumperResultPanel } from '../../components/uwpdumper/UwpDumperResultPanel';
-import { runDump } from '../../api/uwpDumperMockClient';
+import { runDump } from '../../api/uwpDumperClient';
 import type { UwpDumpCommandDto, UwpDumpResponse } from '../../types/contracts';
 import { OperationStatus } from '../../types/contracts';
 import { recordOperation, type OperationHistoryEntry } from '../../state/operationHistory';

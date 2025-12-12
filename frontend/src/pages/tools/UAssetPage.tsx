@@ -5,7 +5,7 @@ import {
   runSerialize,
   runDeserialize,
   runInspect,
-} from '../../api/uassetMockClient';
+} from '../../api/uassetClient';
 import type {
   UAssetSerializeResponse,
   UAssetDeserializeResponse,

@@ -35,6 +35,9 @@ var app = builder.Build();
 
 app.MapHealthAndInfoEndpoints();
 app.MapRetocEndpoints();
+app.MapUAssetEndpoints();
+app.MapUwpDumperEndpoints();
+app.MapDllInjectorEndpoints();
 
 try
 {
