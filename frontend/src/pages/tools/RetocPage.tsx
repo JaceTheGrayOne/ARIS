@@ -4,6 +4,7 @@ import { RetocForm } from '../../components/retoc/RetocForm';
 import { RetocResultPanel } from '../../components/retoc/RetocResultPanel';
 import type { RetocConvertRequest, RetocConvertResponse } from '../../types/contracts';
 import { OperationStatus } from '../../types/contracts';
+import { recordOperation, type OperationHistoryEntry } from '../../state/operationHistory';
 
 const MAX_HISTORY_SIZE = 10;
 
@@ -34,6 +35,20 @@ export function RetocPage() {
       const data: RetocConvertResponse = await response.json();
 
       setCurrentResponse(data);
+
+      // Record to global operation history
+      const entry: OperationHistoryEntry = {
+        id: data.operationId,
+        tool: 'Retoc',
+        kind: 'RetocConvert',
+        status: data.status,
+        startedAt: data.startedAt,
+        completedAt: data.completedAt,
+        label: 'Convert',
+        summary: `${data.result?.outputFormat ?? 'Unknown'} → exit code ${data.result?.exitCode ?? 0}`,
+        payload: data,
+      };
+      recordOperation(entry);
 
       setHistory((prev) => {
         const newHistory = [data, ...prev];

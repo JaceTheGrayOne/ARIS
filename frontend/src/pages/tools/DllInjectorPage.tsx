@@ -9,6 +9,7 @@ import type {
   DllEjectResponse,
 } from '../../types/contracts';
 import { OperationStatus } from '../../types/contracts';
+import { recordOperation, type OperationHistoryEntry } from '../../state/operationHistory';
 
 const MAX_HISTORY_SIZE = 10;
 
@@ -30,6 +31,22 @@ export function DllInjectorPage() {
       setInjectResponse(response);
       setEjectResponse(null);
 
+      // Record to global operation history
+      const entry: OperationHistoryEntry = {
+        id: response.operationId,
+        tool: 'DllInjector',
+        kind: 'DllInject',
+        status: response.status,
+        startedAt: response.startedAt,
+        completedAt: response.completedAt,
+        label: 'Inject',
+        summary: response.result
+          ? `${response.result.processName} (PID: ${response.result.processId})`
+          : 'No result',
+        payload: response,
+      };
+      recordOperation(entry);
+
       setHistory((prev) => {
         const newHistory = [response, ...prev];
         return newHistory.slice(0, MAX_HISTORY_SIZE);
@@ -50,6 +67,22 @@ export function DllInjectorPage() {
       const response = await runEject(command);
       setEjectResponse(response);
       setInjectResponse(null);
+
+      // Record to global operation history
+      const entry: OperationHistoryEntry = {
+        id: response.operationId,
+        tool: 'DllInjector',
+        kind: 'DllEject',
+        status: response.status,
+        startedAt: response.startedAt,
+        completedAt: response.completedAt,
+        label: 'Eject',
+        summary: response.result
+          ? `${response.result.moduleName} from ${response.result.processName}`
+          : 'No result',
+        payload: response,
+      };
+      recordOperation(entry);
 
       setHistory((prev) => {
         const newHistory = [response, ...prev];

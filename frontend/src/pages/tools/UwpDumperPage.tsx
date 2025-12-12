@@ -4,6 +4,7 @@ import { UwpDumperResultPanel } from '../../components/uwpdumper/UwpDumperResult
 import { runDump } from '../../api/uwpDumperMockClient';
 import type { UwpDumpCommandDto, UwpDumpResponse } from '../../types/contracts';
 import { OperationStatus } from '../../types/contracts';
+import { recordOperation, type OperationHistoryEntry } from '../../state/operationHistory';
 
 const MAX_HISTORY_SIZE = 10;
 
@@ -20,6 +21,22 @@ export function UwpDumperPage() {
     try {
       const response = await runDump(command);
       setCurrentResponse(response);
+
+      // Record to global operation history
+      const entry: OperationHistoryEntry = {
+        id: response.operationId,
+        tool: 'UwpDumper',
+        kind: 'UwpDump',
+        status: response.status,
+        startedAt: response.startedAt,
+        completedAt: response.completedAt,
+        label: response.result?.mode ?? 'Dump',
+        summary: response.result
+          ? `${response.result.filesExtracted} files, ${response.result.duration}`
+          : 'No result',
+        payload: response,
+      };
+      recordOperation(entry);
 
       setHistory((prev) => {
         const newHistory = [response, ...prev];

@@ -12,6 +12,7 @@ import type {
   UAssetInspectResponse,
 } from '../../types/contracts';
 import { OperationStatus } from '../../types/contracts';
+import { recordOperation, type OperationHistoryEntry, type OperationKind } from '../../state/operationHistory';
 
 const MAX_HISTORY_SIZE = 10;
 
@@ -42,6 +43,47 @@ export function UAssetPage() {
       }
 
       setCurrentResponse(response);
+
+      // Record to global operation history
+      let kind: OperationKind;
+      let label: string;
+      let summary: string;
+
+      if (payload.kind === 'serialize') {
+        kind = 'UAssetSerialize';
+        label = 'Serialize';
+        const result = (response as UAssetSerializeResponse).result;
+        summary = result
+          ? `${result.producedFiles.length} files, ${result.duration}`
+          : 'No result';
+      } else if (payload.kind === 'deserialize') {
+        kind = 'UAssetDeserialize';
+        label = 'Deserialize';
+        const result = (response as UAssetDeserializeResponse).result;
+        summary = result
+          ? `${result.producedFiles.length} files, ${result.duration}`
+          : 'No result';
+      } else {
+        kind = 'UAssetInspect';
+        label = 'Inspect';
+        const result = (response as UAssetInspectResponse).result;
+        summary = result
+          ? `Names: ${result.summary.nameCount}, Exports: ${result.summary.exportCount}, Imports: ${result.summary.importCount}`
+          : 'No result';
+      }
+
+      const entry: OperationHistoryEntry = {
+        id: response.operationId,
+        tool: 'UAsset',
+        kind,
+        status: response.status,
+        startedAt: response.startedAt,
+        completedAt: response.completedAt,
+        label,
+        summary,
+        payload: response,
+      };
+      recordOperation(entry);
 
       setHistory((prev) => {
         const newHistory = [response, ...prev];
