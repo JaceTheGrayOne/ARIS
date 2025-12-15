@@ -103,7 +103,7 @@ public class RetocAdapterTests : IDisposable
         {
             InputPath = "C:\\input\\test.pak",
             OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack,
+            Mode = RetocMode.PakToIoStore,
             GameVersion = "1.0",
             UEVersion = "5.3"
         };
@@ -112,13 +112,10 @@ public class RetocAdapterTests : IDisposable
 
         Assert.NotNull(_fakeProcessRunner.LastExecutablePath);
         Assert.Contains("retoc.exe", _fakeProcessRunner.LastExecutablePath);
-        Assert.Contains("repack", _fakeProcessRunner.LastArguments);
-        Assert.Contains("--input", _fakeProcessRunner.LastArguments);
+        // PakToIoStore should map to "to-zen" with positional arguments
+        Assert.Contains("to-zen", _fakeProcessRunner.LastArguments);
         Assert.Contains("C:\\input\\test.pak", _fakeProcessRunner.LastArguments);
-        Assert.Contains("--output", _fakeProcessRunner.LastArguments);
         Assert.Contains("C:\\output\\test.pak", _fakeProcessRunner.LastArguments);
-        Assert.Contains("--game-version \"1.0\"", _fakeProcessRunner.LastArguments);
-        Assert.Contains("--ue-version \"5.3\"", _fakeProcessRunner.LastArguments);
     }
 
     [Fact]
@@ -157,7 +154,7 @@ public class RetocAdapterTests : IDisposable
         {
             InputPath = "",
             OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack
+            Mode = RetocMode.PakToIoStore
         };
 
         var ex = await Assert.ThrowsAsync<ValidationError>(() =>
@@ -173,7 +170,7 @@ public class RetocAdapterTests : IDisposable
         {
             InputPath = "C:\\input\\test.pak",
             OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack,
+            Mode = RetocMode.PakToIoStore,
             AdditionalArgs = new List<string> { "--dangerous" }
         };
 
@@ -190,7 +187,7 @@ public class RetocAdapterTests : IDisposable
         {
             InputPath = "C:\\input\\test.pak",
             OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack
+            Mode = RetocMode.PakToIoStore
         };
 
         var progressEvents = new List<ProgressEvent>();
@@ -230,7 +227,7 @@ public class RetocAdapterTests : IDisposable
         {
             InputPath = "C:\\input\\test.pak",
             OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack
+            Mode = RetocMode.PakToIoStore
         };
 
         await _adapter.ConvertAsync(command);
@@ -245,7 +242,7 @@ public class RetocAdapterTests : IDisposable
         {
             InputPath = "C:\\input\\test.pak",
             OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack,
+            Mode = RetocMode.PakToIoStore,
             TimeoutSeconds = 600
         };
 
@@ -261,7 +258,7 @@ public class RetocAdapterTests : IDisposable
         {
             InputPath = "C:\\input\\test.pak",
             OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack
+            Mode = RetocMode.PakToIoStore
         };
 
         _fakeProcessRunner.ExceptionToThrow = new TimeoutException("Process timed out");
@@ -347,7 +344,6 @@ public class RetocAdapterTests : IDisposable
     [Theory]
     [InlineData(RetocMode.PakToIoStore, "iostore")]
     [InlineData(RetocMode.IoStoreToPak, "pak")]
-    [InlineData(RetocMode.Repack, "pak")]
     public async Task ConvertAsync_DifferentModes_SetsCorrectOutputFormat(RetocMode mode, string expectedFormat)
     {
         var command = new RetocCommand
@@ -370,7 +366,7 @@ public class RetocAdapterTests : IDisposable
         {
             InputPath = "C:\\input\\test.pak",
             OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack,
+            Mode = RetocMode.PakToIoStore,
             OperationId = operationId,
             GameVersion = "1.0",
             UEVersion = "5.3"
@@ -396,7 +392,7 @@ public class RetocAdapterTests : IDisposable
         var logContent = File.ReadAllText(expectedLogPath);
         Assert.Contains(operationId, logContent);
         Assert.Contains("Exit Code: 0", logContent);
-        Assert.Contains("Mode: Repack", logContent);
+        Assert.Contains("Mode: PakToIoStore", logContent);
         Assert.Contains("Game Version: 1.0", logContent);
         Assert.Contains("UE Version: 5.3", logContent);
         Assert.Contains("Conversion successful", logContent);
@@ -444,7 +440,7 @@ public class RetocAdapterTests : IDisposable
         {
             InputPath = "C:\\input\\test.pak",
             OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack,
+            Mode = RetocMode.PakToIoStore,
             OperationId = operationId
         };
 

@@ -1,41 +1,41 @@
-{
-  "version": "0.1.0",
-  "tools": [
-    {
-      "id": "retoc",
-      "version": "0.0.0",
-      "platform": "win-x64",
-      "sha256": "placeholder",
-      "size": 0,
-      "relativePath": "retoc/retoc.exe",
-      "executable": true
-    },
-    {
-      "id": "uassetapi",
-      "version": "0.0.0",
-      "platform": "win-x64",
-      "sha256": "placeholder",
-      "size": 0,
-      "relativePath": "uassetapi/UAssetAPI.dll",
-      "executable": false
-    },
-    {
-      "id": "uwpdumper",
-      "version": "0.0.0",
-      "platform": "win-x64",
-      "sha256": "placeholder",
-      "size": 0,
-      "relativePath": "uwpdumper/uwpdumper.exe",
-      "executable": true
-    },
-    {
-      "id": "dllinjector",
-      "version": "0.0.0",
-      "platform": "win-x64",
-      "sha256": "placeholder",
-      "size": 0,
-      "relativePath": "dllinjector/dllinjector.exe",
-      "executable": true
-    }
-  ]
+﻿{
+    "version":  "0.1.0",
+    "tools":  [
+                  {
+                      "id":  "retoc",
+                      "version":  "v0.1.4",
+                      "platform":  "win-x64",
+                      "sha256":  "1c7b3af2b7ca06ac7216d1ba1c629f1e2b178966d964c488135c09abd68a4ec8",
+                      "size":  7020544,
+                      "relativePath":  "retoc/retoc.exe",
+                      "executable":  true
+                  },
+                  {
+                      "id":  "uassetapi",
+                      "version":  "0.0.0",
+                      "platform":  "win-x64",
+                      "sha256":  "placeholder",
+                      "size":  0,
+                      "relativePath":  "uassetapi/UAssetAPI.dll",
+                      "executable":  false
+                  },
+                  {
+                      "id":  "uwpdumper",
+                      "version":  "0.0.0",
+                      "platform":  "win-x64",
+                      "sha256":  "placeholder",
+                      "size":  0,
+                      "relativePath":  "uwpdumper/uwpdumper.exe",
+                      "executable":  true
+                  },
+                  {
+                      "id":  "dllinjector",
+                      "version":  "0.0.0",
+                      "platform":  "win-x64",
+                      "sha256":  "placeholder",
+                      "size":  0,
+                      "relativePath":  "dllinjector/dllinjector.exe",
+                      "executable":  true
+                  }
+              ]
 }

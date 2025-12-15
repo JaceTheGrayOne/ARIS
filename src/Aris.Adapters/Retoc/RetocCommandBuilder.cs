@@ -8,6 +8,7 @@ namespace Aris.Adapters.Retoc;
 /// <summary>
 /// Pure command builder for Retoc CLI invocations.
 /// No IO, no logging - just validation and argument construction.
+/// Builds commands for the real retoc CLI from https://github.com/trumank/retoc
 /// </summary>
 public static class RetocCommandBuilder
 {
@@ -27,65 +28,22 @@ public static class RetocCommandBuilder
         ValidateCommand(command);
         ValidateAdditionalArgs(command.AdditionalArgs, options.AllowedAdditionalArgs);
 
-        var args = new StringBuilder();
+        var args = new List<string>();
 
-        // Mode-specific subcommand/flags
-        AppendModeArgs(args, command.Mode);
+        // Add global options first
+        AppendGlobalOptions(args, command);
 
-        // Input/output paths
-        args.Append($"--input \"{command.InputPath}\" ");
-        args.Append($"--output \"{command.OutputPath}\" ");
+        // Add subcommand
+        var subcommand = GetSubcommand(command);
+        args.Add(subcommand);
 
-        // Game/UE version
-        if (!string.IsNullOrEmpty(command.GameVersion))
-        {
-            args.Append($"--game-version \"{command.GameVersion}\" ");
-        }
-
-        if (!string.IsNullOrEmpty(command.UEVersion))
-        {
-            args.Append($"--ue-version \"{command.UEVersion}\" ");
-        }
-
-        // Compression options
-        var compressionFormat = command.CompressionFormat ?? options.DefaultCompressionFormat;
-        var compressionLevel = command.CompressionLevel ?? options.DefaultCompressionLevel;
-
-        args.Append($"--compression \"{compressionFormat}\" ");
-        args.Append($"--compression-level {compressionLevel} ");
-
-        if (command.CompressionBlockSize.HasValue)
-        {
-            args.Append($"--block-size {command.CompressionBlockSize.Value} ");
-        }
-
-        // Mount keys
-        // TODO: Implement key injection via KeyStore and redact in logs
-        foreach (var keyRef in command.MountKeys)
-        {
-            args.Append($"--aes-key \"{keyRef}\" ");
-        }
-
-        // Filters
-        foreach (var include in command.IncludeFilters)
-        {
-            ValidateFilterPattern(include);
-            args.Append($"--include \"{include}\" ");
-        }
-
-        foreach (var exclude in command.ExcludeFilters)
-        {
-            ValidateFilterPattern(exclude);
-            args.Append($"--exclude \"{exclude}\" ");
-        }
+        // Add subcommand-specific arguments
+        AppendSubcommandArgs(args, command, subcommand);
 
         // Additional args (already validated)
-        foreach (var arg in command.AdditionalArgs)
-        {
-            args.Append($"{arg} ");
-        }
+        args.AddRange(command.AdditionalArgs);
 
-        return (retocExePath, args.ToString().TrimEnd());
+        return (retocExePath, string.Join(" ", args));
     }
 
     private static void ValidateCommand(RetocCommand command)
@@ -153,24 +111,177 @@ public static class RetocCommandBuilder
         }
     }
 
-    private static void AppendModeArgs(StringBuilder args, RetocMode mode)
+    /// <summary>
+    /// Appends global options (--aes-key, --override-container-header-version, --override-toc-version).
+    /// These must come before the subcommand.
+    /// </summary>
+    private static void AppendGlobalOptions(List<string> args, RetocCommand command)
     {
-        switch (mode)
+        // AES key (if provided)
+        var aesKey = command.AesKey ?? (command.MountKeys.Count > 0 ? command.MountKeys[0] : null);
+        if (!string.IsNullOrEmpty(aesKey))
         {
-            case RetocMode.PakToIoStore:
-                args.Append("convert --to-iostore ");
-                break;
-            case RetocMode.IoStoreToPak:
-                args.Append("convert --to-pak ");
-                break;
-            case RetocMode.Repack:
-                args.Append("repack ");
-                break;
-            case RetocMode.Validate:
-                args.Append("validate ");
-                break;
-            default:
-                throw new ValidationError($"Unknown RetocMode: {mode}", nameof(mode), mode.ToString());
+            args.Add("--aes-key");
+            args.Add(aesKey);
         }
+
+        // Container header version override
+        if (command.ContainerHeaderVersion.HasValue)
+        {
+            args.Add("--override-container-header-version");
+            args.Add(command.ContainerHeaderVersion.Value.ToString());
+        }
+
+        // TOC version override
+        if (command.TocVersion.HasValue)
+        {
+            args.Add("--override-toc-version");
+            args.Add(command.TocVersion.Value.ToString());
+        }
+    }
+
+    /// <summary>
+    /// Determines the Retoc CLI subcommand from the command type or mode.
+    /// </summary>
+    private static string GetSubcommand(RetocCommand command)
+    {
+        // If CommandType is explicitly set, use it
+        if (command.CommandType != default(RetocCommandType))
+        {
+            return CommandTypeToString(command.CommandType);
+        }
+
+        // Otherwise, infer from Mode (backward compatibility)
+        if (command.Mode.HasValue)
+        {
+            return command.Mode.Value switch
+            {
+                RetocMode.PakToIoStore => "to-zen",
+                RetocMode.IoStoreToPak => "to-legacy",
+                RetocMode.Validate => "verify",
+                RetocMode.Repack => throw new ValidationError(
+                    "RetocMode.Repack is not directly supported by retoc CLI. Use explicit CommandType instead.",
+                    nameof(command.Mode),
+                    command.Mode.Value.ToString()),
+                _ => throw new ValidationError($"Unknown RetocMode: {command.Mode.Value}", nameof(command.Mode), command.Mode.Value.ToString())
+            };
+        }
+
+        throw new ValidationError("Either CommandType or Mode must be specified", nameof(command.CommandType));
+    }
+
+    /// <summary>
+    /// Converts RetocCommandType enum to the actual CLI subcommand string.
+    /// </summary>
+    private static string CommandTypeToString(RetocCommandType commandType)
+    {
+        return commandType switch
+        {
+            RetocCommandType.Manifest => "manifest",
+            RetocCommandType.Info => "info",
+            RetocCommandType.List => "list",
+            RetocCommandType.Verify => "verify",
+            RetocCommandType.Unpack => "unpack",
+            RetocCommandType.UnpackRaw => "unpack-raw",
+            RetocCommandType.PackRaw => "pack-raw",
+            RetocCommandType.ToLegacy => "to-legacy",
+            RetocCommandType.ToZen => "to-zen",
+            RetocCommandType.Get => "get",
+            RetocCommandType.DumpTest => "dump-test",
+            RetocCommandType.GenScriptObjects => "gen-script-objects",
+            RetocCommandType.PrintScriptObjects => "print-script-objects",
+            _ => throw new ValidationError($"Unknown RetocCommandType: {commandType}", nameof(commandType), commandType.ToString())
+        };
+    }
+
+    /// <summary>
+    /// Appends subcommand-specific arguments (input/output paths, etc.).
+    /// </summary>
+    private static void AppendSubcommandArgs(List<string> args, RetocCommand command, string subcommand)
+    {
+        // Most commands take input as a positional argument
+        switch (subcommand)
+        {
+            case "to-zen":
+                // Format: to-zen --version <version> <input> <output>
+                if (!string.IsNullOrWhiteSpace(command.Version))
+                {
+                    args.Add("--version");
+                    args.Add(command.Version);
+                }
+                args.Add(QuoteIfNeeded(command.InputPath));
+                args.Add(QuoteIfNeeded(command.OutputPath));
+                break;
+
+            case "to-legacy":
+                // Format: to-legacy <input> <output>
+                args.Add(QuoteIfNeeded(command.InputPath));
+                args.Add(QuoteIfNeeded(command.OutputPath));
+                break;
+
+            case "unpack":
+            case "unpack-raw":
+                // Format: unpack <input.utoc> <output-dir>
+                args.Add(QuoteIfNeeded(command.InputPath));
+                args.Add(QuoteIfNeeded(command.OutputPath));
+                break;
+
+            case "pack-raw":
+                // Format: pack-raw <input-dir> <output-prefix>
+                args.Add(QuoteIfNeeded(command.InputPath));
+                args.Add(QuoteIfNeeded(command.OutputPath));
+                break;
+
+            case "manifest":
+            case "info":
+            case "list":
+            case "verify":
+            case "print-script-objects":
+                // Format: <command> <input.utoc>
+                args.Add(QuoteIfNeeded(command.InputPath));
+                break;
+
+            case "gen-script-objects":
+                // Format: gen-script-objects <input.jmap> <output-dir>
+                args.Add(QuoteIfNeeded(command.InputPath));
+                args.Add(QuoteIfNeeded(command.OutputPath));
+                break;
+
+            case "get":
+                // Format: get <input.utoc> <chunk-index>
+                // Note: chunk index would need to be in AdditionalArgs for now
+                args.Add(QuoteIfNeeded(command.InputPath));
+                break;
+
+            case "dump-test":
+                // Format: dump-test <input>
+                args.Add(QuoteIfNeeded(command.InputPath));
+                break;
+
+            default:
+                // For unknown commands, just add input and output if they exist
+                if (!string.IsNullOrEmpty(command.InputPath))
+                {
+                    args.Add(QuoteIfNeeded(command.InputPath));
+                }
+                if (!string.IsNullOrEmpty(command.OutputPath))
+                {
+                    args.Add(QuoteIfNeeded(command.OutputPath));
+                }
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Quotes a path if it contains spaces.
+    /// </summary>
+    private static string QuoteIfNeeded(string path)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            return string.Empty;
+        }
+
+        return path.Contains(' ') ? $"\"{path}\"" : path;
     }
 }

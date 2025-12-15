@@ -51,6 +51,7 @@ export interface RetocConvertRequest {
   mode: string;
   game?: string | null;
   ueVersion?: string | null;
+  engineVersion?: string | null;
   compressionFormat?: string | null;
   compressionLevel?: number | null;
   timeoutSeconds?: number | null;

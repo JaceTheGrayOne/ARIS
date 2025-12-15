@@ -30,13 +30,10 @@ public class RetocCommandBuilderTests
         var (execPath, args) = RetocCommandBuilder.Build(command, _defaultOptions, "C:\\tools\\retoc.exe");
 
         Assert.Equal("C:\\tools\\retoc.exe", execPath);
-        Assert.Contains("convert --to-iostore", args);
-        Assert.Contains("--input \"C:\\input\\test.pak\"", args);
-        Assert.Contains("--output \"C:\\output\\test.utoc\"", args);
-        Assert.Contains("--game-version \"1.0\"", args);
-        Assert.Contains("--ue-version \"5.3\"", args);
-        Assert.Contains("--compression \"Zlib\"", args);
-        Assert.Contains("--compression-level 6", args);
+        // PakToIoStore maps to "to-zen" command with positional arguments
+        Assert.Contains("to-zen", args);
+        Assert.Contains("C:\\input\\test.pak", args);
+        Assert.Contains("C:\\output\\test.utoc", args);
     }
 
     [Fact]
@@ -46,7 +43,7 @@ public class RetocCommandBuilderTests
         {
             InputPath = "",
             OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack
+            Mode = RetocMode.PakToIoStore
         };
 
         var ex = Assert.Throws<ValidationError>(() =>
@@ -62,7 +59,7 @@ public class RetocCommandBuilderTests
         {
             InputPath = "C:\\input\\test.pak",
             OutputPath = "",
-            Mode = RetocMode.Repack
+            Mode = RetocMode.PakToIoStore
         };
 
         var ex = Assert.Throws<ValidationError>(() =>
@@ -78,7 +75,7 @@ public class RetocCommandBuilderTests
         {
             InputPath = "relative\\path\\test.pak",
             OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack
+            Mode = RetocMode.PakToIoStore
         };
 
         var ex = Assert.Throws<ValidationError>(() =>
@@ -94,7 +91,7 @@ public class RetocCommandBuilderTests
         {
             InputPath = "C:\\input\\test.pak",
             OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack,
+            Mode = RetocMode.PakToIoStore,
             AdditionalArgs = new List<string> { "--dangerous-flag" }
         };
 
@@ -112,7 +109,7 @@ public class RetocCommandBuilderTests
         {
             InputPath = "C:\\input\\test.pak",
             OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack,
+            Mode = RetocMode.PakToIoStore,
             AdditionalArgs = new List<string> { "--verbose" }
         };
 
@@ -121,47 +118,12 @@ public class RetocCommandBuilderTests
         Assert.Contains("--verbose", args);
     }
 
-    [Fact]
-    public void Build_FilterWithPathTraversal_ThrowsValidationError()
-    {
-        var command = new RetocCommand
-        {
-            InputPath = "C:\\input\\test.pak",
-            OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack,
-            IncludeFilters = new List<string> { "../../etc/passwd" }
-        };
 
-        var ex = Assert.Throws<ValidationError>(() =>
-            RetocCommandBuilder.Build(command, _defaultOptions, "C:\\tools\\retoc.exe"));
-
-        Assert.Contains("path traversal", ex.Message);
-    }
-
-    [Fact]
-    public void Build_ValidFilters_IncludedInCommand()
-    {
-        var command = new RetocCommand
-        {
-            InputPath = "C:\\input\\test.pak",
-            OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack,
-            IncludeFilters = new List<string> { "*.uasset", "Content/*" },
-            ExcludeFilters = new List<string> { "*.tmp" }
-        };
-
-        var (_, args) = RetocCommandBuilder.Build(command, _defaultOptions, "C:\\tools\\retoc.exe");
-
-        Assert.Contains("--include \"*.uasset\"", args);
-        Assert.Contains("--include \"Content/*\"", args);
-        Assert.Contains("--exclude \"*.tmp\"", args);
-    }
 
     [Theory]
-    [InlineData(RetocMode.PakToIoStore, "convert --to-iostore")]
-    [InlineData(RetocMode.IoStoreToPak, "convert --to-pak")]
-    [InlineData(RetocMode.Repack, "repack")]
-    [InlineData(RetocMode.Validate, "validate")]
+    [InlineData(RetocMode.PakToIoStore, "to-zen")]
+    [InlineData(RetocMode.IoStoreToPak, "to-legacy")]
+    [InlineData(RetocMode.Validate, "verify")]
     public void Build_DifferentModes_MapsToCorrectSubcommand(RetocMode mode, string expectedSubcommand)
     {
         var command = new RetocCommand
@@ -173,43 +135,148 @@ public class RetocCommandBuilderTests
 
         var (_, args) = RetocCommandBuilder.Build(command, _defaultOptions, "C:\\tools\\retoc.exe");
 
-        Assert.StartsWith(expectedSubcommand, args);
+        Assert.Contains(expectedSubcommand, args);
     }
 
     [Fact]
-    public void Build_WithMountKeys_IncludesAesKeyArgs()
+    public void Build_RepackMode_ThrowsValidationError()
+    {
+        // RetocMode.Repack is not supported by the real retoc CLI
+        var command = new RetocCommand
+        {
+            InputPath = "C:\\input\\test.pak",
+            OutputPath = "C:\\output\\test.pak",
+            Mode = RetocMode.Repack
+        };
+
+        var ex = Assert.Throws<ValidationError>(() =>
+            RetocCommandBuilder.Build(command, _defaultOptions, "C:\\tools\\retoc.exe"));
+
+        Assert.Contains("Repack", ex.Message);
+    }
+
+    [Fact]
+    public void Build_WithMountKeys_IncludesAesKeyArg()
     {
         var command = new RetocCommand
         {
             InputPath = "C:\\input\\test.pak",
             OutputPath = "C:\\output\\test.utoc",
             Mode = RetocMode.PakToIoStore,
-            MountKeys = new List<string> { "key1", "key2" }
+            MountKeys = new List<string> { "0x1234567890ABCDEF" }
         };
 
         var (_, args) = RetocCommandBuilder.Build(command, _defaultOptions, "C:\\tools\\retoc.exe");
 
-        Assert.Contains("--aes-key \"key1\"", args);
-        Assert.Contains("--aes-key \"key2\"", args);
+        // AES key should come before the subcommand
+        Assert.Contains("--aes-key", args);
+        Assert.Contains("0x1234567890ABCDEF", args);
     }
 
     [Fact]
-    public void Build_WithCompressionOptions_IncludesCompressionArgs()
+    public void Build_WithAesKeyProperty_IncludesAesKeyArg()
     {
         var command = new RetocCommand
         {
             InputPath = "C:\\input\\test.pak",
-            OutputPath = "C:\\output\\test.pak",
-            Mode = RetocMode.Repack,
-            CompressionFormat = "Oodle",
-            CompressionLevel = 9,
-            CompressionBlockSize = 65536
+            OutputPath = "C:\\output\\test.utoc",
+            Mode = RetocMode.PakToIoStore,
+            AesKey = "0x1234567890ABCDEF"
         };
 
         var (_, args) = RetocCommandBuilder.Build(command, _defaultOptions, "C:\\tools\\retoc.exe");
 
-        Assert.Contains("--compression \"Oodle\"", args);
-        Assert.Contains("--compression-level 9", args);
-        Assert.Contains("--block-size 65536", args);
+        Assert.Contains("--aes-key", args);
+        Assert.Contains("0x1234567890ABCDEF", args);
     }
+
+    [Fact]
+    public void Build_WithContainerHeaderOverride_IncludesOverrideArg()
+    {
+        var command = new RetocCommand
+        {
+            InputPath = "C:\\input\\test.utoc",
+            OutputPath = "C:\\output\\test.pak",
+            Mode = RetocMode.IoStoreToPak,
+            ContainerHeaderVersion = RetocContainerHeaderVersion.Initial
+        };
+
+        var (_, args) = RetocCommandBuilder.Build(command, _defaultOptions, "C:\\tools\\retoc.exe");
+
+        Assert.Contains("--override-container-header-version", args);
+        Assert.Contains("Initial", args);
+    }
+
+    [Fact]
+    public void Build_WithTocVersionOverride_IncludesOverrideArg()
+    {
+        var command = new RetocCommand
+        {
+            InputPath = "C:\\input\\test.utoc",
+            OutputPath = "C:\\output\\test.pak",
+            Mode = RetocMode.IoStoreToPak,
+            TocVersion = RetocTocVersion.DirectoryIndex
+        };
+
+        var (_, args) = RetocCommandBuilder.Build(command, _defaultOptions, "C:\\tools\\retoc.exe");
+
+        Assert.Contains("--override-toc-version", args);
+        Assert.Contains("DirectoryIndex", args);
+    }
+
+    [Fact]
+    public void Build_SimplePack_ProducesCorrectCommandLine()
+    {
+        // Simulates: Pack (Legacy → Zen) with version
+        var command = new RetocCommand
+        {
+            CommandType = RetocCommandType.ToZen,
+            InputPath = @"G:\Grounded\Modding\ModFolder",
+            OutputPath = @"G:\Grounded\Modding\AwesomeMod\AwesomeMod.utoc",
+            Mode = RetocMode.PakToIoStore,
+            Version = "UE5_6"
+        };
+
+        var (execPath, args) = RetocCommandBuilder.Build(command, _defaultOptions, "C:\\tools\\retoc.exe");
+
+        Assert.Equal("C:\\tools\\retoc.exe", execPath);
+
+        // Expected: to-zen --version UE5_6 <input> <output>
+        Assert.Contains("--version", args);
+        Assert.Contains("UE5_6", args);
+        Assert.Contains("to-zen", args);
+        Assert.Contains(@"G:\Grounded\Modding\ModFolder", args);
+        Assert.Contains(@"G:\Grounded\Modding\AwesomeMod\AwesomeMod.utoc", args);
+
+        // Verify order: to-zen comes before --version (subcommand option, not global)
+        var toZenIndex = args.IndexOf("to-zen");
+        var versionIndex = args.IndexOf("--version");
+        Assert.True(toZenIndex < versionIndex, "Subcommand should come before --version flag");
+    }
+
+    [Fact]
+    public void Build_SimpleUnpack_ProducesCorrectCommandLine()
+    {
+        // Simulates: Unpack (Zen → Legacy) without version
+        var command = new RetocCommand
+        {
+            CommandType = RetocCommandType.ToLegacy,
+            InputPath = @"E:\SteamLibrary\steamapps\common\Grounded2\Augusta\Content\Paks",
+            OutputPath = @"G:\Grounded\Modding\Grounded 2_Extracted",
+            Mode = RetocMode.IoStoreToPak
+        };
+
+        var (execPath, args) = RetocCommandBuilder.Build(command, _defaultOptions, "C:\\tools\\retoc.exe");
+
+        Assert.Equal("C:\\tools\\retoc.exe", execPath);
+
+        // Expected: to-legacy <input> <output>
+        Assert.Contains("to-legacy", args);
+        Assert.Contains(@"E:\SteamLibrary\steamapps\common\Grounded2\Augusta\Content\Paks", args);
+        Assert.Contains(@"G:\Grounded\Modding\Grounded 2_Extracted", args);
+
+        // Should NOT contain --version
+        Assert.DoesNotContain("--version", args);
+    }
+
 }

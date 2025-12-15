@@ -5,3 +5,6 @@ obj/
 node_modules/
 dist/
 .DS_Store
+
+# Downloaded tool binaries
+src/Aris.Tools/tools/

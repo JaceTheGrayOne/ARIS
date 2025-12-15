@@ -25,6 +25,11 @@ public sealed record RetocConvertRequest(
     /// </summary>
     string? UEVersion,
     /// <summary>
+    /// Engine version for retoc --version flag (optional, e.g., "UE5_6").
+    /// Used for to-zen pack operations.
+    /// </summary>
+    string? EngineVersion,
+    /// <summary>
     /// Compression format (optional).
     /// </summary>
     string? CompressionFormat,

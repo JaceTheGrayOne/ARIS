@@ -1,11 +1,16 @@
 namespace Aris.Core.Retoc;
 
 /// <summary>
-/// Command to execute a Retoc conversion operation.
+/// Command to execute a Retoc CLI operation.
 /// Immutable domain model representing all parameters for a Retoc invocation.
 /// </summary>
 public class RetocCommand
 {
+    /// <summary>
+    /// Retoc CLI subcommand to execute.
+    /// </summary>
+    public RetocCommandType CommandType { get; init; }
+
     /// <summary>
     /// Absolute path to the input file (PAK, UTOC, or UCAS).
     /// </summary>
@@ -17,12 +22,37 @@ public class RetocCommand
     public string OutputPath { get; init; } = string.Empty;
 
     /// <summary>
-    /// Conversion mode.
+    /// High-level operation mode (for backward compatibility with HTTP layer).
     /// </summary>
-    public RetocMode Mode { get; init; }
+    public RetocMode? Mode { get; init; }
+
+    /// <summary>
+    /// AES encryption key (hex string, required for many operations).
+    /// Maps to --aes-key CLI flag.
+    /// </summary>
+    public string? AesKey { get; init; }
+
+    /// <summary>
+    /// Engine/UE version for retoc --version flag (e.g., "UE5_6").
+    /// Used for to-zen pack operations.
+    /// </summary>
+    public string? Version { get; init; }
+
+    /// <summary>
+    /// Override container header version.
+    /// Maps to --override-container-header-version CLI flag.
+    /// </summary>
+    public RetocContainerHeaderVersion? ContainerHeaderVersion { get; init; }
+
+    /// <summary>
+    /// Override TOC version.
+    /// Maps to --override-toc-version CLI flag.
+    /// </summary>
+    public RetocTocVersion? TocVersion { get; init; }
 
     /// <summary>
     /// AES mount key identifiers or values (resolved via KeyStore).
+    /// Legacy field for backward compatibility.
     /// </summary>
     public IReadOnlyList<string> MountKeys { get; init; } = Array.Empty<string>();
 

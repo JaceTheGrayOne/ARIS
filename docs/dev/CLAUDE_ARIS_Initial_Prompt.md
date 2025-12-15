@@ -139,7 +139,7 @@ These describe the **order of implementation**. At minimum, you should expect:
 - **Phase 5 – Minimal UI + Wiring**  
 - **Phase 6 – Frontend UI (Full UX)**  
 - **Phase 7 – Final Wiring and Parity Pass**
-
+`
 For each phase, follow the corresponding Execution Document for specific steps, APIs, and tests.
 
 ---

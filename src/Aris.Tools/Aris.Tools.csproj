@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RepoRoot>$(MSBuildThisFileDirectory)..\..\</RepoRoot>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,18 @@
 
   <ItemGroup>
     <EmbeddedResource Include="tools.manifest.json" />
+    <EmbeddedResource Include="tools\**\*.*">
+      <Link>EmbeddedTools\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </EmbeddedResource>
   </ItemGroup>
+
+  <Target Name="UpdateRetocTool" BeforeTargets="BeforeBuild" Condition="'$(OS)' == 'Windows_NT'">
+    <PropertyGroup>
+      <RetocScriptPath>$(RepoRoot)scripts\Update-RetocTool.ps1</RetocScriptPath>
+      <ToolsDir>$(MSBuildThisFileDirectory)tools</ToolsDir>
+      <ManifestPath>$(MSBuildThisFileDirectory)tools.manifest.json</ManifestPath>
+    </PropertyGroup>
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(RetocScriptPath)&quot; -ToolsDir &quot;$(ToolsDir)&quot; -ManifestPath &quot;$(ManifestPath)&quot;" />
+  </Target>
 
 </Project>

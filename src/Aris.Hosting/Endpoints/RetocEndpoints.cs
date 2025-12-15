@@ -59,12 +59,23 @@ public static class RetocEndpoints
                     }
                 }
 
+                // Map mode to explicit CommandType for simple Pack/Unpack flow
+                var commandType = mode switch
+                {
+                    RetocMode.PakToIoStore => RetocCommandType.ToZen,     // Pack: Legacy → Zen
+                    RetocMode.IoStoreToPak => RetocCommandType.ToLegacy,   // Unpack: Zen → Legacy
+                    RetocMode.Validate => RetocCommandType.Verify,
+                    _ => default(RetocCommandType)
+                };
+
                 var command = new RetocCommand
                 {
                     OperationId = operationId,
+                    CommandType = commandType,
                     InputPath = request.InputPath,
                     OutputPath = request.OutputPath,
                     Mode = mode,
+                    Version = request.EngineVersion,  // --version flag for to-zen
                     GameVersion = request.Game,
                     UEVersion = request.UEVersion,
                     CompressionFormat = request.CompressionFormat,

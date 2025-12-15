@@ -6,6 +6,18 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure CORS to allow frontend dev server
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var logsPath = Path.Combine(
     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
     "ARIS",
@@ -32,6 +44,9 @@ builder.Services.AddSingleton<BackendHealthState>();
 builder.Services.AddHostedService<ToolingStartupHostedService>();
 
 var app = builder.Build();
+
+// Enable CORS for frontend -> backend calls
+app.UseCors();
 
 app.MapHealthAndInfoEndpoints();
 app.MapRetocEndpoints();

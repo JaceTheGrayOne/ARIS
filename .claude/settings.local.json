@@ -17,7 +17,11 @@
       "Bash(del \"G:\\Development\\ARIS(CS)\\ARIS\\src\\Aris.Contracts\\Class1.cs\")",
       "Bash(rm:*)",
       "Bash(dotnet run:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(timeout /t 15 dotnet run)",
+      "Bash(powershell:*)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [],
     "ask": []

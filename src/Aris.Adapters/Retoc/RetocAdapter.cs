@@ -189,9 +189,14 @@ public class RetocAdapter : IRetocAdapter
         progress?.Report(new ProgressEvent(step, message, percent));
     }
 
-    private static string DetermineOutputFormat(RetocMode mode)
+    private static string DetermineOutputFormat(RetocMode? mode)
     {
-        return mode switch
+        if (!mode.HasValue)
+        {
+            return "unknown";
+        }
+
+        return mode.Value switch
         {
             RetocMode.PakToIoStore => "iostore",
             RetocMode.IoStoreToPak => "pak",
