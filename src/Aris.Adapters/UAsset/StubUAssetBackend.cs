@@ -3,9 +3,9 @@ using Aris.Core.UAsset;
 namespace Aris.Adapters.UAsset;
 
 /// <summary>
-/// Stub implementation of IUAssetBackend for testing and development.
+/// Stub implementation of IUAssetBackend for testing purposes.
 /// Returns plausible data without calling real UAssetAPI.
-/// This will be replaced with a real UAssetAPI backend when the library is integrated.
+/// Used by tests to validate UAssetService orchestration independently of UAssetAPI.
 /// </summary>
 public class StubUAssetBackend : IUAssetBackend
 {

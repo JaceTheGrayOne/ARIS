@@ -4,6 +4,7 @@
     <ProjectReference Include="..\Aris.Application\Aris.Application.csproj" />
     <ProjectReference Include="..\Aris.Core\Aris.Core.csproj" />
     <ProjectReference Include="..\Aris.Infrastructure\Aris.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\external\UAssetAPI\UAssetAPI\UAssetAPI.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
