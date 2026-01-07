@@ -8,6 +8,7 @@ dist/
 
 # Downloaded tool binaries
 src/Aris.Tools/tools/
+ARIS.exe
 
 # Build artifacts
 artifacts/
