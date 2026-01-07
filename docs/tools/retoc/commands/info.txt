@@ -1,0 +1,9 @@
+Show container info
+
+Usage: retoc.exe info <PATH>
+
+Arguments:
+  <PATH>
+
+Options:
+  -h, --help  Print help

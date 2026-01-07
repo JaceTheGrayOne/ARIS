@@ -1,5 +1,6 @@
 using Aris.Infrastructure.Configuration;
 using Aris.Infrastructure.Process;
+using Aris.Infrastructure.Terminal;
 using Aris.Infrastructure.Tools;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,6 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.Configure<ToolingOptions>(configuration.GetSection(nameof(ToolingOptions)));
-        services.Configure<WorkspaceOptions>(configuration.GetSection(nameof(WorkspaceOptions)));
         services.Configure<RetocOptions>(configuration.GetSection("Retoc"));
         services.Configure<UAssetOptions>(configuration.GetSection("UAsset"));
         services.Configure<UwpDumperOptions>(configuration.GetSection("UwpDumper"));
@@ -28,6 +28,9 @@ public static class DependencyInjection
         services.AddSingleton<IDependencyExtractor, DependencyExtractor>();
         services.AddSingleton<IDependencyValidator, DependencyValidator>();
         services.AddSingleton<IProcessRunner, ProcessRunner>();
+
+        // ConPTY process (transient - each stream session needs a new instance)
+        services.AddTransient<IConPtyProcess, ConPtyProcess>();
 
         return services;
     }

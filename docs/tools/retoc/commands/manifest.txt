@@ -1,0 +1,9 @@
+Extract manifest from .utoc
+
+Usage: retoc.exe manifest <UTOC>
+
+Arguments:
+  <UTOC>
+
+Options:
+  -h, --help  Print help

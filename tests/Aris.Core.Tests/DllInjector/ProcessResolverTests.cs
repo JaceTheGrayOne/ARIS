@@ -80,16 +80,34 @@ public class ProcessResolverTests
     }
 
     [Fact]
-    public void ResolveAndValidateTarget_CurrentProcessName_WithDenylist_Succeeds()
+    public void ResolveAndValidateTarget_CurrentProcessName_WithDenylist_IsDeterministic()
     {
         var options = CreateValidOptions();
         var currentProcess = System.Diagnostics.Process.GetCurrentProcess();
         var currentPid = currentProcess.Id;
 
-        var result = _resolver.ResolveAndValidateTarget(null, currentProcess.ProcessName, options);
+        var name = currentProcess.ProcessName;
 
-        Assert.Equal(currentPid, result);
+        // Name-based resolution is strict: if multiple processes share the name, it must throw.
+        // If the name is unique, it should resolve to the current process.
+        var matches = System.Diagnostics.Process.GetProcessesByName(name);
+
+        if (matches.Length > 1)
+        {
+            var ex = Assert.Throws<ValidationError>(() =>
+                _resolver.ResolveAndValidateTarget(null, name, options));
+
+            Assert.Contains("resolved to", ex.Message);
+            Assert.Contains("running processes", ex.Message);
+        }
+        else
+        {
+            var result = _resolver.ResolveAndValidateTarget(null, name, options);
+            Assert.Equal(currentPid, result);
+        }
     }
+
+
 
     [Fact]
     public void ResolveAndValidateTarget_CurrentProcess_IsX64OrX86_Returns()

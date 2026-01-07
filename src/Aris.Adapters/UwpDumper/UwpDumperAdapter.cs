@@ -17,30 +17,37 @@ public class UwpDumperAdapter : IUwpDumperAdapter
     private readonly IDependencyValidator _dependencyValidator;
     private readonly ILogger<UwpDumperAdapter> _logger;
     private readonly UwpDumperOptions _options;
-    private readonly WorkspaceOptions _workspaceOptions;
-    private readonly string _uwpDumperExePath;
+    private readonly string? _uwpDumperExePath;
+    private readonly bool _isAvailable;
 
     public UwpDumperAdapter(
         IProcessRunner processRunner,
         IDependencyValidator dependencyValidator,
         ILogger<UwpDumperAdapter> logger,
-        IOptions<UwpDumperOptions> options,
-        IOptions<WorkspaceOptions> workspaceOptions)
+        IOptions<UwpDumperOptions> options)
     {
         _processRunner = processRunner;
         _dependencyValidator = dependencyValidator;
         _logger = logger;
         _options = options.Value;
-        _workspaceOptions = workspaceOptions.Value;
 
-        // Determine uwpdumper.exe path from manifest
+        // UWPDumper is deprecated and no longer bundled
         var manifest = ToolManifestLoader.Load();
-        var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var toolsRoot = Path.Combine(localAppData, "ARIS", "tools", manifest.Version);
-        var uwpDumperEntry = manifest.Tools.FirstOrDefault(t => t.Id == "uwpdumper")
-            ?? throw new DependencyMissingError("uwpdumper", "UWPDumper entry not found in tool manifest");
+        var uwpDumperEntry = manifest.Tools.FirstOrDefault(t => t.Id == "uwpdumper");
 
-        _uwpDumperExePath = Path.Combine(toolsRoot, uwpDumperEntry.RelativePath);
+        if (uwpDumperEntry != null)
+        {
+            var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var toolsRoot = Path.Combine(localAppData, "ARIS", "tools", manifest.Version);
+            _uwpDumperExePath = Path.Combine(toolsRoot, uwpDumperEntry.RelativePath);
+            _isAvailable = true;
+        }
+        else
+        {
+            _uwpDumperExePath = null;
+            _isAvailable = false;
+            _logger.LogWarning("UWPDumper is not available (tool not in manifest). This feature is deprecated and not maintained.");
+        }
     }
 
     public async Task<UwpDumpResult> DumpAsync(
@@ -48,6 +55,14 @@ public class UwpDumperAdapter : IUwpDumperAdapter
         CancellationToken cancellationToken = default,
         IProgress<ProgressEvent>? progress = null)
     {
+        if (!_isAvailable || string.IsNullOrEmpty(_uwpDumperExePath))
+        {
+            throw new DependencyMissingError("uwpdumper", "UWPDumper feature is not available. This tool is deprecated and no longer bundled with ARIS.")
+            {
+                RemediationHint = "UWPDumper is no longer maintained or distributed with ARIS. Consider alternative approaches for UWP package analysis."
+            };
+        }
+
         var operationId = command.OperationId;
 
         _logger.LogInformation(
@@ -56,19 +71,15 @@ public class UwpDumperAdapter : IUwpDumperAdapter
             command.PackageFamilyName,
             operationId);
 
-        UwpDumpCommandValidator.ValidateDumpCommand(command, _options, _workspaceOptions.DefaultWorkspacePath);
+        UwpDumpCommandValidator.ValidateDumpCommand(command, _options);
 
         ReportProgress(progress, "locating", "Locating package", 0);
 
         var workingDirectory = command.WorkingDirectory;
         if (string.IsNullOrEmpty(workingDirectory))
         {
-            var workspaceRoot = _workspaceOptions.DefaultWorkspacePath;
-            if (string.IsNullOrEmpty(workspaceRoot))
-            {
-                workspaceRoot = Path.Combine(Path.GetTempPath(), "aris");
-            }
-            workingDirectory = Path.Combine(workspaceRoot, "temp", $"uwp-{operationId}");
+            // Default to system temp directory
+            workingDirectory = Path.Combine(Path.GetTempPath(), "aris", "temp", $"uwp-{operationId}");
             Directory.CreateDirectory(workingDirectory);
         }
 
@@ -109,8 +120,6 @@ public class UwpDumperAdapter : IUwpDumperAdapter
         }
 
         var endTime = DateTimeOffset.UtcNow;
-
-        WriteOperationLog(command, processResult, arguments);
 
         ReportProgress(progress, "finalizing", "Finalizing output", 90);
 
@@ -169,6 +178,12 @@ public class UwpDumperAdapter : IUwpDumperAdapter
 
     public async Task<bool> ValidateAsync(CancellationToken cancellationToken = default)
     {
+        if (!_isAvailable)
+        {
+            _logger.LogWarning("UWPDumper is not available (feature deprecated)");
+            return false;
+        }
+
         _logger.LogDebug("Validating UWPDumper dependency");
 
         var result = await _dependencyValidator.ValidateToolAsync("uwpdumper", cancellationToken);
@@ -336,65 +351,5 @@ public class UwpDumperAdapter : IUwpDumperAdapter
 
         var truncated = text.Substring(0, Math.Min(text.Length, (int)(maxBytes / 2)));
         return truncated + "\n... [truncated] ...";
-    }
-
-    private void WriteOperationLog(
-        UwpDumpCommand command,
-        ProcessResult processResult,
-        string commandLine)
-    {
-        try
-        {
-            var workspaceRoot = _workspaceOptions.DefaultWorkspacePath;
-            if (string.IsNullOrEmpty(workspaceRoot))
-            {
-                _logger.LogWarning("WorkspaceOptions.DefaultWorkspacePath is not configured; skipping operation log");
-                return;
-            }
-
-            var logsDir = Path.Combine(workspaceRoot, "logs");
-            Directory.CreateDirectory(logsDir);
-
-            var logFileName = $"uwpdumper-{command.OperationId}.log";
-            var logFilePath = Path.Combine(logsDir, logFileName);
-
-            var logContent = new System.Text.StringBuilder();
-            logContent.AppendLine("=== ARIS UWPDumper Operation Log ===");
-            logContent.AppendLine($"Operation ID: {command.OperationId}");
-            logContent.AppendLine($"Package Family Name: {command.PackageFamilyName}");
-
-            if (!string.IsNullOrEmpty(command.ApplicationId))
-            {
-                logContent.AppendLine($"Application ID: {command.ApplicationId}");
-            }
-
-            logContent.AppendLine($"Mode: {command.Mode}");
-            logContent.AppendLine($"Include Symbols: {command.IncludeSymbols}");
-            logContent.AppendLine($"Output Path: {command.OutputPath}");
-            logContent.AppendLine($"Timestamp: {processResult.StartTime:yyyy-MM-dd HH:mm:ss UTC}");
-            logContent.AppendLine($"Exit Code: {processResult.ExitCode}");
-            logContent.AppendLine($"Duration: {processResult.Duration.TotalSeconds:F2}s");
-            logContent.AppendLine();
-
-            logContent.AppendLine("Command Line:");
-            logContent.AppendLine(commandLine);
-            logContent.AppendLine();
-
-            var maxOutputBytes = _options.MaxLogBytes / 2;
-            logContent.AppendLine("Standard Output:");
-            logContent.AppendLine(TruncateForLog(processResult.StdOut, maxOutputBytes));
-            logContent.AppendLine();
-
-            logContent.AppendLine("Standard Error:");
-            logContent.AppendLine(TruncateForLog(processResult.StdErr, maxOutputBytes));
-
-            File.WriteAllText(logFilePath, logContent.ToString());
-
-            _logger.LogDebug("Wrote operation log to {LogFilePath}", logFilePath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to write operation log for operation {OperationId}", command.OperationId);
-        }
     }
 }

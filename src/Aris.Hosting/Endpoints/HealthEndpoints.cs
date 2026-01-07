@@ -1,11 +1,9 @@
 using System.Reflection;
 using Aris.Contracts;
 using Aris.Hosting.Infrastructure;
-using Aris.Infrastructure.Configuration;
 using Aris.Tools.Manifest;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 
 namespace Aris.Hosting.Endpoints;
 
@@ -18,15 +16,12 @@ public static class HealthEndpoints
     {
         endpoints.MapGet("/health", async (
             HttpContext httpContext,
-            BackendHealthState healthState,
-            IOptions<WorkspaceOptions> workspaceOptions
+            BackendHealthState healthState
         ) =>
         {
-            var workspacePath = workspaceOptions.Value.DefaultWorkspacePath;
             var response = new HealthResponse(
                 Status: healthState.Status,
                 DependenciesReady: healthState.DependenciesReady,
-                CurrentWorkspace: string.IsNullOrWhiteSpace(workspacePath) ? null : workspacePath,
                 Message: healthState.Message
             );
 

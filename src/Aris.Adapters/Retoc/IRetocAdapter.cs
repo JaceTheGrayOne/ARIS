@@ -9,6 +9,15 @@ namespace Aris.Adapters.Retoc;
 public interface IRetocAdapter
 {
     /// <summary>
+    /// Builds a Retoc command for preview or execution.
+    /// Returns the executable path, arguments, and formatted command line.
+    /// This is the single source of truth for command construction.
+    /// </summary>
+    /// <param name="command">The Retoc command to build.</param>
+    /// <returns>Built command information (executable path, arguments, command line).</returns>
+    (string ExecutablePath, string[] Arguments, string CommandLine) BuildCommand(RetocCommand command);
+
+    /// <summary>
     /// Executes a Retoc conversion operation.
     /// </summary>
     /// <param name="command">The Retoc command to execute.</param>

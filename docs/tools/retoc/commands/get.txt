@@ -1,0 +1,11 @@
+Get chunk by index and write to stdout
+
+Usage: retoc.exe get <INPUT> <CHUNK_ID> [OUTPUT]
+
+Arguments:
+  <INPUT>     Input .utoc or directory with multiple .utoc (e.g. Content/Paks/)
+  <CHUNK_ID>  Chunk ID to get
+  [OUTPUT]    Optional output path or stdout if "-" or omitted
+
+Options:
+  -h, --help  Print help

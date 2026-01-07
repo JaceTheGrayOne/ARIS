@@ -1,22 +1,24 @@
 using Aris.Hosting;
 using Aris.Hosting.Endpoints;
 using Aris.Hosting.Infrastructure;
-using Aris.Infrastructure.Configuration;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure CORS to allow frontend dev server
-builder.Services.AddCors(options =>
+// Configure CORS for frontend dev server - ONLY in Development
+if (builder.Environment.IsDevelopment())
 {
-    options.AddDefaultPolicy(policy =>
+    builder.Services.AddCors(options =>
     {
-        policy
-            .WithOrigins("http://localhost:5173")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+        options.AddDefaultPolicy(policy =>
+        {
+            policy
+                .WithOrigins("http://localhost:5173")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
     });
-});
+}
 
 var logsPath = Path.Combine(
     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -37,26 +39,44 @@ Log.Logger = new LoggerConfiguration()
 builder.Services.AddSerilog();
 builder.Services.AddArisBackend(builder.Configuration);
 
-builder.Services.Configure<WorkspaceOptions>(
-    builder.Configuration.GetSection("Workspace"));
-
 builder.Services.AddSingleton<BackendHealthState>();
 builder.Services.AddHostedService<ToolingStartupHostedService>();
 
+// Register URL announcement service - announces bound URL to stdout for UI discovery
+builder.Services.AddHostedService<UrlAnnouncementService>();
+
 var app = builder.Build();
 
-// Enable CORS for frontend -> backend calls
-app.UseCors();
+// Enable WebSocket support
+app.UseWebSockets(new WebSocketOptions
+{
+    KeepAliveInterval = TimeSpan.FromSeconds(30)
+});
 
+// Enable CORS only in Development (production uses same-origin via static file serving)
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors();
+}
+
+// Serve frontend static files from wwwroot (production)
+app.UseStaticFiles();
+
+// Map API and health endpoints
 app.MapHealthAndInfoEndpoints();
 app.MapRetocEndpoints();
 app.MapUAssetEndpoints();
 app.MapUwpDumperEndpoints();
 app.MapDllInjectorEndpoints();
+app.MapToolDocsEndpoints();
+
+// SPA fallback - serve index.html for unmatched routes (must be after API endpoints)
+app.MapFallbackToFile("index.html");
 
 try
 {
     Log.Information("ARIS backend starting");
+
     await app.RunAsync();
 }
 catch (Exception ex)

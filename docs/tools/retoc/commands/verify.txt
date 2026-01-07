@@ -1,0 +1,9 @@
+Verify IO Store container
+
+Usage: retoc.exe verify <UTOC>
+
+Arguments:
+  <UTOC>
+
+Options:
+  -h, --help  Print help

@@ -1,0 +1,21 @@
+Converts asests and shaders from Zen to Legacy
+
+Usage: retoc.exe to-legacy [OPTIONS] <INPUT> <OUTPUT>
+
+Arguments:
+  <INPUT>   Input .utoc or directory with multiple .utoc (e.g. Content/Paks/)
+  <OUTPUT>  Output directory or .pak
+
+Options:
+  -f, --filter <FILTER>            Asset file name filter
+      --no-assets                  Skip conversion of assets
+      --no-shaders                 Skip conversion of shader libraries
+      --no-script-objects          Skip extraction of script objects
+      --no-compres-shaders         Skip compression of shader libraries
+  -d, --dry-run                    Do not output any files (dry run). Useful for testing conversion
+      --version <VERSION>          Engine version override [possible values: UE4_25, UE4_26, UE4_27, UE5_0, UE5_1, UE5_2, UE5_3, UE5_4, UE5_5, UE5_6]
+      --script-cell <SCRIPT_CELL>  Allows specifying additional Verse script cells to be considered for verse native cell import resolution
+  -v, --verbose                    Verbose logging
+      --debug                      Debug logging
+      --no-parallel                Do not run in parallel. Useful for debugging
+  -h, --help                       Print help

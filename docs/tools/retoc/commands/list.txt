@@ -1,0 +1,15 @@
+List fils in .utoc (directory index)
+
+Usage: retoc.exe list [OPTIONS] <UTOC>
+
+Arguments:
+  <UTOC>
+
+Options:
+      --all      By default only unique chunks will be listed. --all will also list chunks overriden by patch containers
+      --hash     Show chunk content hash
+      --package  Show package ID
+      --size     Show chunk size
+      --path     Show chunk path
+      --store    Show package store entry
+  -h, --help     Print help

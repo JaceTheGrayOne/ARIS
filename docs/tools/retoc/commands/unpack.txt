@@ -1,0 +1,11 @@
+Extracts chunks (files) from .utoc
+
+Usage: retoc.exe unpack [OPTIONS] <UTOC> <OUTPUT>
+
+Arguments:
+  <UTOC>
+  <OUTPUT>
+
+Options:
+  -v, --verbose
+  -h, --help     Print help

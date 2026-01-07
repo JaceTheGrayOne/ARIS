@@ -17,21 +17,18 @@ public class RetocAdapter : IRetocAdapter
     private readonly IDependencyValidator _dependencyValidator;
     private readonly ILogger<RetocAdapter> _logger;
     private readonly RetocOptions _options;
-    private readonly WorkspaceOptions _workspaceOptions;
     private readonly string _retocExePath;
 
     public RetocAdapter(
         IProcessRunner processRunner,
         IDependencyValidator dependencyValidator,
         ILogger<RetocAdapter> logger,
-        IOptions<RetocOptions> options,
-        IOptions<WorkspaceOptions> workspaceOptions)
+        IOptions<RetocOptions> options)
     {
         _processRunner = processRunner;
         _dependencyValidator = dependencyValidator;
         _logger = logger;
         _options = options.Value;
-        _workspaceOptions = workspaceOptions.Value;
 
         // Determine retoc.exe path from manifest
         var manifest = ToolManifestLoader.Load();
@@ -41,6 +38,22 @@ public class RetocAdapter : IRetocAdapter
             ?? throw new DependencyMissingError("retoc", "Retoc entry not found in tool manifest");
 
         _retocExePath = Path.Combine(toolsRoot, retocEntry.RelativePath);
+    }
+
+    public (string ExecutablePath, string[] Arguments, string CommandLine) BuildCommand(RetocCommand command)
+    {
+        _logger.LogDebug(
+            "Building Retoc command: commandType={CommandType}, mode={Mode}",
+            command.CommandType,
+            command.Mode);
+
+        var (executablePath, argumentList, argumentsString) = RetocCommandBuilder.BuildWithList(command, _options, _retocExePath);
+
+        // Format command line for preview (quote executable path if it contains spaces)
+        var quotedExePath = executablePath.Contains(' ') ? $"\"{executablePath}\"" : executablePath;
+        var commandLine = $"{quotedExePath} {argumentsString}";
+
+        return (executablePath, argumentList.ToArray(), commandLine);
     }
 
     public async Task<RetocResult> ConvertAsync(
@@ -68,8 +81,7 @@ public class RetocAdapter : IRetocAdapter
         var workingDirectory = command.WorkingDirectory;
         if (string.IsNullOrEmpty(workingDirectory))
         {
-            // Default to workspace temp/retoc-{operationId}/
-            // TODO: Use workspace abstraction once available
+            // Default to system temp/aris/retoc/{operationId}/
             workingDirectory = Path.Combine(Path.GetTempPath(), "aris", "retoc", operationId);
             Directory.CreateDirectory(workingDirectory);
         }
@@ -114,9 +126,6 @@ public class RetocAdapter : IRetocAdapter
         }
 
         var endTime = DateTimeOffset.UtcNow;
-
-        // Write operation log to workspace
-        WriteOperationLog(command, processResult, arguments);
 
         // Emit finalizing progress
         ReportProgress(progress, "finalizing", "Finalizing output files", 90);
@@ -294,74 +303,5 @@ public class RetocAdapter : IRetocAdapter
 
         var truncated = text.Substring(0, Math.Min(text.Length, maxBytes / 2));
         return truncated + "\n... [truncated] ...";
-    }
-
-    private void WriteOperationLog(
-        RetocCommand command,
-        ProcessResult processResult,
-        string commandLine)
-    {
-        try
-        {
-            // Determine workspace root
-            var workspaceRoot = _workspaceOptions.DefaultWorkspacePath;
-            if (string.IsNullOrEmpty(workspaceRoot))
-            {
-                _logger.LogWarning("WorkspaceOptions.DefaultWorkspacePath is not configured; skipping operation log");
-                return;
-            }
-
-            // Create logs directory
-            var logsDir = Path.Combine(workspaceRoot, "logs");
-            Directory.CreateDirectory(logsDir);
-
-            // Determine log file path
-            var logFileName = $"retoc-{command.OperationId}.log";
-            var logFilePath = Path.Combine(logsDir, logFileName);
-
-            // Build log content
-            var logContent = new System.Text.StringBuilder();
-            logContent.AppendLine("=== ARIS Retoc Operation Log ===");
-            logContent.AppendLine($"Operation ID: {command.OperationId}");
-            logContent.AppendLine($"Mode: {command.Mode}");
-            logContent.AppendLine($"Timestamp: {processResult.StartTime:yyyy-MM-dd HH:mm:ss UTC}");
-
-            if (!string.IsNullOrEmpty(command.GameVersion))
-            {
-                logContent.AppendLine($"Game Version: {command.GameVersion}");
-            }
-
-            if (!string.IsNullOrEmpty(command.UEVersion))
-            {
-                logContent.AppendLine($"UE Version: {command.UEVersion}");
-            }
-
-            logContent.AppendLine($"Exit Code: {processResult.ExitCode}");
-            logContent.AppendLine($"Duration: {processResult.Duration.TotalSeconds:F2}s");
-            logContent.AppendLine();
-
-            // TODO: Implement key redaction in command line
-            logContent.AppendLine("Command Line:");
-            logContent.AppendLine(commandLine);
-            logContent.AppendLine();
-
-            // Truncate stdout/stderr to respect MaxLogBytes
-            var maxOutputBytes = _options.MaxLogBytes / 2; // Split between stdout and stderr
-            logContent.AppendLine("Standard Output:");
-            logContent.AppendLine(TruncateForLog(processResult.StdOut, maxOutputBytes));
-            logContent.AppendLine();
-
-            logContent.AppendLine("Standard Error:");
-            logContent.AppendLine(TruncateForLog(processResult.StdErr, maxOutputBytes));
-
-            // Write to file
-            File.WriteAllText(logFilePath, logContent.ToString());
-
-            _logger.LogDebug("Wrote operation log to {LogFilePath}", logFilePath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to write operation log for operation {OperationId}", command.OperationId);
-        }
     }
 }

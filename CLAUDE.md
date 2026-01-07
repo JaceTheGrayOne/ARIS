@@ -4,6 +4,62 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+# User Environment Configuration
+
+## Platform Information
+- **Operating System**: Windows
+- **Shell**: PowerShell (not Linux/Mac terminal)
+- **Command Style**: Use PowerShell cmdlets and Windows commands
+
+You are running natively in a windows environment via git bash. You can execute powershell 7 commands and access the windows API through "pwsh", and outside of ls / find / grep style commands, you should use powershell via pwsh to execute any commands you need on this system. 
+
+## PowerShell Command Discovery
+
+### Listing Available Commands
+- `Get-Command` - Lists all available cmdlets, functions, aliases, and applications
+- `Get-Command | Out-GridView` - Searchable GUI for all commands
+- `Get-Command Get-*` - Filter commands starting with 'Get-'
+- `Get-Module -ListAvailable` - Lists all installed modules
+- `Get-Command -Module <ModuleName>` - Lists commands from specific module
+- `Get-Command -Type Application` - Lists traditional Windows commands (ipconfig, dir, etc.)
+
+### Getting Help
+- `Get-Help <command-name>` - Basic command help
+- `Get-Help <command-name> -Detailed` - Detailed help with examples
+- `Get-Help <command-name> -Examples` - Just usage examples
+- `Get-Help <command-name> -Online` - Opens web documentation
+- `Update-Help` - Updates local help files (may require admin)
+
+## Windows Tool Alternatives
+
+### JSON Handling
+- Use `ConvertFrom-Json` and `ConvertTo-Json` instead of `jq`
+- If `jq` needed: `winget install jq`
+- Alternative: Enable WSL for Linux tool compatibility
+
+### Common Commands
+- Use `dir` or `Get-ChildItem` instead of `ls`
+- Use `type` or `Get-Content` instead of `cat`
+- Use `where` or `Get-Command` instead of `which`
+
+## Reference Resources
+- [PowerShell Cmdlets Documentation](
+https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/?view=powershell-7.4
+)
+- [Windows Commands Reference](
+https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands
+)
+- [PowerShell Community Resources](
+https://www.pdq.com/powershell/
+)
+
+## Additional Installed Tools/Commands
+
+### Windows Compatible Replacements For Unix/Linux Tools and Commands
+- RipGrep `rg`
+
+---
+
 ## Project Context
 
 ARIS is a C#/.NET 8 rewrite of an Unreal Engine modding toolkit. This is a clean rewrite, not a line-by-line port.  
@@ -15,8 +71,6 @@ The original Go/Wails implementation is a **behavioral reference only**.
 - Frontend: React + TypeScript + Tailwind in `frontend/`
 - UI Host: WebView2-based desktop application
 - Target Platform: Windows 10/11 x64 only
-
-> **Do not modify this file or the docs in `docs/` unless the user explicitly asks you to.**
 
 ---
 
@@ -38,6 +92,23 @@ For specific tool integrations, use the relevant SDD:
 
 **Never contradict these documents.**  
 If code and docs disagree, call it out explicitly and propose a fix instead of silently choosing one.
+
+
+---
+
+## AI Feature Workflow (Claude Code Automation)
+
+This repo uses a standardized AI-driven feature workflow. When generating or executing feature work, the following documents are canonical:
+
+- `docs/plans/AI_Prompt_Contract.md` — binding prompt rules that MUST be embedded verbatim in generated prompts
+- `docs/plans/AI_Feature_Workflow.md` — required artifact paths, naming, gates, and stop conditions
+
+Claude Code project customization lives in:
+- `.claude/agents/` — subagent definitions (e.g., aris-architect, prompt-generator)
+- `.claude/commands/` — custom slash commands (e.g., /featurebuild)
+
+Note: The “Phased Implementation Model” section below describes ARIS product development phases (Retoc integration, UAssetAPI integration, etc.). It is separate from the AI Feature Workflow stages described in `docs/plans/AI_Feature_Workflow.md`.
+
 
 ---
 

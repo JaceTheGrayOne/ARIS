@@ -31,6 +31,18 @@ public class RetocOptions
     public int MaxLogBytes { get; set; } = 5 * 1024 * 1024; // 5 MB
 
     /// <summary>
+    /// Maximum streaming output size in bytes (per stream: stdout/stderr).
+    /// Aligns with ProcessRunner buffering limits.
+    /// </summary>
+    public int MaxStreamingOutputBytes { get; set; } = 10 * 1024 * 1024; // 10 MB
+
+    /// <summary>
+    /// Maximum streaming output lines (per stream: stdout/stderr).
+    /// Aligns with ProcessRunner buffering limits.
+    /// </summary>
+    public int MaxStreamingOutputLines { get; set; } = 100_000;
+
+    /// <summary>
     /// Optional staging root override (defaults to workspace temp if empty).
     /// </summary>
     public string StagingRoot { get; set; } = string.Empty;

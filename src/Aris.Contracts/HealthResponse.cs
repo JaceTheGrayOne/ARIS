@@ -9,13 +9,9 @@ public sealed record HealthResponse(
     /// </summary>
     string Status,
     /// <summary>
-    /// True if all critical dependencies (tools, workspace) are considered ready.
+    /// True if all critical dependencies (tools) are considered ready.
     /// </summary>
     bool DependenciesReady,
-    /// <summary>
-    /// Current workspace root path, if configured.
-    /// </summary>
-    string? CurrentWorkspace,
     /// <summary>
     /// Human-readable message describing current status.
     /// </summary>

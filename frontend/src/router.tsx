@@ -3,7 +3,6 @@ import { MainLayout } from './layouts/MainLayout';
 import { DashboardPage } from './pages/DashboardPage';
 import { SystemHealthPage } from './pages/SystemHealthPage';
 import { SettingsPage } from './pages/SettingsPage';
-import { LogsPage } from './pages/LogsPage';
 import { RetocPage } from './pages/tools/RetocPage';
 import { UAssetPage } from './pages/tools/UAssetPage';
 import { UwpDumperPage } from './pages/tools/UwpDumperPage';
@@ -41,10 +40,6 @@ export const router = createBrowserRouter([
       {
         path: 'settings',
         element: <SettingsPage />,
-      },
-      {
-        path: 'logs',
-        element: <LogsPage />,
       },
     ],
   },

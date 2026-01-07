@@ -1,0 +1,21 @@
+{
+  "tool": "retoc",
+  "version": "v0.1.4",
+  "exeHash": "1c7b3af2b7ca06ac7216d1ba1c629f1e2b178966d964c488135c09abd68a4ec8",
+  "generatedAtUtc": "2025-12-24T23:59:23.0491542+00:00",
+  "commands": [
+    "dump-test",
+    "gen-script-objects",
+    "get",
+    "info",
+    "list",
+    "manifest",
+    "pack-raw",
+    "print-script-objects",
+    "to-legacy",
+    "to-zen",
+    "unpack",
+    "unpack-raw",
+    "verify"
+  ]
+}

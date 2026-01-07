@@ -8,3 +8,6 @@ dist/
 
 # Downloaded tool binaries
 src/Aris.Tools/tools/
+
+# Build artifacts
+artifacts/

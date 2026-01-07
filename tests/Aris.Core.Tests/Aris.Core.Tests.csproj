@@ -14,6 +14,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="xunit" Version="2.5.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+    <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +26,13 @@
     <ProjectReference Include="..\..\src\Aris.Application\Aris.Application.csproj" />
     <ProjectReference Include="..\..\src\Aris.Infrastructure\Aris.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\Aris.Adapters\Aris.Adapters.csproj" />
+    <ProjectReference Include="..\..\src\Aris.Hosting\Aris.Hosting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+  <None Include="TestAssets\**\*">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
   </ItemGroup>
 
 </Project>

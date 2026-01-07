@@ -9,7 +9,7 @@ namespace Aris.Adapters.UwpDumper;
 /// </summary>
 public static class UwpDumpCommandValidator
 {
-    public static void ValidateDumpCommand(UwpDumpCommand command, UwpDumperOptions options, string? workspaceRoot)
+    public static void ValidateDumpCommand(UwpDumpCommand command, UwpDumperOptions options)
     {
         if (string.IsNullOrWhiteSpace(command.PackageFamilyName))
         {
@@ -40,22 +40,6 @@ public static class UwpDumpCommandValidator
         if (command.TimeoutSeconds.HasValue && command.TimeoutSeconds.Value <= 0)
         {
             throw new ValidationError($"TimeoutSeconds must be greater than 0, got {command.TimeoutSeconds.Value}", nameof(command.TimeoutSeconds));
-        }
-
-        if (!string.IsNullOrEmpty(workspaceRoot))
-        {
-            var outputPath = Path.GetFullPath(command.OutputPath);
-            var workspacePath = Path.GetFullPath(workspaceRoot);
-
-            if (!outputPath.StartsWith(workspacePath, StringComparison.OrdinalIgnoreCase))
-            {
-                throw new ValidationError(
-                    $"OutputPath must be within workspace: {command.OutputPath}",
-                    nameof(command.OutputPath))
-                {
-                    RemediationHint = $"Ensure OutputPath is under workspace root: {workspaceRoot}"
-                };
-            }
         }
     }
 }

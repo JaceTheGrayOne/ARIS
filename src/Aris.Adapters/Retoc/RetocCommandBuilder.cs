@@ -46,16 +46,46 @@ public static class RetocCommandBuilder
         return (retocExePath, string.Join(" ", args));
     }
 
+    /// <summary>
+    /// Builds the command-line arguments for a Retoc operation.
+    /// Returns both the argument list and the joined string.
+    /// </summary>
+    /// <param name="command">The Retoc command to build.</param>
+    /// <param name="options">Retoc configuration options.</param>
+    /// <param name="retocExePath">Full path to retoc.exe.</param>
+    /// <returns>Tuple of (executablePath, argumentList, argumentsString).</returns>
+    /// <exception cref="ValidationError">Thrown if command validation fails.</exception>
+    public static (string ExecutablePath, List<string> ArgumentList, string ArgumentsString) BuildWithList(
+        RetocCommand command,
+        RetocOptions options,
+        string retocExePath)
+    {
+        ValidateCommand(command);
+        ValidateAdditionalArgs(command.AdditionalArgs, options.AllowedAdditionalArgs);
+
+        var args = new List<string>();
+
+        // Add global options first
+        AppendGlobalOptions(args, command);
+
+        // Add subcommand
+        var subcommand = GetSubcommand(command);
+        args.Add(subcommand);
+
+        // Add subcommand-specific arguments
+        AppendSubcommandArgs(args, command, subcommand);
+
+        // Additional args (already validated)
+        args.AddRange(command.AdditionalArgs);
+
+        return (retocExePath, args, string.Join(" ", args));
+    }
+
     private static void ValidateCommand(RetocCommand command)
     {
         if (string.IsNullOrWhiteSpace(command.InputPath))
         {
             throw new ValidationError("InputPath is required", nameof(command.InputPath));
-        }
-
-        if (string.IsNullOrWhiteSpace(command.OutputPath))
-        {
-            throw new ValidationError("OutputPath is required", nameof(command.OutputPath));
         }
 
         if (!Path.IsPathFullyQualified(command.InputPath))
@@ -66,12 +96,45 @@ public static class RetocCommandBuilder
                 command.InputPath);
         }
 
-        if (!Path.IsPathFullyQualified(command.OutputPath))
+        // OutputPath validation depends on command type
+        // Some commands (get, info, list, verify, etc.) have optional or no output
+        var commandsWithOptionalOutput = new[]
         {
-            throw new ValidationError(
-                "OutputPath must be an absolute path",
-                nameof(command.OutputPath),
-                command.OutputPath);
+            RetocCommandType.Get,
+            RetocCommandType.Info,
+            RetocCommandType.List,
+            RetocCommandType.Verify,
+            RetocCommandType.PrintScriptObjects,
+            RetocCommandType.DumpTest
+        };
+
+        var requiresOutput = !commandsWithOptionalOutput.Contains(command.CommandType);
+
+        if (requiresOutput)
+        {
+            if (string.IsNullOrWhiteSpace(command.OutputPath))
+            {
+                throw new ValidationError("OutputPath is required", nameof(command.OutputPath));
+            }
+
+            if (!Path.IsPathFullyQualified(command.OutputPath))
+            {
+                throw new ValidationError(
+                    "OutputPath must be an absolute path",
+                    nameof(command.OutputPath),
+                    command.OutputPath);
+            }
+        }
+        else if (!string.IsNullOrWhiteSpace(command.OutputPath) && command.OutputPath != "-")
+        {
+            // If output is provided for optional-output commands, validate it
+            if (!Path.IsPathFullyQualified(command.OutputPath))
+            {
+                throw new ValidationError(
+                    "OutputPath must be an absolute path",
+                    nameof(command.OutputPath),
+                    command.OutputPath);
+            }
         }
     }
 
@@ -248,9 +311,21 @@ public static class RetocCommandBuilder
                 break;
 
             case "get":
-                // Format: get <input.utoc> <chunk-index>
-                // Note: chunk index would need to be in AdditionalArgs for now
+                // Format: get <input.utoc> <chunk-id> [output]
+                // OUTPUT is optional - if omitted or "-", writes to stdout
+                if (string.IsNullOrWhiteSpace(command.ChunkId))
+                {
+                    throw new ValidationError(
+                        "ChunkId is required for Get command",
+                        nameof(command.ChunkId));
+                }
                 args.Add(QuoteIfNeeded(command.InputPath));
+                args.Add(command.ChunkId);
+                // Add optional output path if provided and not empty/"-"
+                if (!string.IsNullOrWhiteSpace(command.OutputPath) && command.OutputPath != "-")
+                {
+                    args.Add(QuoteIfNeeded(command.OutputPath));
+                }
                 break;
 
             case "dump-test":

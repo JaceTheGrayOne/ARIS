@@ -1,0 +1,61 @@
+<Window x:Class="ARIS.UI.Views.ErrorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="ARIS - Error" Height="350" Width="500"
+        WindowStartupLocation="CenterScreen"
+        Background="#1a1a1a"
+        ResizeMode="NoResize">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Error Icon and Title -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
+            <TextBlock Text="⚠" FontSize="32" Foreground="#e74c3c" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBlock x:Name="TitleText" Text="Startup Error" FontSize="20" Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Error Code -->
+        <Border Grid.Row="1" Background="#2d2d2d" CornerRadius="4" Padding="8,4" HorizontalAlignment="Left" Margin="0,0,0,10">
+            <TextBlock x:Name="ErrorCodeText" Text="ERROR_CODE" FontFamily="Consolas" Foreground="#888"/>
+        </Border>
+
+        <!-- Error Message -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <TextBlock x:Name="MessageText"
+                       Text="Error message goes here"
+                       Foreground="#ccc"
+                       TextWrapping="Wrap"
+                       FontSize="14"
+                       LineHeight="22"/>
+        </ScrollViewer>
+
+        <!-- Remediation Hint -->
+        <Border Grid.Row="3" Background="#2d3a2d" CornerRadius="4" Padding="12" Margin="0,15,0,0" x:Name="RemediationBorder">
+            <StackPanel>
+                <TextBlock Text="Suggestion:" Foreground="#4ade80" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <TextBlock x:Name="RemediationText" Text="Remediation hint" Foreground="#9ca3af" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button x:Name="OpenLogsButton" Content="Open Logs"
+                    Click="OpenLogsButton_Click"
+                    Padding="20,8" Margin="0,0,10,0"
+                    Background="#374151" Foreground="White" BorderThickness="0"/>
+            <Button x:Name="ExitButton" Content="Exit"
+                    Click="ExitButton_Click"
+                    Padding="20,8"
+                    Background="#4b5563" Foreground="White" BorderThickness="0"/>
+        </StackPanel>
+    </Grid>
+</Window>

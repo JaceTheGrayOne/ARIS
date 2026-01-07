@@ -20,4 +20,9 @@
     <ProjectReference Include="..\Aris.Contracts\Aris.Contracts.csproj" />
     <ProjectReference Include="..\Aris.Tools\Aris.Tools.csproj" />
   </ItemGroup>
+
+  <!-- Copy tool documentation for API endpoints -->
+  <ItemGroup>
+    <Content Include="..\..\docs\tools\**\*" CopyToOutputDirectory="PreserveNewest" LinkBase="docs\tools" />
+  </ItemGroup>
 </Project>

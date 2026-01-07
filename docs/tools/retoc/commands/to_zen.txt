@@ -1,0 +1,16 @@
+Converts assets and shaders from Legacy to Zen
+
+Usage: retoc.exe to-zen [OPTIONS] --version <VERSION> <INPUT> <OUTPUT>
+
+Arguments:
+  <INPUT>   Input directory or .pak
+  <OUTPUT>  Output .utoc
+
+Options:
+  -f, --filter <FILTER>            Asset file name filter
+      --version <VERSION>          Engine version [possible values: UE4_25, UE4_26, UE4_27, UE5_0, UE5_1, UE5_2, UE5_3, UE5_4, UE5_5, UE5_6]
+      --script-cell <SCRIPT_CELL>  Allows specifying additional Verse script cells to be considered for verse native cell import resolution
+  -v, --verbose                    Verbose logging
+      --debug                      Debug logging
+      --no-parallel                Do not run in parallel. Useful for debugging
+  -h, --help                       Print help

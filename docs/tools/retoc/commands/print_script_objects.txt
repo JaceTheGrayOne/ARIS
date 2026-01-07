@@ -1,0 +1,9 @@
+Print script objects from container
+
+Usage: retoc.exe print-script-objects <INPUT>
+
+Arguments:
+  <INPUT>  Input .utoc file containing script objects
+
+Options:
+  -h, --help  Print help

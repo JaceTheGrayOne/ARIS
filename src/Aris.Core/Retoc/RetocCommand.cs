@@ -51,6 +51,12 @@ public class RetocCommand
     public RetocTocVersion? TocVersion { get; init; }
 
     /// <summary>
+    /// Chunk ID for Get command (retrieves a specific chunk by ID).
+    /// This is a string identifier, not an integer index.
+    /// </summary>
+    public string? ChunkId { get; init; }
+
+    /// <summary>
     /// AES mount key identifiers or values (resolved via KeyStore).
     /// Legacy field for backward compatibility.
     /// </summary>

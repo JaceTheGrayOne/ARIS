@@ -1,0 +1,1474 @@
+{
+  "testing_strategy": {
+    "schema_provider_tests": [
+      {
+        "start_line": 1,
+        "why": "Full schema provider test suite (15 tests)",
+        "end_line": 181,
+        "path": "tests/Aris.Core.Tests/Retoc/RetocCommandSchemaProviderTests.cs"
+      },
+      {
+        "start_line": 9,
+        "why": "GetSchema_ReturnsValidSchema test",
+        "end_line": 17,
+        "path": "tests/Aris.Core.Tests/Retoc/RetocCommandSchemaProviderTests.cs"
+      },
+      {
+        "start_line": 19,
+        "why": "GetSchema_IncludesAllRetocCommandTypes test",
+        "end_line": 31,
+        "path": "tests/Aris.Core.Tests/Retoc/RetocCommandSchemaProviderTests.cs"
+      },
+      {
+        "start_line": 127,
+        "why": "GetSchema_IsSerializable test",
+        "end_line": 141,
+        "path": "tests/Aris.Core.Tests/Retoc/RetocCommandSchemaProviderTests.cs"
+      }
+    ],
+    "test_patterns": [
+      {
+        "start_line": 15,
+        "why": "IDisposable pattern with temp workspace cleanup",
+        "end_line": 50,
+        "path": "tests/Aris.Core.Tests/Adapters/RetocAdapterTests.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Fake dependency implementation",
+        "end_line": 50,
+        "path": "tests/Aris.Core.Tests/Fakes/FakeProcessRunner.cs"
+      }
+    ],
+    "framework": {
+      "start_line": 13,
+      "why": "xUnit 2.5.3 and coverlet",
+      "end_line": 16,
+      "path": "tests/Aris.Core.Tests/Aris.Core.Tests.csproj"
+    }
+  },
+  "version": "6.1.0",
+  "terminal_streaming": {
+    "conpty_infrastructure": [
+      {
+        "start_line": 1,
+        "why": "ConPTY process wrapper with Win32 pseudo-console",
+        "end_line": 389,
+        "path": "src/Aris.Infrastructure/Terminal/ConPtyProcess.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Win32 P/Invoke declarations for ConPTY APIs",
+        "end_line": 336,
+        "path": "src/Aris.Infrastructure/Terminal/ConPtyNativeMethods.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "IConPtyProcess interface for testability",
+        "end_line": 74,
+        "path": "src/Aris.Infrastructure/Terminal/IConPtyProcess.cs"
+      }
+    ],
+    "websocket_streaming": [
+      {
+        "start_line": 295,
+        "why": "WebSocket endpoint at /api/retoc/stream",
+        "end_line": 311,
+        "path": "src/Aris.Hosting/Endpoints/RetocEndpoints.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "RetocStreamHandler - WebSocket handler for Retoc streaming",
+        "end_line": 361,
+        "path": "src/Aris.Hosting/Endpoints/RetocStreamHandler.cs"
+      },
+      {
+        "start_line": 54,
+        "why": "WebSocket middleware configuration (30s keep-alive)",
+        "end_line": 58,
+        "path": "src/Aris.Hosting/Program.cs"
+      }
+    ],
+    "stream_contracts": [
+      {
+        "start_line": 1,
+        "why": "RetocStreamRequest DTO with command parameters",
+        "end_line": 62,
+        "path": "src/Aris.Contracts/Retoc/RetocStreamRequest.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "RetocStreamEvent discriminated union (started/output/exited/error)",
+        "end_line": 76,
+        "path": "src/Aris.Contracts/Retoc/RetocStreamEvent.cs"
+      }
+    ],
+    "frontend_terminal": [
+      {
+        "start_line": 1,
+        "why": "TerminalPanel xterm.js wrapper component",
+        "end_line": 189,
+        "path": "frontend/src/components/terminal/TerminalPanel.tsx"
+      },
+      {
+        "start_line": 82,
+        "why": "streamRetocExecution WebSocket client function",
+        "end_line": 142,
+        "path": "frontend/src/api/retocClient.ts"
+      },
+      {
+        "start_line": 336,
+        "why": "TypeScript RetocStream* types",
+        "end_line": 385,
+        "path": "frontend/src/types/contracts.ts"
+      }
+    ],
+    "dependency_injection": [
+      {
+        "start_line": 33,
+        "why": "ConPtyProcess registered as Transient",
+        "end_line": 34,
+        "path": "src/Aris.Infrastructure/DependencyInjection.cs"
+      },
+      {
+        "start_line": 36,
+        "why": "RetocStreamHandler with ConPTY factory",
+        "end_line": 45,
+        "path": "src/Aris.Hosting/DependencyInjection.cs"
+      }
+    ]
+  },
+  "single_executable_bootstrapper": {
+    "tests": [
+      {
+        "start_line": 1,
+        "why": "Payload extraction tests (9 tests)",
+        "end_line": 136,
+        "path": "tests/ARIS.UI.Tests/Bootstrap/PayloadExtractorTests.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Process manager tests (12 tests)",
+        "end_line": 141,
+        "path": "tests/ARIS.UI.Tests/Bootstrap/BackendProcessManagerTests.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Readiness polling tests (6 tests)",
+        "end_line": 82,
+        "path": "tests/ARIS.UI.Tests/Bootstrap/ReadinessPollerTests.cs"
+      }
+    ],
+    "readiness_polling": {
+      "start_line": 1,
+      "why": "Health endpoint polling until backend ready",
+      "end_line": 110,
+      "path": "src/ARIS.UI/Bootstrap/ReadinessPoller.cs"
+    },
+    "overview": [
+      {
+        "start_line": 1,
+        "why": "Bootstrap flow orchestration (mode detection, payload extract, backend start, readiness poll, navigate)",
+        "end_line": 159,
+        "path": "src/ARIS.UI/MainWindow.xaml.cs"
+      },
+      {
+        "start_line": 12,
+        "why": "Single-file publish configuration and payload embedding",
+        "end_line": 36,
+        "path": "src/ARIS.UI/ARIS.UI.csproj"
+      },
+      {
+        "start_line": 1,
+        "why": "Release build script producing ARIS.exe with embedded payload",
+        "end_line": 76,
+        "path": "build/publish-release.ps1"
+      }
+    ],
+    "payload_extraction": [
+      {
+        "start_line": 1,
+        "why": "Embedded payload extraction with SHA-256 hash and lock file idempotency",
+        "end_line": 209,
+        "path": "src/ARIS.UI/Bootstrap/PayloadExtractor.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Lock file data model (payloadHash, extractedAt, version)",
+        "end_line": 29,
+        "path": "src/ARIS.UI/Bootstrap/PayloadLockFile.cs"
+      }
+    ],
+    "static_file_hosting": [
+      {
+        "start_line": 60,
+        "why": "UseStaticFiles and MapFallbackToFile for SPA hosting",
+        "end_line": 79,
+        "path": "src/Aris.Hosting/Program.cs"
+      },
+      {
+        "start_line": 9,
+        "why": "Conditional CORS (development only)",
+        "end_line": 22,
+        "path": "src/Aris.Hosting/Program.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Same-origin URL in production (empty string base URL)",
+        "end_line": 34,
+        "path": "frontend/src/config/backend.ts"
+      }
+    ],
+    "backend_process_lifecycle": [
+      {
+        "start_line": 1,
+        "why": "Hidden backend process creation, URL discovery via stdout, lifecycle management",
+        "end_line": 197,
+        "path": "src/ARIS.UI/Bootstrap/BackendProcessManager.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Stdout URL announcement (ARIS_BACKEND_URL=http://127.0.0.1:<port>)",
+        "end_line": 77,
+        "path": "src/Aris.Hosting/Infrastructure/UrlAnnouncementService.cs"
+      }
+    ],
+    "error_handling": [
+      {
+        "start_line": 1,
+        "why": "Typed bootstrap exceptions with error codes and remediation hints",
+        "end_line": 107,
+        "path": "src/ARIS.UI/Bootstrap/BootstrapException.cs"
+      },
+      {
+        "start_line": 13,
+        "why": "Global exception handlers (Dispatcher, AppDomain, TaskScheduler)",
+        "end_line": 74,
+        "path": "src/ARIS.UI/App.xaml.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Error window XAML layout",
+        "end_line": 62,
+        "path": "src/ARIS.UI/Views/ErrorWindow.xaml"
+      },
+      {
+        "start_line": 1,
+        "why": "Error window code-behind with title mapping and log button",
+        "end_line": 104,
+        "path": "src/ARIS.UI/Views/ErrorWindow.xaml.cs"
+      }
+    ]
+  },
+  "repository_overview": {
+    "primary_runtimes": [
+      {
+        "start_line": 1,
+        "why": "WPF WebView2 desktop shell with bootstrap logic (production/dev mode)",
+        "end_line": 158,
+        "path": "src/ARIS.UI/MainWindow.xaml.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Global exception handling for startup errors",
+        "end_line": 76,
+        "path": "src/ARIS.UI/App.xaml.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "ASP.NET Core backend with static file hosting and conditional CORS",
+        "end_line": 90,
+        "path": "src/Aris.Hosting/Program.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Frontend backend URL configuration (same-origin in production)",
+        "end_line": 33,
+        "path": "frontend/src/config/backend.ts"
+      }
+    ],
+    "key_directories": [
+      {
+        "start_line": 6,
+        "why": "Solution structure with 8 src + 2 test projects",
+        "end_line": 28,
+        "path": "ARIS.sln"
+      },
+      {
+        "start_line": 40,
+        "why": "Layered architecture documentation",
+        "end_line": 50,
+        "path": "CLAUDE.md"
+      }
+    ],
+    "tech_stack": [
+      {
+        "start_line": 2,
+        "why": ".NET SDK 8.0.416 specification",
+        "end_line": 5,
+        "path": "global.json"
+      },
+      {
+        "start_line": 12,
+        "why": "React 19.2.0, TypeScript 5.9.3, Tailwind 4.1.17, Vite 7.2.4",
+        "end_line": 35,
+        "path": "frontend/package.json"
+      },
+      {
+        "start_line": 11,
+        "why": "Serilog 10.0.0 dependencies",
+        "end_line": 13,
+        "path": "src/Aris.Hosting/Aris.Hosting.csproj"
+      },
+      {
+        "start_line": 8,
+        "why": "WebView2 1.0.3595.46",
+        "end_line": 8,
+        "path": "src/ARIS.UI/ARIS.UI.csproj"
+      },
+      {
+        "start_line": 13,
+        "why": "xUnit 2.5.3 and coverlet",
+        "end_line": 16,
+        "path": "tests/Aris.Core.Tests/Aris.Core.Tests.csproj"
+      }
+    ]
+  },
+  "appendix_a_key_files": [
+    {
+      "start_line": 1,
+      "why": ".NET SDK version pinning",
+      "end_line": 6,
+      "path": "global.json"
+    },
+    {
+      "start_line": 1,
+      "why": "Backend entry point with WebSocket and static file hosting",
+      "end_line": 94,
+      "path": "src/Aris.Hosting/Program.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "Stdout URL announcement for UI discovery",
+      "end_line": 77,
+      "path": "src/Aris.Hosting/Infrastructure/UrlAnnouncementService.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "Retoc HTTP API + WebSocket stream endpoint",
+      "end_line": 391,
+      "path": "src/Aris.Hosting/Endpoints/RetocEndpoints.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "ConPTY process wrapper for terminal streaming",
+      "end_line": 389,
+      "path": "src/Aris.Infrastructure/Terminal/ConPtyProcess.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "UI schema provider",
+      "end_line": 208,
+      "path": "src/Aris.Adapters/Retoc/RetocCommandSchemaProvider.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "Retoc Simple/Advanced UI with terminal streaming",
+      "end_line": 734,
+      "path": "frontend/src/pages/tools/RetocPage.tsx"
+    },
+    {
+      "start_line": 1,
+      "why": "Advanced mode builder",
+      "end_line": 279,
+      "path": "frontend/src/components/retoc/RetocAdvancedCommandBuilder.tsx"
+    },
+    {
+      "start_line": 1,
+      "why": "Retoc API + WebSocket streaming client",
+      "end_line": 142,
+      "path": "frontend/src/api/retocClient.ts"
+    },
+    {
+      "start_line": 1,
+      "why": "TypeScript contracts including stream types",
+      "end_line": 384,
+      "path": "frontend/src/types/contracts.ts"
+    },
+    {
+      "start_line": 1,
+      "why": "Schema provider tests",
+      "end_line": 181,
+      "path": "tests/Aris.Core.Tests/Retoc/RetocCommandSchemaProviderTests.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "WPF project with publish config",
+      "end_line": 37,
+      "path": "src/ARIS.UI/ARIS.UI.csproj"
+    },
+    {
+      "start_line": 1,
+      "why": "Main window XAML with loading overlay",
+      "end_line": 38,
+      "path": "src/ARIS.UI/MainWindow.xaml"
+    },
+    {
+      "start_line": 1,
+      "why": "Bootstrap flow + WebView2 hosting",
+      "end_line": 159,
+      "path": "src/ARIS.UI/MainWindow.xaml.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "Global exception handling",
+      "end_line": 76,
+      "path": "src/ARIS.UI/App.xaml.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "Embedded payload extraction",
+      "end_line": 209,
+      "path": "src/ARIS.UI/Bootstrap/PayloadExtractor.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "Backend process lifecycle",
+      "end_line": 197,
+      "path": "src/ARIS.UI/Bootstrap/BackendProcessManager.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "Health endpoint polling",
+      "end_line": 110,
+      "path": "src/ARIS.UI/Bootstrap/ReadinessPoller.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "Lock file data model",
+      "end_line": 29,
+      "path": "src/ARIS.UI/Bootstrap/PayloadLockFile.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "Bootstrap exception types",
+      "end_line": 107,
+      "path": "src/ARIS.UI/Bootstrap/BootstrapException.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "Error window XAML",
+      "end_line": 62,
+      "path": "src/ARIS.UI/Views/ErrorWindow.xaml"
+    },
+    {
+      "start_line": 1,
+      "why": "Error window code-behind",
+      "end_line": 104,
+      "path": "src/ARIS.UI/Views/ErrorWindow.xaml.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "Single-exe release build script",
+      "end_line": 76,
+      "path": "build/publish-release.ps1"
+    },
+    {
+      "start_line": 1,
+      "why": "Backend URL config (same-origin in prod)",
+      "end_line": 34,
+      "path": "frontend/src/config/backend.ts"
+    },
+    {
+      "start_line": 1,
+      "why": "Payload extraction tests (9 tests)",
+      "end_line": 136,
+      "path": "tests/ARIS.UI.Tests/Bootstrap/PayloadExtractorTests.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "Process manager tests (12 tests)",
+      "end_line": 141,
+      "path": "tests/ARIS.UI.Tests/Bootstrap/BackendProcessManagerTests.cs"
+    },
+    {
+      "start_line": 1,
+      "why": "Readiness polling tests (6 tests)",
+      "end_line": 82,
+      "path": "tests/ARIS.UI.Tests/Bootstrap/ReadinessPollerTests.cs"
+    }
+  ],
+  "configuration": {
+    "appsettings_structure": [
+      {
+        "start_line": 1,
+        "why": "Complete appsettings with all tool sections",
+        "end_line": 61,
+        "path": "src/Aris.Hosting/appsettings.json"
+      },
+      {
+        "start_line": 1,
+        "why": "RetocOptions configuration",
+        "end_line": 55,
+        "path": "src/Aris.Infrastructure/Configuration/RetocOptions.cs"
+      }
+    ]
+  },
+  "description": "Citation index mapping SOFTWARE_DESIGN_DOCUMENT.md sections to source file references with verified line ranges. Includes ConPTY/WebSocket terminal streaming infrastructure for Retoc with progress bar support, Simple/Advanced mode implementation, and Single Executable Bootstrapper (ARIS.exe with payload extraction, hidden backend child process, dynamic port discovery, same-origin hosting).",
+  "security": {
+    "authentication_authorization": {
+      "start_line": 10,
+      "why": "CORS restricted to localhost:5173, no auth",
+      "end_line": 19,
+      "path": "src/Aris.Hosting/Program.cs"
+    },
+    "input_validation": [
+      {
+        "start_line": 49,
+        "why": "Path validation and arg allowlist",
+        "end_line": 112,
+        "path": "src/Aris.Adapters/Retoc/RetocCommandBuilder.cs"
+      },
+      {
+        "start_line": 15,
+        "why": "Tool name allowlist",
+        "end_line": 21,
+        "path": "src/Aris.Hosting/Endpoints/ToolDocsEndpoints.cs"
+      }
+    ],
+    "sha256_verification": {
+      "start_line": 81,
+      "why": "SHA-256 hash computation and comparison",
+      "end_line": 137,
+      "path": "src/Aris.Infrastructure/Tools/DependencyValidator.cs"
+    }
+  },
+  "generatedAt": "2026-01-05",
+  "public_interfaces": {
+    "endpoints_summary": {
+      "start_line": 57,
+      "why": "All endpoint group registrations",
+      "end_line": 63,
+      "path": "src/Aris.Hosting/Program.cs"
+    },
+    "retoc_schema_endpoint": [
+      {
+        "start_line": 203,
+        "why": "GET /api/retoc/schema UI command schema",
+        "end_line": 241,
+        "path": "src/Aris.Hosting/Endpoints/RetocEndpoints.cs"
+      },
+      {
+        "start_line": 22,
+        "why": "Schema derivation from canonical + UI mapping",
+        "end_line": 66,
+        "path": "src/Aris.Adapters/Retoc/RetocSchemaDerived.cs"
+      },
+      {
+        "start_line": 13,
+        "why": "Command schema definitions (13 commands)",
+        "end_line": 208,
+        "path": "src/Aris.Adapters/Retoc/RetocCommandSchemaProvider.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Schema response DTO",
+        "end_line": 24,
+        "path": "src/Aris.Contracts/Retoc/RetocCommandSchemaResponse.cs"
+      }
+    ],
+    "frontend_api_clients": [
+      {
+        "start_line": 1,
+        "why": "Retoc API client",
+        "end_line": 153,
+        "path": "frontend/src/api/retocClient.ts"
+      },
+      {
+        "start_line": 11,
+        "why": "UAsset API client pattern",
+        "end_line": 102,
+        "path": "frontend/src/api/uassetClient.ts"
+      },
+      {
+        "start_line": 1,
+        "why": "Complete TypeScript contract types",
+        "end_line": 367,
+        "path": "frontend/src/types/contracts.ts"
+      }
+    ],
+    "retoc_build_endpoint": [
+      {
+        "start_line": 164,
+        "why": "POST /api/retoc/build command preview",
+        "end_line": 201,
+        "path": "src/Aris.Hosting/Endpoints/RetocEndpoints.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Build command request DTO",
+        "end_line": 59,
+        "path": "src/Aris.Contracts/Retoc/RetocBuildCommandRequest.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Build command response DTO",
+        "end_line": 24,
+        "path": "src/Aris.Contracts/Retoc/RetocBuildCommandResponse.cs"
+      }
+    ],
+    "retoc_help_endpoint": [
+      {
+        "start_line": 243,
+        "why": "GET /api/retoc/help retoc --help output",
+        "end_line": 298,
+        "path": "src/Aris.Hosting/Endpoints/RetocEndpoints.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Help response DTO",
+        "end_line": 12,
+        "path": "src/Aris.Contracts/Retoc/RetocHelpResponse.cs"
+      }
+    ],
+    "tool_docs_endpoints": [
+      {
+        "start_line": 23,
+        "why": "GET /api/tools/{tool}/help and /schema",
+        "end_line": 31,
+        "path": "src/Aris.Hosting/Endpoints/ToolDocsEndpoints.cs"
+      },
+      {
+        "start_line": 15,
+        "why": "Tool name allowlist",
+        "end_line": 21,
+        "path": "src/Aris.Hosting/Endpoints/ToolDocsEndpoints.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Docs path resolution (dev vs prod)",
+        "end_line": 28,
+        "path": "src/Aris.Hosting/ToolDocsPathResolver.cs"
+      }
+    ],
+    "base_url": [
+      {
+        "start_line": 9,
+        "why": "Conditional CORS (dev only), no authentication",
+        "end_line": 22,
+        "path": "src/Aris.Hosting/Program.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Backend URL from VITE_ARIS_BACKEND_URL or localhost:5000",
+        "end_line": 12,
+        "path": "frontend/src/config/backend.ts"
+      }
+    ]
+  },
+  "code_style_conventions": {
+    "dependency_injection": [
+      {
+        "start_line": 8,
+        "why": "Extension method DI pattern",
+        "end_line": 28,
+        "path": "src/Aris.Hosting/DependencyInjection.cs"
+      }
+    ],
+    "naming": [
+      {
+        "start_line": 107,
+        "why": "Naming conventions",
+        "end_line": 112,
+        "path": "CLAUDE.md"
+      },
+      {
+        "start_line": 14,
+        "why": "Private field naming example",
+        "end_line": 21,
+        "path": "src/Aris.Adapters/Retoc/RetocAdapter.cs"
+      }
+    ],
+    "common_utilities": [
+      {
+        "start_line": 19,
+        "why": "ProcessRunner interface usage",
+        "end_line": 25,
+        "path": "src/Aris.Infrastructure/Process/ProcessRunner.cs"
+      }
+    ]
+  },
+  "appendix_b_dependencies": [
+    {
+      "start_line": 12,
+      "why": "npm dependencies",
+      "end_line": 35,
+      "path": "frontend/package.json"
+    },
+    {
+      "start_line": 1,
+      "why": "UAssetAPI submodule",
+      "end_line": 4,
+      "path": ".gitmodules"
+    },
+    {
+      "start_line": 1,
+      "why": "Embedded tools (retoc)",
+      "end_line": 14,
+      "path": "src/Aris.Tools/tools.manifest.json"
+    }
+  ],
+  "frontend_architecture": {
+    "ui_component_library": [
+      {
+        "start_line": 1,
+        "why": "Shared UI component exports",
+        "end_line": 37,
+        "path": "frontend/src/components/ui/index.ts"
+      },
+      {
+        "start_line": 1,
+        "why": "Button component",
+        "end_line": 47,
+        "path": "frontend/src/components/ui/Button.tsx"
+      },
+      {
+        "start_line": 1,
+        "why": "Panel layout component",
+        "end_line": 73,
+        "path": "frontend/src/components/ui/Panel.tsx"
+      },
+      {
+        "start_line": 1,
+        "why": "Console/code display component",
+        "end_line": 60,
+        "path": "frontend/src/components/ui/ConsoleBlock.tsx"
+      }
+    ],
+    "routing": [
+      {
+        "start_line": 1,
+        "why": "React Router configuration with 7 routes",
+        "end_line": 46,
+        "path": "frontend/src/router.tsx"
+      },
+      {
+        "start_line": 1,
+        "why": "Main layout wrapper with AppShell",
+        "end_line": 30,
+        "path": "frontend/src/layouts/MainLayout.tsx"
+      }
+    ],
+    "retoc_simple_advanced_mode": {
+      "command_preview": {
+        "start_line": 1,
+        "why": "Command preview with copy-to-clipboard",
+        "end_line": 68,
+        "path": "frontend/src/components/retoc/RetocCommandPreview.tsx"
+      },
+      "advanced_mode": [
+        {
+          "start_line": 483,
+          "why": "Advanced Mode UI section",
+          "end_line": 508,
+          "path": "frontend/src/pages/tools/RetocPage.tsx"
+        },
+        {
+          "start_line": 1,
+          "why": "Schema-driven command builder",
+          "end_line": 280,
+          "path": "frontend/src/components/retoc/RetocAdvancedCommandBuilder.tsx"
+        }
+      ],
+      "simple_mode": [
+        {
+          "start_line": 143,
+          "why": "Simple Mode Pack (ToZen) handler",
+          "end_line": 187,
+          "path": "frontend/src/pages/tools/RetocPage.tsx"
+        },
+        {
+          "start_line": 189,
+          "why": "Simple Mode Unpack (ToLegacy) handler",
+          "end_line": 221,
+          "path": "frontend/src/pages/tools/RetocPage.tsx"
+        },
+        {
+          "start_line": 327,
+          "why": "Simple Mode UI panels",
+          "end_line": 481,
+          "path": "frontend/src/pages/tools/RetocPage.tsx"
+        }
+      ],
+      "page": [
+        {
+          "start_line": 1,
+          "why": "Full Retoc page with Simple/Advanced mode and terminal",
+          "end_line": 734,
+          "path": "frontend/src/pages/tools/RetocPage.tsx"
+        },
+        {
+          "start_line": 21,
+          "why": "Mode state declaration",
+          "end_line": 31,
+          "path": "frontend/src/pages/tools/RetocPage.tsx"
+        },
+        {
+          "start_line": 295,
+          "why": "Mode toggle UI buttons",
+          "end_line": 316,
+          "path": "frontend/src/pages/tools/RetocPage.tsx"
+        }
+      ],
+      "help_modal": {
+        "start_line": 1,
+        "why": "Help modal component",
+        "end_line": 88,
+        "path": "frontend/src/components/retoc/RetocHelpModal.tsx"
+      },
+      "console_log": null
+    }
+  },
+  "extending_system": {
+    "adding_feature": [
+      {
+        "start_line": 51,
+        "why": "Endpoint registration pattern",
+        "end_line": 56,
+        "path": "src/Aris.Hosting/Program.cs"
+      },
+      {
+        "start_line": 26,
+        "why": "Complete endpoint implementation example",
+        "end_line": 451,
+        "path": "src/Aris.Hosting/Endpoints/RetocEndpoints.cs"
+      }
+    ],
+    "frontend_integration_pattern": [
+      {
+        "start_line": 82,
+        "why": "Streaming client pattern",
+        "end_line": 153,
+        "path": "frontend/src/api/retocClient.ts"
+      },
+      {
+        "start_line": 12,
+        "why": "Route registration pattern",
+        "end_line": 51,
+        "path": "frontend/src/router.tsx"
+      }
+    ]
+  },
+  "verification_report": {
+    "endpoints_enumerated": {
+      "start_line": 57,
+      "why": "All endpoint group registrations (17 endpoints total)",
+      "end_line": 63,
+      "path": "src/Aris.Hosting/Program.cs"
+    },
+    "frontend_routes_enumerated": {
+      "start_line": 11,
+      "why": "All 7 routes enumerated",
+      "end_line": 45,
+      "path": "frontend/src/router.tsx"
+    },
+    "single_executable_bootstrapper_verified": [
+      {
+        "start_line": 1,
+        "why": "PayloadExtractor verified (209 lines)",
+        "end_line": 209,
+        "path": "src/ARIS.UI/Bootstrap/PayloadExtractor.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "BackendProcessManager verified (197 lines)",
+        "end_line": 197,
+        "path": "src/ARIS.UI/Bootstrap/BackendProcessManager.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "ReadinessPoller verified (110 lines)",
+        "end_line": 110,
+        "path": "src/ARIS.UI/Bootstrap/ReadinessPoller.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "PayloadLockFile verified (29 lines)",
+        "end_line": 29,
+        "path": "src/ARIS.UI/Bootstrap/PayloadLockFile.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "BootstrapException verified (107 lines)",
+        "end_line": 107,
+        "path": "src/ARIS.UI/Bootstrap/BootstrapException.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "MainWindow bootstrap flow verified (159 lines)",
+        "end_line": 159,
+        "path": "src/ARIS.UI/MainWindow.xaml.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "MainWindow XAML verified (38 lines)",
+        "end_line": 38,
+        "path": "src/ARIS.UI/MainWindow.xaml"
+      },
+      {
+        "start_line": 1,
+        "why": "App exception handling verified (76 lines)",
+        "end_line": 76,
+        "path": "src/ARIS.UI/App.xaml.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "ErrorWindow XAML verified (62 lines)",
+        "end_line": 62,
+        "path": "src/ARIS.UI/Views/ErrorWindow.xaml"
+      },
+      {
+        "start_line": 1,
+        "why": "ErrorWindow code-behind verified (104 lines)",
+        "end_line": 104,
+        "path": "src/ARIS.UI/Views/ErrorWindow.xaml.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "UrlAnnouncementService verified (77 lines)",
+        "end_line": 77,
+        "path": "src/Aris.Hosting/Infrastructure/UrlAnnouncementService.cs"
+      },
+      {
+        "start_line": 60,
+        "why": "Static file hosting verified",
+        "end_line": 79,
+        "path": "src/Aris.Hosting/Program.cs"
+      },
+      {
+        "start_line": 12,
+        "why": "Publish config verified",
+        "end_line": 36,
+        "path": "src/ARIS.UI/ARIS.UI.csproj"
+      },
+      {
+        "start_line": 1,
+        "why": "Publish script verified (76 lines)",
+        "end_line": 76,
+        "path": "build/publish-release.ps1"
+      },
+      {
+        "start_line": 1,
+        "why": "Backend URL config verified (34 lines)",
+        "end_line": 34,
+        "path": "frontend/src/config/backend.ts"
+      },
+      {
+        "start_line": 1,
+        "why": "PayloadExtractor tests verified (9 tests, 136 lines)",
+        "end_line": 136,
+        "path": "tests/ARIS.UI.Tests/Bootstrap/PayloadExtractorTests.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "BackendProcessManager tests verified (12 tests, 141 lines)",
+        "end_line": 141,
+        "path": "tests/ARIS.UI.Tests/Bootstrap/BackendProcessManagerTests.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "ReadinessPoller tests verified (6 tests, 82 lines)",
+        "end_line": 82,
+        "path": "tests/ARIS.UI.Tests/Bootstrap/ReadinessPollerTests.cs"
+      }
+    ],
+    "citation_integrity": [
+      {
+        "start_line": 1,
+        "why": "File length verified (734 lines)",
+        "end_line": 734,
+        "path": "frontend/src/pages/tools/RetocPage.tsx"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (391 lines)",
+        "end_line": 391,
+        "path": "src/Aris.Hosting/Endpoints/RetocEndpoints.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (208 lines)",
+        "end_line": 208,
+        "path": "src/Aris.Adapters/Retoc/RetocCommandSchemaProvider.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (384 lines)",
+        "end_line": 384,
+        "path": "frontend/src/types/contracts.ts"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (208 lines)",
+        "end_line": 208,
+        "path": "src/ARIS.UI/Bootstrap/PayloadExtractor.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (196 lines)",
+        "end_line": 196,
+        "path": "src/ARIS.UI/Bootstrap/BackendProcessManager.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (109 lines)",
+        "end_line": 109,
+        "path": "src/ARIS.UI/Bootstrap/ReadinessPoller.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (29 lines)",
+        "end_line": 29,
+        "path": "src/ARIS.UI/Bootstrap/PayloadLockFile.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (106 lines)",
+        "end_line": 106,
+        "path": "src/ARIS.UI/Bootstrap/BootstrapException.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (158 lines)",
+        "end_line": 158,
+        "path": "src/ARIS.UI/MainWindow.xaml.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (38 lines)",
+        "end_line": 38,
+        "path": "src/ARIS.UI/MainWindow.xaml"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (76 lines)",
+        "end_line": 76,
+        "path": "src/ARIS.UI/App.xaml.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (62 lines)",
+        "end_line": 62,
+        "path": "src/ARIS.UI/Views/ErrorWindow.xaml"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (104 lines)",
+        "end_line": 104,
+        "path": "src/ARIS.UI/Views/ErrorWindow.xaml.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (76 lines)",
+        "end_line": 76,
+        "path": "src/Aris.Hosting/Infrastructure/UrlAnnouncementService.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (90 lines)",
+        "end_line": 90,
+        "path": "src/Aris.Hosting/Program.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (37 lines)",
+        "end_line": 37,
+        "path": "src/ARIS.UI/ARIS.UI.csproj"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (76 lines)",
+        "end_line": 76,
+        "path": "build/publish-release.ps1"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (34 lines)",
+        "end_line": 34,
+        "path": "frontend/src/config/backend.ts"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (136 lines)",
+        "end_line": 136,
+        "path": "tests/ARIS.UI.Tests/Bootstrap/PayloadExtractorTests.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (141 lines)",
+        "end_line": 141,
+        "path": "tests/ARIS.UI.Tests/Bootstrap/BackendProcessManagerTests.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "File length verified (82 lines)",
+        "end_line": 82,
+        "path": "tests/ARIS.UI.Tests/Bootstrap/ReadinessPollerTests.cs"
+      }
+    ],
+    "simple_advanced_mode_verified": [
+      {
+        "start_line": 21,
+        "why": "Mode toggle state verified",
+        "end_line": 31,
+        "path": "frontend/src/pages/tools/RetocPage.tsx"
+      },
+      {
+        "start_line": 295,
+        "why": "Mode toggle UI verified",
+        "end_line": 316,
+        "path": "frontend/src/pages/tools/RetocPage.tsx"
+      },
+      {
+        "start_line": 143,
+        "why": "Simple Mode Pack verified",
+        "end_line": 187,
+        "path": "frontend/src/pages/tools/RetocPage.tsx"
+      },
+      {
+        "start_line": 189,
+        "why": "Simple Mode Unpack verified",
+        "end_line": 221,
+        "path": "frontend/src/pages/tools/RetocPage.tsx"
+      },
+      {
+        "start_line": 1,
+        "why": "Advanced Mode builder verified (280 lines)",
+        "end_line": 280,
+        "path": "frontend/src/components/retoc/RetocAdvancedCommandBuilder.tsx"
+      },
+      {
+        "start_line": 1,
+        "why": "Command preview verified (68 lines)",
+        "end_line": 68,
+        "path": "frontend/src/components/retoc/RetocCommandPreview.tsx"
+      },
+      {
+        "start_line": 1,
+        "why": "Help modal verified (88 lines)",
+        "end_line": 88,
+        "path": "frontend/src/components/retoc/RetocHelpModal.tsx"
+      },
+      {
+        "start_line": 1,
+        "why": "API client verified (153 lines)",
+        "end_line": 153,
+        "path": "frontend/src/api/retocClient.ts"
+      },
+      {
+        "start_line": 164,
+        "why": "Build endpoint verified",
+        "end_line": 201,
+        "path": "src/Aris.Hosting/Endpoints/RetocEndpoints.cs"
+      },
+      {
+        "start_line": 300,
+        "why": "Stream endpoint verified",
+        "end_line": 448,
+        "path": "src/Aris.Hosting/Endpoints/RetocEndpoints.cs"
+      },
+      {
+        "start_line": 203,
+        "why": "Schema endpoint verified",
+        "end_line": 241,
+        "path": "src/Aris.Hosting/Endpoints/RetocEndpoints.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Schema provider verified (208 lines)",
+        "end_line": 208,
+        "path": "src/Aris.Adapters/Retoc/RetocCommandSchemaProvider.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Schema deriver verified (226 lines)",
+        "end_line": 226,
+        "path": "src/Aris.Adapters/Retoc/RetocSchemaDerived.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "ConPTY process verified (389 lines)",
+        "end_line": 389,
+        "path": "src/Aris.Infrastructure/Terminal/ConPtyProcess.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "WebSocket stream handler verified (361 lines)",
+        "end_line": 361,
+        "path": "src/Aris.Hosting/Endpoints/RetocStreamHandler.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Schema tests verified (180 lines, 15 tests)",
+        "end_line": 180,
+        "path": "tests/Aris.Core.Tests/Retoc/RetocCommandSchemaProviderTests.cs"
+      }
+    ],
+    "entry_points": [
+      {
+        "start_line": 1,
+        "why": "Backend entry point with WebSocket + static file hosting (verified 90 lines)",
+        "end_line": 90,
+        "path": "src/Aris.Hosting/Program.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Desktop UI entry point with bootstrap logic (verified 158 lines)",
+        "end_line": 158,
+        "path": "src/ARIS.UI/MainWindow.xaml.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Global exception handling (verified 76 lines)",
+        "end_line": 76,
+        "path": "src/ARIS.UI/App.xaml.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Frontend entry point",
+        "end_line": 10,
+        "path": "frontend/src/main.tsx"
+      }
+    ]
+  },
+  "core_execution_flows": {
+    "flow_4_uasset_serialization": [
+      {
+        "start_line": 29,
+        "why": "UAsset serialize endpoint",
+        "end_line": 72,
+        "path": "src/Aris.Hosting/Endpoints/UAssetEndpoints.cs"
+      },
+      {
+        "start_line": 29,
+        "why": "SerializeAsync with progress events",
+        "end_line": 108,
+        "path": "src/Aris.Adapters/UAsset/UAssetService.cs"
+      },
+      {
+        "start_line": 244,
+        "why": "Operation log writing to workspace/logs/",
+        "end_line": 265,
+        "path": "src/Aris.Adapters/UAsset/UAssetService.cs"
+      }
+    ],
+    "flow_3_dll_injection": [
+      {
+        "start_line": 27,
+        "why": "DLL inject endpoint with process resolution",
+        "end_line": 100,
+        "path": "src/Aris.Hosting/Endpoints/DllInjectorEndpoints.cs"
+      },
+      {
+        "start_line": 23,
+        "why": "Complete CreateRemoteThread Win32 injection",
+        "end_line": 398,
+        "path": "src/Aris.Infrastructure/DllInjection/NativeDllInjectionService.cs"
+      },
+      {
+        "start_line": 46,
+        "why": "DLL injector config with denied targets",
+        "end_line": 63,
+        "path": "src/Aris.Hosting/appsettings.json"
+      }
+    ],
+    "flow_1_tool_extraction": [
+      {
+        "start_line": 27,
+        "why": "Startup orchestration calling extractor and validator",
+        "end_line": 57,
+        "path": "src/Aris.Hosting/Infrastructure/ToolingStartupHostedService.cs"
+      },
+      {
+        "start_line": 32,
+        "why": "Tool extraction with .extraction.lock idempotency",
+        "end_line": 137,
+        "path": "src/Aris.Infrastructure/Tools/DependencyExtractor.cs"
+      },
+      {
+        "start_line": 28,
+        "why": "SHA-256 validation (L81-137 hash computation)",
+        "end_line": 137,
+        "path": "src/Aris.Infrastructure/Tools/DependencyValidator.cs"
+      },
+      {
+        "start_line": 32,
+        "why": "MarkReady/MarkError health state management",
+        "end_line": 44,
+        "path": "src/Aris.Hosting/Infrastructure/BackendHealthState.cs"
+      }
+    ]
+  },
+  "purpose_and_non_goals": {
+    "purpose": [
+      {
+        "start_line": 8,
+        "why": "Defines ARIS as C#/.NET 8 rewrite with four tool integrations",
+        "end_line": 13,
+        "path": "CLAUDE.md"
+      },
+      {
+        "start_line": 51,
+        "why": "All four tool endpoints registered plus tool docs",
+        "end_line": 56,
+        "path": "src/Aris.Hosting/Program.cs"
+      }
+    ],
+    "non_goals": [
+      {
+        "start_line": 8,
+        "why": "Platform and approach constraints documented",
+        "end_line": 13,
+        "path": "CLAUDE.md"
+      },
+      {
+        "start_line": 2,
+        "why": ".NET SDK version and Windows targeting",
+        "end_line": 5,
+        "path": "global.json"
+      },
+      {
+        "start_line": 13,
+        "why": "Windows-only target framework (net8.0-windows)",
+        "end_line": 13,
+        "path": "src/ARIS.UI/ARIS.UI.csproj"
+      }
+    ]
+  },
+  "data_model_persistence": {
+    "domain_models": [
+      {
+        "start_line": 1,
+        "why": "RetocCommand with ~20 properties",
+        "end_line": 80,
+        "path": "src/Aris.Core/Retoc/RetocCommand.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "RetocResult model",
+        "end_line": 50,
+        "path": "src/Aris.Core/Retoc/RetocResult.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "ProducedFile model",
+        "end_line": 25,
+        "path": "src/Aris.Core/Models/ProducedFile.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "ProcessResult model",
+        "end_line": 35,
+        "path": "src/Aris.Core/Models/ProcessResult.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "RetocCommandType enum (13 values)",
+        "end_line": 75,
+        "path": "src/Aris.Core/Retoc/RetocCommandType.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "OperationStatus enum",
+        "end_line": 23,
+        "path": "src/Aris.Contracts/OperationStatus.cs"
+      }
+    ],
+    "error_types": [
+      {
+        "start_line": 1,
+        "why": "Base exception class",
+        "end_line": 29,
+        "path": "src/Aris.Core/Errors/ArisException.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "ValidationError exception",
+        "end_line": 36,
+        "path": "src/Aris.Core/Errors/ValidationError.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "ChecksumMismatchError exception",
+        "end_line": 38,
+        "path": "src/Aris.Core/Errors/ChecksumMismatchError.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "ToolExecutionError exception",
+        "end_line": 47,
+        "path": "src/Aris.Core/Errors/ToolExecutionError.cs"
+      }
+    ],
+    "tool_manifest_schema": [
+      {
+        "start_line": 1,
+        "why": "Embedded tool manifest with SHA-256",
+        "end_line": 14,
+        "path": "src/Aris.Tools/tools.manifest.json"
+      },
+      {
+        "start_line": 3,
+        "why": "ToolManifest C# model",
+        "end_line": 18,
+        "path": "src/Aris.Tools/Manifest/ToolManifest.cs"
+      }
+    ],
+    "retoc_contracts": [
+      {
+        "start_line": 1,
+        "why": "Build command request DTO",
+        "end_line": 59,
+        "path": "src/Aris.Contracts/Retoc/RetocBuildCommandRequest.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Schema response DTO",
+        "end_line": 24,
+        "path": "src/Aris.Contracts/Retoc/RetocCommandSchemaResponse.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Command definition with required/optional fields",
+        "end_line": 35,
+        "path": "src/Aris.Contracts/Retoc/RetocCommandDefinition.cs"
+      },
+      {
+        "start_line": 1,
+        "why": "Field definition with type and enum values",
+        "end_line": 40,
+        "path": "src/Aris.Contracts/Retoc/RetocCommandFieldDefinition.cs"
+      },
+      {
+        "start_line": 245,
+        "why": "TypeScript Retoc schema types",
+        "end_line": 332,
+        "path": "frontend/src/types/contracts.ts"
+      }
+    ],
+    "storage": [
+      {
+        "start_line": 21,
+        "why": "Serilog file sink to %LOCALAPPDATA%/ARIS/logs/",
+        "end_line": 35,
+        "path": "src/Aris.Hosting/Program.cs"
+      },
+      {
+        "start_line": 27,
+        "why": "Tools extracted to %LOCALAPPDATA%/ARIS/tools/{version}/",
+        "end_line": 29,
+        "path": "src/Aris.Infrastructure/Tools/DependencyExtractor.cs"
+      }
+    ]
+  }
+}

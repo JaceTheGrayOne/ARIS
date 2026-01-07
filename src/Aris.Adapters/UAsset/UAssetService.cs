@@ -12,18 +12,15 @@ public class UAssetService : IUAssetService
     private readonly IUAssetBackend _backend;
     private readonly ILogger<UAssetService> _logger;
     private readonly UAssetOptions _options;
-    private readonly WorkspaceOptions _workspaceOptions;
 
     public UAssetService(
         IUAssetBackend backend,
         ILogger<UAssetService> logger,
-        IOptions<UAssetOptions> options,
-        IOptions<WorkspaceOptions> workspaceOptions)
+        IOptions<UAssetOptions> options)
     {
         _backend = backend;
         _logger = logger;
         _options = options.Value;
-        _workspaceOptions = workspaceOptions.Value;
     }
 
     public async Task<UAssetResult> SerializeAsync(
@@ -73,10 +70,6 @@ public class UAssetService : IUAssetService
                 SchemaVersion = backendResult.UsedSchemaVersion,
                 UEVersion = backendResult.DetectedUEVersion
             };
-
-            WriteOperationLog(operationId, UAssetOperation.Serialize, command.InputJsonPath,
-                backendResult.OutputPath, result, backendResult.UsedSchemaVersion,
-                backendResult.DetectedUEVersion, stopwatch.Elapsed);
 
             ReportProgress(progress, "complete", "Serialization complete", 100);
 
@@ -156,10 +149,6 @@ public class UAssetService : IUAssetService
                 UEVersion = backendResult.DetectedUEVersion
             };
 
-            WriteOperationLog(operationId, UAssetOperation.Deserialize, command.InputAssetPath,
-                backendResult.OutputPath, result, backendResult.UsedSchemaVersion,
-                backendResult.DetectedUEVersion, stopwatch.Elapsed);
-
             ReportProgress(progress, "complete", "Deserialization complete", 100);
 
             _logger.LogInformation(
@@ -218,15 +207,10 @@ public class UAssetService : IUAssetService
         return inspection;
     }
 
-    private string CreateStagingDirectory(string operationId)
+    private static string CreateStagingDirectory(string operationId)
     {
-        var workspaceRoot = _workspaceOptions.DefaultWorkspacePath;
-        if (string.IsNullOrEmpty(workspaceRoot))
-        {
-            workspaceRoot = Path.Combine(Path.GetTempPath(), "aris");
-        }
-
-        var stagingDir = Path.Combine(workspaceRoot, "temp", $"uasset-{operationId}");
+        // Use system temp directory for staging
+        var stagingDir = Path.Combine(Path.GetTempPath(), "aris", "temp", $"uasset-{operationId}");
         Directory.CreateDirectory(stagingDir);
 
         return stagingDir;
@@ -263,95 +247,5 @@ public class UAssetService : IUAssetService
         }
 
         return files;
-    }
-
-    private void WriteOperationLog(
-        string operationId,
-        UAssetOperation operation,
-        string inputPath,
-        string outputPath,
-        UAssetResult result,
-        string? schemaVersion,
-        string? ueVersion,
-        TimeSpan duration)
-    {
-        try
-        {
-            var workspaceRoot = _workspaceOptions.DefaultWorkspacePath;
-            if (string.IsNullOrEmpty(workspaceRoot))
-            {
-                _logger.LogWarning("WorkspaceOptions.DefaultWorkspacePath is not configured; skipping operation log");
-                return;
-            }
-
-            var logsDir = Path.Combine(workspaceRoot, "logs");
-            Directory.CreateDirectory(logsDir);
-
-            var logFileName = $"uasset-{operationId}.log";
-            var logFilePath = Path.Combine(logsDir, logFileName);
-
-            var logContent = new System.Text.StringBuilder();
-            logContent.AppendLine("=== ARIS UAsset Operation Log ===");
-            logContent.AppendLine($"Operation ID: {operationId}");
-            logContent.AppendLine($"Operation: {operation}");
-            logContent.AppendLine($"Timestamp: {DateTimeOffset.UtcNow:yyyy-MM-dd HH:mm:ss UTC}");
-            logContent.AppendLine($"Input Path: {inputPath}");
-            logContent.AppendLine($"Output Path: {outputPath}");
-
-            if (!string.IsNullOrEmpty(schemaVersion))
-            {
-                logContent.AppendLine($"Schema Version: {schemaVersion}");
-            }
-
-            if (!string.IsNullOrEmpty(ueVersion))
-            {
-                logContent.AppendLine($"UE Version: {ueVersion}");
-            }
-
-            logContent.AppendLine($"Duration: {duration.TotalSeconds:F2}s");
-            logContent.AppendLine($"Warnings: {result.Warnings.Count}");
-            logContent.AppendLine($"Produced Files: {result.ProducedFiles.Count}");
-            logContent.AppendLine();
-
-            if (result.Warnings.Any())
-            {
-                logContent.AppendLine("Warnings:");
-                foreach (var warning in result.Warnings)
-                {
-                    logContent.AppendLine($"  - {TruncateForLog(warning, 500)}");
-                }
-                logContent.AppendLine();
-            }
-
-            logContent.AppendLine("Produced Files:");
-            foreach (var file in result.ProducedFiles)
-            {
-                logContent.AppendLine($"  - {file.Path} ({file.SizeBytes} bytes, type: {file.FileType})");
-            }
-
-            File.WriteAllText(logFilePath, logContent.ToString());
-
-            _logger.LogDebug("Wrote operation log to {LogFilePath}", logFilePath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to write operation log for operation {OperationId}", operationId);
-        }
-    }
-
-    private static string TruncateForLog(string text, int maxBytes)
-    {
-        if (string.IsNullOrEmpty(text))
-        {
-            return string.Empty;
-        }
-
-        if (System.Text.Encoding.UTF8.GetByteCount(text) <= maxBytes)
-        {
-            return text;
-        }
-
-        var truncated = text.Substring(0, Math.Min(text.Length, maxBytes / 2));
-        return truncated + "\n... [truncated] ...";
     }
 }

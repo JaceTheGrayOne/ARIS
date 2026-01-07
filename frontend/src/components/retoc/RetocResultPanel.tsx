@@ -131,7 +131,7 @@ export function RetocResultPanel({ response }: RetocResultPanelProps) {
                 )}
               </div>
 
-              {response.result.warnings.length > 0 && (
+              {response.result.warnings && response.result.warnings.length > 0 && (
                 <div className="pt-4 border-t border-gray-700">
                   <span className="text-amber-400 text-sm font-medium">Warnings</span>
                   <ul className="mt-2 space-y-1">
@@ -144,7 +144,7 @@ export function RetocResultPanel({ response }: RetocResultPanelProps) {
                 </div>
               )}
 
-              {response.result.producedFiles.length > 0 && (
+              {response.result.producedFiles && response.result.producedFiles.length > 0 && (
                 <div className="pt-4 border-t border-gray-700">
                   <h4 className="text-sm font-medium text-gray-300 mb-3">
                     Produced Files ({response.result.producedFiles.length})

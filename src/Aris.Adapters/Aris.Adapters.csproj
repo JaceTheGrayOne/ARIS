@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aris.Application\Aris.Application.csproj" />
+    <ProjectReference Include="..\Aris.Contracts\Aris.Contracts.csproj" />
     <ProjectReference Include="..\Aris.Core\Aris.Core.csproj" />
     <ProjectReference Include="..\Aris.Infrastructure\Aris.Infrastructure.csproj" />
     <ProjectReference Include="..\..\external\UAssetAPI\UAssetAPI\UAssetAPI.csproj" />

@@ -1,0 +1,11 @@
+Dump test
+
+Usage: retoc.exe dump-test <INPUT> <OUTPUT_DIR> <PACKAGE_ID>
+
+Arguments:
+  <INPUT>
+  <OUTPUT_DIR>
+  <PACKAGE_ID>
+
+Options:
+  -h, --help  Print help

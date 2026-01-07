@@ -8,16 +8,16 @@ namespace Aris.Core.Tests.DllInjector;
 
 public class DllInjectCommandValidatorTests : IDisposable
 {
-    private readonly string _tempWorkspaceRoot;
+    private readonly string _tempTestDir;
     private readonly string _tempPayloadPath;
     private readonly FakeProcessResolver _fakeResolver;
 
     public DllInjectCommandValidatorTests()
     {
-        _tempWorkspaceRoot = Path.Combine(Path.GetTempPath(), "aris-test-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(_tempWorkspaceRoot);
+        _tempTestDir = Path.Combine(Path.GetTempPath(), "aris-test-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(_tempTestDir);
 
-        var payloadsDir = Path.Combine(_tempWorkspaceRoot, "input", "payloads");
+        var payloadsDir = Path.Combine(_tempTestDir, "payloads");
         Directory.CreateDirectory(payloadsDir);
 
         _tempPayloadPath = Path.Combine(payloadsDir, "test_payload.dll");
@@ -30,9 +30,9 @@ public class DllInjectCommandValidatorTests : IDisposable
     {
         try
         {
-            if (Directory.Exists(_tempWorkspaceRoot))
+            if (Directory.Exists(_tempTestDir))
             {
-                Directory.Delete(_tempWorkspaceRoot, recursive: true);
+                Directory.Delete(_tempTestDir, recursive: true);
             }
         }
         catch
@@ -54,7 +54,7 @@ public class DllInjectCommandValidatorTests : IDisposable
         _fakeResolver.SetResult(1234);
 
         var result = DllInjectCommandValidator.ValidateAndResolveTarget(
-            command, options, _tempWorkspaceRoot, _fakeResolver);
+            command, options, _fakeResolver);
 
         Assert.Equal(1234, result);
     }
@@ -66,7 +66,7 @@ public class DllInjectCommandValidatorTests : IDisposable
 
         Assert.Throws<ArgumentNullException>(() =>
             DllInjectCommandValidator.ValidateAndResolveTarget(
-                null!, options, _tempWorkspaceRoot, _fakeResolver));
+                null!, options, _fakeResolver));
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class DllInjectCommandValidatorTests : IDisposable
 
         Assert.Throws<ArgumentNullException>(() =>
             DllInjectCommandValidator.ValidateAndResolveTarget(
-                command, null!, _tempWorkspaceRoot, _fakeResolver));
+                command, null!, _fakeResolver));
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class DllInjectCommandValidatorTests : IDisposable
 
         Assert.Throws<ArgumentNullException>(() =>
             DllInjectCommandValidator.ValidateAndResolveTarget(
-                command, options, _tempWorkspaceRoot, null!));
+                command, options, null!));
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class DllInjectCommandValidatorTests : IDisposable
 
         var ex = Assert.Throws<ValidationError>(() =>
             DllInjectCommandValidator.ValidateAndResolveTarget(
-                command, options, _tempWorkspaceRoot, _fakeResolver));
+                command, options, _fakeResolver));
 
         Assert.Contains("DllPath is required", ex.Message);
         Assert.Contains("absolute path", ex.RemediationHint);
@@ -126,7 +126,7 @@ public class DllInjectCommandValidatorTests : IDisposable
 
         var ex = Assert.Throws<ValidationError>(() =>
             DllInjectCommandValidator.ValidateAndResolveTarget(
-                command, options, _tempWorkspaceRoot, _fakeResolver));
+                command, options, _fakeResolver));
 
         Assert.Contains("DllPath is required", ex.Message);
     }
@@ -146,7 +146,7 @@ public class DllInjectCommandValidatorTests : IDisposable
 
         var ex = Assert.Throws<ValidationError>(() =>
             DllInjectCommandValidator.ValidateAndResolveTarget(
-                command, options, _tempWorkspaceRoot, _fakeResolver));
+                command, options, _fakeResolver));
 
         Assert.Contains("DllPath must be an absolute path", ex.Message);
         Assert.Contains("fully-qualified", ex.RemediationHint);
@@ -155,7 +155,7 @@ public class DllInjectCommandValidatorTests : IDisposable
     [Fact]
     public void ValidateAndResolveTarget_NonExistentDllPath_ThrowsValidationError()
     {
-        var nonExistentPath = Path.Combine(_tempWorkspaceRoot, "input", "payloads", "nonexistent.dll");
+        var nonExistentPath = Path.Combine(_tempTestDir, "payloads", "nonexistent.dll");
         var command = new DllInjectCommand
         {
             ProcessId = 1234,
@@ -168,7 +168,7 @@ public class DllInjectCommandValidatorTests : IDisposable
 
         var ex = Assert.Throws<ValidationError>(() =>
             DllInjectCommandValidator.ValidateAndResolveTarget(
-                command, options, _tempWorkspaceRoot, _fakeResolver));
+                command, options, _fakeResolver));
 
         Assert.Contains("Payload DLL not found", ex.Message);
         Assert.Contains("file exists", ex.RemediationHint);
@@ -177,7 +177,7 @@ public class DllInjectCommandValidatorTests : IDisposable
     [Fact]
     public void ValidateAndResolveTarget_WrongExtension_ThrowsValidationError()
     {
-        var wrongExtPath = Path.Combine(_tempWorkspaceRoot, "input", "payloads", "payload.exe");
+        var wrongExtPath = Path.Combine(_tempTestDir, "payloads", "payload.exe");
         File.WriteAllText(wrongExtPath, "fake");
 
         var command = new DllInjectCommand
@@ -192,55 +192,20 @@ public class DllInjectCommandValidatorTests : IDisposable
 
         var ex = Assert.Throws<ValidationError>(() =>
             DllInjectCommandValidator.ValidateAndResolveTarget(
-                command, options, _tempWorkspaceRoot, _fakeResolver));
+                command, options, _fakeResolver));
 
         Assert.Contains("Payload must be a .dll file", ex.Message);
         Assert.Contains("valid DLL", ex.RemediationHint);
     }
 
     [Fact]
-    public void ValidateAndResolveTarget_DllOutsideWorkspace_ThrowsValidationError()
+    public void ValidateAndResolveTarget_DllFromAnyLocation_Succeeds()
     {
-        var outsidePath = Path.Combine(Path.GetTempPath(), "outside.dll");
-        File.WriteAllText(outsidePath, "fake");
-
-        try
-        {
-            var command = new DllInjectCommand
-            {
-                ProcessId = 1234,
-                DllPath = outsidePath,
-                Method = DllInjectionMethod.CreateRemoteThread
-            };
-
-            var options = CreateValidOptions();
-            _fakeResolver.SetResult(1234);
-
-            var ex = Assert.Throws<ValidationError>(() =>
-                DllInjectCommandValidator.ValidateAndResolveTarget(
-                    command, options, _tempWorkspaceRoot, _fakeResolver));
-
-            Assert.Contains("Payload DLL must be under workspace payloads directory", ex.Message);
-            Assert.Contains("Place payload DLLs", ex.RemediationHint);
-        }
-        finally
-        {
-            File.Delete(outsidePath);
-        }
-    }
-
-    [Fact]
-    public void ValidateAndResolveTarget_DllInDependenciesPayloads_Succeeds()
-    {
-        var depsPayloadsDir = Path.Combine(_tempWorkspaceRoot, "dependencies", "payloads");
-        Directory.CreateDirectory(depsPayloadsDir);
-        var depsPayload = Path.Combine(depsPayloadsDir, "dep_payload.dll");
-        File.WriteAllText(depsPayload, "fake");
-
+        // After workspace removal, any absolute DLL path is accepted as long as file exists
         var command = new DllInjectCommand
         {
             ProcessId = 1234,
-            DllPath = depsPayload,
+            DllPath = _tempPayloadPath,
             Method = DllInjectionMethod.CreateRemoteThread
         };
 
@@ -248,7 +213,7 @@ public class DllInjectCommandValidatorTests : IDisposable
         _fakeResolver.SetResult(1234);
 
         var result = DllInjectCommandValidator.ValidateAndResolveTarget(
-            command, options, _tempWorkspaceRoot, _fakeResolver);
+            command, options, _fakeResolver);
 
         Assert.Equal(1234, result);
     }
@@ -272,7 +237,7 @@ public class DllInjectCommandValidatorTests : IDisposable
 
         var ex = Assert.Throws<ValidationError>(() =>
             DllInjectCommandValidator.ValidateAndResolveTarget(
-                command, options, _tempWorkspaceRoot, _fakeResolver));
+                command, options, _fakeResolver));
 
         Assert.Contains("Injection method 'ManualMap' is not allowed", ex.Message);
         Assert.Contains("AllowedMethods", ex.RemediationHint);
@@ -292,7 +257,7 @@ public class DllInjectCommandValidatorTests : IDisposable
         _fakeResolver.SetResult(1234);
 
         var result = DllInjectCommandValidator.ValidateAndResolveTarget(
-            command, options, _tempWorkspaceRoot, _fakeResolver);
+            command, options, _fakeResolver);
 
         Assert.Equal(1234, result);
     }
@@ -313,7 +278,7 @@ public class DllInjectCommandValidatorTests : IDisposable
 
         var ex = Assert.Throws<ValidationError>(() =>
             DllInjectCommandValidator.ValidateAndResolveTarget(
-                command, options, _tempWorkspaceRoot, _fakeResolver));
+                command, options, _fakeResolver));
 
         Assert.Contains("Arguments must not contain empty or whitespace-only entries", ex.Message);
         Assert.Contains("meaningful value", ex.RemediationHint);
@@ -335,7 +300,7 @@ public class DllInjectCommandValidatorTests : IDisposable
 
         var ex = Assert.Throws<ValidationError>(() =>
             DllInjectCommandValidator.ValidateAndResolveTarget(
-                command, options, _tempWorkspaceRoot, _fakeResolver));
+                command, options, _fakeResolver));
 
         Assert.Contains("Arguments must not contain empty or whitespace-only entries", ex.Message);
     }
@@ -355,7 +320,7 @@ public class DllInjectCommandValidatorTests : IDisposable
         _fakeResolver.SetResult(1234);
 
         var result = DllInjectCommandValidator.ValidateAndResolveTarget(
-            command, options, _tempWorkspaceRoot, _fakeResolver);
+            command, options, _fakeResolver);
 
         Assert.Equal(1234, result);
     }
@@ -376,7 +341,7 @@ public class DllInjectCommandValidatorTests : IDisposable
 
         var ex = Assert.Throws<ValidationError>(() =>
             DllInjectCommandValidator.ValidateAndResolveTarget(
-                command, options, _tempWorkspaceRoot, _fakeResolver));
+                command, options, _fakeResolver));
 
         Assert.Contains("TimeoutSeconds must be greater than zero", ex.Message);
         Assert.Contains("positive value", ex.RemediationHint);
@@ -398,7 +363,7 @@ public class DllInjectCommandValidatorTests : IDisposable
 
         var ex = Assert.Throws<ValidationError>(() =>
             DllInjectCommandValidator.ValidateAndResolveTarget(
-                command, options, _tempWorkspaceRoot, _fakeResolver));
+                command, options, _fakeResolver));
 
         Assert.Contains("TimeoutSeconds must be greater than zero", ex.Message);
     }
@@ -418,7 +383,7 @@ public class DllInjectCommandValidatorTests : IDisposable
         _fakeResolver.SetResult(1234);
 
         var result = DllInjectCommandValidator.ValidateAndResolveTarget(
-            command, options, _tempWorkspaceRoot, _fakeResolver);
+            command, options, _fakeResolver);
 
         Assert.Equal(1234, result);
     }

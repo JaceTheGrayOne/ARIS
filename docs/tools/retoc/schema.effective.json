@@ -1,0 +1,479 @@
+{
+  "tool": "retoc",
+  "version": "v0.1.4",
+  "generatedAtUtc": "2025-12-24T23:59:23.0491542+00:00",
+  "commands": [
+    {
+      "name": "dump-test",
+      "summary": "Dump test",
+      "usages": [
+        "retoc.exe dump-test <INPUT> <OUTPUT_DIR> <PACKAGE_ID>"
+      ],
+      "positionals": [
+        {
+          "name": "INPUT",
+          "index": 0,
+          "required": true,
+          "typeHint": "path"
+        },
+        {
+          "name": "OUTPUT_DIR",
+          "index": 1,
+          "required": true,
+          "typeHint": "path"
+        },
+        {
+          "name": "PACKAGE_ID",
+          "index": 2,
+          "required": true,
+          "typeHint": "integer"
+        }
+      ],
+      "options": [
+        {
+          "name": "--help",
+          "shortName": "-h",
+          "takesValue": false
+        }
+      ]
+    },
+    {
+      "name": "gen-script-objects",
+      "summary": "Generate script objects global container from UE reflection data JSON see https://github.com/trumank/meatloaf",
+      "usages": [
+        "retoc.exe gen-script-objects --version <VERSION> <INPUT> <OUTPUT>"
+      ],
+      "positionals": [
+        {
+          "name": "VERSION",
+          "index": 0,
+          "required": true,
+          "typeHint": "string"
+        },
+        {
+          "name": "INPUT",
+          "index": 1,
+          "required": true,
+          "typeHint": "path"
+        },
+        {
+          "name": "OUTPUT",
+          "index": 2,
+          "required": true,
+          "typeHint": "path"
+        }
+      ],
+      "options": [
+        {
+          "name": "--help",
+          "shortName": "-h",
+          "takesValue": false
+        },
+        {
+          "name": "--version",
+          "takesValue": true,
+          "valueHint": "VERSION"
+        }
+      ]
+    },
+    {
+      "name": "get",
+      "summary": "Get chunk by index and write to stdout",
+      "usages": [
+        "retoc.exe get <INPUT> <CHUNK_ID> [OUTPUT]"
+      ],
+      "positionals": [
+        {
+          "name": "INPUT",
+          "index": 0,
+          "required": true,
+          "typeHint": "path"
+        },
+        {
+          "name": "CHUNK_ID",
+          "index": 1,
+          "required": true,
+          "typeHint": "integer"
+        },
+        {
+          "name": "OUTPUT",
+          "index": 2,
+          "required": false,
+          "typeHint": "path"
+        }
+      ],
+      "options": [
+        {
+          "name": "--help",
+          "shortName": "-h",
+          "takesValue": false
+        }
+      ]
+    },
+    {
+      "name": "info",
+      "summary": "Show container info",
+      "usages": [
+        "retoc.exe info <PATH>"
+      ],
+      "positionals": [
+        {
+          "name": "PATH",
+          "index": 0,
+          "required": true,
+          "typeHint": "path"
+        }
+      ],
+      "options": [
+        {
+          "name": "--help",
+          "shortName": "-h",
+          "takesValue": false
+        }
+      ]
+    },
+    {
+      "name": "list",
+      "summary": "List fils in .utoc (directory index)",
+      "usages": [
+        "retoc.exe list [OPTIONS] <UTOC>"
+      ],
+      "positionals": [
+        {
+          "name": "UTOC",
+          "index": 0,
+          "required": true,
+          "typeHint": "string"
+        }
+      ],
+      "options": [
+        {
+          "name": "--all",
+          "takesValue": false
+        },
+        {
+          "name": "--hash",
+          "takesValue": false
+        },
+        {
+          "name": "--help",
+          "shortName": "-h",
+          "takesValue": false
+        },
+        {
+          "name": "--package",
+          "takesValue": false
+        },
+        {
+          "name": "--path",
+          "takesValue": false
+        },
+        {
+          "name": "--size",
+          "takesValue": false
+        },
+        {
+          "name": "--store",
+          "takesValue": false
+        }
+      ]
+    },
+    {
+      "name": "manifest",
+      "summary": "Extract manifest from .utoc",
+      "usages": [
+        "retoc.exe manifest <UTOC>"
+      ],
+      "positionals": [
+        {
+          "name": "UTOC",
+          "index": 0,
+          "required": true,
+          "typeHint": "string"
+        }
+      ],
+      "options": [
+        {
+          "name": "--help",
+          "shortName": "-h",
+          "takesValue": false
+        }
+      ]
+    },
+    {
+      "name": "pack-raw",
+      "summary": "Packs directory of raw chunks into container",
+      "usages": [
+        "retoc.exe pack-raw <INPUT> <UTOC>"
+      ],
+      "positionals": [
+        {
+          "name": "INPUT",
+          "index": 0,
+          "required": true,
+          "typeHint": "path"
+        },
+        {
+          "name": "UTOC",
+          "index": 1,
+          "required": true,
+          "typeHint": "string"
+        }
+      ],
+      "options": [
+        {
+          "name": "--help",
+          "shortName": "-h",
+          "takesValue": false
+        }
+      ]
+    },
+    {
+      "name": "print-script-objects",
+      "summary": "Print script objects from container",
+      "usages": [
+        "retoc.exe print-script-objects <INPUT>"
+      ],
+      "positionals": [
+        {
+          "name": "INPUT",
+          "index": 0,
+          "required": true,
+          "typeHint": "path"
+        }
+      ],
+      "options": [
+        {
+          "name": "--help",
+          "shortName": "-h",
+          "takesValue": false
+        }
+      ]
+    },
+    {
+      "name": "to-legacy",
+      "summary": "Converts asests and shaders from Zen to Legacy",
+      "usages": [
+        "retoc.exe to-legacy [OPTIONS] <INPUT> <OUTPUT>"
+      ],
+      "positionals": [
+        {
+          "name": "INPUT",
+          "index": 0,
+          "required": true,
+          "typeHint": "path"
+        },
+        {
+          "name": "OUTPUT",
+          "index": 1,
+          "required": true,
+          "typeHint": "path"
+        }
+      ],
+      "options": [
+        {
+          "name": "--debug",
+          "takesValue": false
+        },
+        {
+          "name": "--dry-run",
+          "shortName": "-d",
+          "takesValue": false
+        },
+        {
+          "name": "--filter",
+          "shortName": "-f",
+          "takesValue": true,
+          "valueHint": "FILTER"
+        },
+        {
+          "name": "--help",
+          "shortName": "-h",
+          "takesValue": false
+        },
+        {
+          "name": "--no-assets",
+          "takesValue": false
+        },
+        {
+          "name": "--no-compres-shaders",
+          "takesValue": false
+        },
+        {
+          "name": "--no-parallel",
+          "takesValue": false
+        },
+        {
+          "name": "--no-script-objects",
+          "takesValue": false
+        },
+        {
+          "name": "--no-shaders",
+          "takesValue": false
+        },
+        {
+          "name": "--script-cell",
+          "takesValue": true,
+          "valueHint": "SCRIPT_CELL"
+        },
+        {
+          "name": "--verbose",
+          "shortName": "-v",
+          "takesValue": false
+        },
+        {
+          "name": "--version",
+          "takesValue": true,
+          "valueHint": "VERSION"
+        }
+      ]
+    },
+    {
+      "name": "to-zen",
+      "summary": "Converts assets and shaders from Legacy to Zen",
+      "usages": [
+        "retoc.exe to-zen [OPTIONS] --version <VERSION> <INPUT> <OUTPUT>"
+      ],
+      "positionals": [
+        {
+          "name": "VERSION",
+          "index": 0,
+          "required": true,
+          "typeHint": "string"
+        },
+        {
+          "name": "INPUT",
+          "index": 1,
+          "required": true,
+          "typeHint": "path"
+        },
+        {
+          "name": "OUTPUT",
+          "index": 2,
+          "required": true,
+          "typeHint": "path"
+        }
+      ],
+      "options": [
+        {
+          "name": "--debug",
+          "takesValue": false
+        },
+        {
+          "name": "--filter",
+          "shortName": "-f",
+          "takesValue": true,
+          "valueHint": "FILTER"
+        },
+        {
+          "name": "--help",
+          "shortName": "-h",
+          "takesValue": false
+        },
+        {
+          "name": "--no-parallel",
+          "takesValue": false
+        },
+        {
+          "name": "--script-cell",
+          "takesValue": true,
+          "valueHint": "SCRIPT_CELL"
+        },
+        {
+          "name": "--verbose",
+          "shortName": "-v",
+          "takesValue": false
+        },
+        {
+          "name": "--version",
+          "takesValue": true,
+          "valueHint": "VERSION"
+        }
+      ]
+    },
+    {
+      "name": "unpack",
+      "summary": "Extracts chunks (files) from .utoc",
+      "usages": [
+        "retoc.exe unpack [OPTIONS] <UTOC> <OUTPUT>"
+      ],
+      "positionals": [
+        {
+          "name": "UTOC",
+          "index": 0,
+          "required": true,
+          "typeHint": "string"
+        },
+        {
+          "name": "OUTPUT",
+          "index": 1,
+          "required": true,
+          "typeHint": "path"
+        }
+      ],
+      "options": [
+        {
+          "name": "--help",
+          "shortName": "-h",
+          "takesValue": false
+        },
+        {
+          "name": "--verbose",
+          "shortName": "-v",
+          "takesValue": false
+        }
+      ]
+    },
+    {
+      "name": "unpack-raw",
+      "summary": "Extracts raw chunks from container",
+      "usages": [
+        "retoc.exe unpack-raw <UTOC> <OUTPUT>"
+      ],
+      "positionals": [
+        {
+          "name": "UTOC",
+          "index": 0,
+          "required": true,
+          "typeHint": "string"
+        },
+        {
+          "name": "OUTPUT",
+          "index": 1,
+          "required": true,
+          "typeHint": "path"
+        }
+      ],
+      "options": [
+        {
+          "name": "--help",
+          "shortName": "-h",
+          "takesValue": false
+        }
+      ]
+    },
+    {
+      "name": "verify",
+      "summary": "Verify IO Store container",
+      "usages": [
+        "retoc.exe verify <UTOC>"
+      ],
+      "positionals": [
+        {
+          "name": "UTOC",
+          "index": 0,
+          "required": true,
+          "typeHint": "string"
+        }
+      ],
+      "options": [
+        {
+          "name": "--help",
+          "shortName": "-h",
+          "takesValue": false
+        }
+      ]
+    }
+  ],
+  "globalOptions": []
+}

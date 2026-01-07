@@ -172,7 +172,7 @@ export function DllInjectorResultPanel({
                   </div>
                 </div>
 
-                {result.warnings.length > 0 && (
+                {result.warnings && result.warnings.length > 0 && (
                   <div className="pt-4 border-t border-gray-700">
                     <span className="text-amber-400 text-sm font-medium">Warnings</span>
                     <ul className="mt-2 space-y-1">
@@ -243,7 +243,7 @@ export function DllInjectorResultPanel({
                   </div>
                 </div>
 
-                {result.warnings.length > 0 && (
+                {result.warnings && result.warnings.length > 0 && (
                   <div className="pt-4 border-t border-gray-700">
                     <span className="text-amber-400 text-sm font-medium">Warnings</span>
                     <ul className="mt-2 space-y-1">

@@ -70,13 +70,6 @@ export function HealthPanel() {
               {health.dependenciesReady ? 'Yes' : 'No'}
             </span>
 
-            {health.currentWorkspace && (
-              <>
-                <span className="text-gray-400">Workspace:</span>
-                <span className="text-white truncate">{health.currentWorkspace}</span>
-              </>
-            )}
-
             {health.message && (
               <>
                 <span className="text-gray-400">Message:</span>

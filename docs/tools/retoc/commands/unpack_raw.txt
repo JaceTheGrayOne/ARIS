@@ -1,0 +1,10 @@
+Extracts raw chunks from container
+
+Usage: retoc.exe unpack-raw <UTOC> <OUTPUT>
+
+Arguments:
+  <UTOC>
+  <OUTPUT>
+
+Options:
+  -h, --help  Print help

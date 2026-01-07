@@ -14,14 +14,12 @@ public static class DllInjectCommandValidator
     /// </summary>
     /// <param name="command">Injection command to validate.</param>
     /// <param name="options">DLL injector configuration options.</param>
-    /// <param name="workspaceRoot">Workspace root path for payload validation.</param>
     /// <param name="processResolver">Process resolver for target validation.</param>
     /// <returns>Validated process ID.</returns>
     /// <exception cref="ValidationError">When validation fails.</exception>
     public static int ValidateAndResolveTarget(
         DllInjectCommand command,
         DllInjectorOptions options,
-        string? workspaceRoot,
         IProcessResolver processResolver)
     {
         if (command is null)
@@ -44,7 +42,7 @@ public static class DllInjectCommandValidator
             command.ProcessName,
             options);
 
-        ValidatePayloadPath(command.DllPath, workspaceRoot);
+        ValidatePayloadPath(command.DllPath);
         ValidateMethod(command.Method, options);
         ValidateArguments(command.Arguments);
 
@@ -59,7 +57,7 @@ public static class DllInjectCommandValidator
         return pid;
     }
 
-    private static void ValidatePayloadPath(string dllPath, string? workspaceRoot)
+    private static void ValidatePayloadPath(string dllPath)
     {
         if (string.IsNullOrWhiteSpace(dllPath))
         {
@@ -93,24 +91,6 @@ public static class DllInjectCommandValidator
             {
                 RemediationHint = "Use a valid DLL file for injection."
             };
-        }
-
-        if (!string.IsNullOrWhiteSpace(workspaceRoot))
-        {
-            var normalizedWorkspace = Path.GetFullPath(workspaceRoot);
-            var inputPayloadsPath = Path.Combine(normalizedWorkspace, "input", "payloads");
-            var dependenciesPayloadsPath = Path.Combine(normalizedWorkspace, "dependencies", "payloads");
-
-            var isInInputPayloads = normalizedPath.StartsWith(inputPayloadsPath, StringComparison.OrdinalIgnoreCase);
-            var isInDependenciesPayloads = normalizedPath.StartsWith(dependenciesPayloadsPath, StringComparison.OrdinalIgnoreCase);
-
-            if (!isInInputPayloads && !isInDependenciesPayloads)
-            {
-                throw new ValidationError($"Payload DLL must be under workspace payloads directory: {normalizedPath}")
-                {
-                    RemediationHint = $"Place payload DLLs in '{inputPayloadsPath}' or '{dependenciesPayloadsPath}'."
-                };
-            }
         }
     }
 

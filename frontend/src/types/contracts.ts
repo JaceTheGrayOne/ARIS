@@ -9,7 +9,6 @@ export type OperationStatus = typeof OperationStatus[keyof typeof OperationStatu
 export interface HealthResponse {
   status: string;
   dependenciesReady: boolean;
-  currentWorkspace?: string | null;
   message?: string | null;
 }
 
@@ -241,3 +240,145 @@ export interface DllEjectResponse {
   startedAt: string;
   completedAt: string;
 }
+
+// Retoc Streaming and Advanced Mode Contracts
+
+export interface RetocBuildCommandRequest {
+  commandType: string;
+  inputPath: string;
+  outputPath: string;
+  engineVersion?: string | null;
+  aesKey?: string | null;
+  containerHeaderVersion?: string | null;
+  tocVersion?: string | null;
+  chunkId?: string | null;
+  verbose?: boolean;
+  timeoutSeconds?: number | null;
+}
+
+export interface RetocBuildCommandResponse {
+  executablePath: string;
+  arguments: string[];
+  commandLine: string;
+}
+
+export interface RetocCommandFieldDefinition {
+  fieldName: string;
+  label: string;
+  fieldType: string;
+  helpText?: string | null;
+  enumValues?: string[] | null;
+  minValue?: number | null;
+  maxValue?: number | null;
+}
+
+export interface RetocFieldUiHint {
+  pathKind?: 'file' | 'folder' | null;
+  extensions?: string[] | null;
+}
+
+export interface RetocCommandDefinition {
+  commandType: string;
+  displayName: string;
+  description: string;
+  requiredFields: string[];
+  optionalFields: string[];
+  fieldUiHints?: Record<string, RetocFieldUiHint> | null;
+}
+
+export interface RetocCommandSchemaResponse {
+  commands: RetocCommandDefinition[];
+  globalOptions: RetocCommandFieldDefinition[];
+  allowlistedFlags: string[];
+}
+
+export interface RetocHelpResponse {
+  markdown: string;
+}
+
+// Tool Schema Types (canonical format from /api/tools/{tool}/schema)
+
+export interface ToolSchemaResponse {
+  tool: string;
+  version?: string | null;
+  generatedAtUtc: string;
+  commands: ToolCommandSchema[];
+  globalOptions?: ToolOptionSchema[] | null;
+}
+
+export interface ToolCommandSchema {
+  name: string;
+  summary?: string | null;
+  usages: string[];
+  positionals: ToolPositionalSchema[];
+  options?: ToolOptionSchema[] | null;
+}
+
+export interface ToolPositionalSchema {
+  name: string;
+  index: number;
+  required: boolean;
+  typeHint?: string | null;
+  description?: string | null;
+}
+
+export interface ToolOptionSchema {
+  name: string;
+  shortName?: string | null;
+  description?: string | null;
+  takesValue?: boolean;
+  valueHint?: string | null;
+}
+
+// Retoc Streaming Contracts (WebSocket / ConPTY)
+
+export interface RetocStreamRequest {
+  commandType: string;
+  inputPath: string;
+  outputPath: string;
+  engineVersion?: string | null;
+  aesKey?: string | null;
+  containerHeaderVersion?: string | null;
+  tocVersion?: string | null;
+  chunkId?: string | null;
+  verbose?: boolean;
+  timeoutSeconds?: number | null;
+  ttyProbe?: boolean;
+}
+
+export type RetocStreamEventType = 'started' | 'output' | 'exited' | 'error';
+
+export interface RetocStreamEventBase {
+  type: RetocStreamEventType;
+  timestamp: string;
+}
+
+export interface RetocStreamStarted extends RetocStreamEventBase {
+  type: 'started';
+  operationId: string;
+  commandLine: string;
+}
+
+export interface RetocStreamOutput extends RetocStreamEventBase {
+  type: 'output';
+  data: string;
+}
+
+export interface RetocStreamExited extends RetocStreamEventBase {
+  type: 'exited';
+  exitCode: number;
+  duration: string;
+}
+
+export interface RetocStreamError extends RetocStreamEventBase {
+  type: 'error';
+  code: string;
+  message: string;
+  remediationHint?: string | null;
+}
+
+export type RetocStreamEvent =
+  | RetocStreamStarted
+  | RetocStreamOutput
+  | RetocStreamExited
+  | RetocStreamError;

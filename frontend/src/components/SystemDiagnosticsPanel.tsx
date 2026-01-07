@@ -89,15 +89,6 @@ export function SystemDiagnosticsPanel() {
                   </div>
                 </div>
 
-                {backendStatus.health.currentWorkspace && (
-                  <div className="col-span-2">
-                    <span className="text-sm text-gray-400">Current Workspace</span>
-                    <div className="text-sm text-white font-mono break-all">
-                      {backendStatus.health.currentWorkspace}
-                    </div>
-                  </div>
-                )}
-
                 {backendStatus.health.message && (
                   <div className="col-span-2">
                     <span className="text-sm text-gray-400">Status Message</span>

@@ -1,0 +1,11 @@
+Generate script objects global container from UE reflection data JSON see https://github.com/trumank/meatloaf
+
+Usage: retoc.exe gen-script-objects --version <VERSION> <INPUT> <OUTPUT>
+
+Arguments:
+  <INPUT>   Input reflection data JSON dump
+  <OUTPUT>  Output .utoc file
+
+Options:
+      --version <VERSION>  Engine version [possible values: UE4_25, UE4_26, UE4_27, UE5_0, UE5_1, UE5_2, UE5_3, UE5_4, UE5_5, UE5_6]
+  -h, --help               Print help

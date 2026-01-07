@@ -1,0 +1,127 @@
+{
+  "$schema": "ui.mapping.schema.json",
+  "$comment": "Semantics overlay for retoc schema. Maps canonical positionals to domain fields and provides UI hints.",
+
+  "positionalMappings": {
+    "INPUT": "InputPath",
+    "OUTPUT": "OutputPath",
+    "OUTPUT_DIR": "OutputPath",
+    "PATH": "InputPath",
+    "UTOC": "InputPath",
+    "CHUNK_ID": "ChunkId",
+    "VERSION": "EngineVersion"
+  },
+
+  "commandOverrides": {
+    "get": {
+      "requiredFields": ["InputPath", "ChunkId"],
+      "optionalFields": ["OutputPath"]
+    },
+    "info": {
+      "requiredFields": ["InputPath"],
+      "optionalFields": []
+    },
+    "list": {
+      "requiredFields": ["InputPath"],
+      "optionalFields": []
+    },
+    "manifest": {
+      "requiredFields": ["InputPath"],
+      "optionalFields": []
+    },
+    "verify": {
+      "requiredFields": ["InputPath"],
+      "optionalFields": []
+    },
+    "print-script-objects": {
+      "requiredFields": ["InputPath"],
+      "optionalFields": []
+    }
+  },
+
+  "commandDisplayNames": {
+    "to-legacy": "Unpack (Zen → Legacy)",
+    "to-zen": "Pack (Legacy → Zen)",
+    "get": "Get Chunk",
+    "info": "Display Info",
+    "list": "List Files",
+    "manifest": "Extract Manifest",
+    "verify": "Verify Container",
+    "unpack": "Unpack Chunks",
+    "unpack-raw": "Unpack Raw Chunks",
+    "pack-raw": "Pack Raw Chunks",
+    "dump-test": "Dump Test",
+    "gen-script-objects": "Generate Script Objects",
+    "print-script-objects": "Print Script Objects"
+  },
+
+  "commandDescriptions": {
+    "to-legacy": "Convert IoStore containers to editable legacy UAsset files",
+    "to-zen": "Build IoStore containers from modified legacy UAsset files",
+    "get": "Get chunk by index and write to file",
+    "info": "Display container information",
+    "list": "List files in .utoc directory index",
+    "manifest": "Extract manifest data from .utoc file",
+    "verify": "Validate IoStore container integrity",
+    "unpack": "Extract chunks (files) from .utoc",
+    "unpack-raw": "Extract raw chunks from container",
+    "pack-raw": "Pack directory of raw chunks into container",
+    "dump-test": "Dump test data",
+    "gen-script-objects": "Generate script objects global container from UE reflection data",
+    "print-script-objects": "Print script objects from container"
+  },
+
+  "commandFieldUi": {
+    "to-legacy": {
+      "InputPath": { "pathKind": "folder" },
+      "OutputPath": { "pathKind": "folder" }
+    },
+    "to-zen": {
+      "InputPath": { "pathKind": "folder" },
+      "OutputPath": { "pathKind": "folder" }
+    },
+    "get": {
+      "InputPath": { "pathKind": "file", "extensions": [".utoc"] },
+      "OutputPath": { "pathKind": "folder" }
+    },
+    "unpack": {
+      "InputPath": { "pathKind": "file", "extensions": [".utoc"] },
+      "OutputPath": { "pathKind": "folder" }
+    },
+    "unpack-raw": {
+      "InputPath": { "pathKind": "file", "extensions": [".utoc"] },
+      "OutputPath": { "pathKind": "folder" }
+    },
+    "pack-raw": {
+      "InputPath": { "pathKind": "folder" },
+      "OutputPath": { "pathKind": "file", "extensions": [".utoc"] }
+    },
+    "info": {
+      "InputPath": { "pathKind": "file", "extensions": [".utoc"] }
+    },
+    "list": {
+      "InputPath": { "pathKind": "file", "extensions": [".utoc"] }
+    },
+    "manifest": {
+      "InputPath": { "pathKind": "file", "extensions": [".utoc"] }
+    },
+    "verify": {
+      "InputPath": { "pathKind": "file", "extensions": [".utoc"] }
+    },
+    "print-script-objects": {
+      "InputPath": { "pathKind": "file", "extensions": [".utoc"] }
+    },
+    "dump-test": {
+      "InputPath": { "pathKind": "file", "extensions": [".utoc"] },
+      "OutputPath": { "pathKind": "folder" }
+    },
+    "gen-script-objects": {
+      "InputPath": { "pathKind": "file", "extensions": [".json"] },
+      "OutputPath": { "pathKind": "file" }
+    }
+  },
+
+  "globalOptionsMappings": {
+    "--verbose": "Verbose"
+  }
+}

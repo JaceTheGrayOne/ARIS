@@ -9,7 +9,7 @@ namespace Aris.Core.Tests.UwpDumper;
 public class UwpDumpCommandValidatorTests : IDisposable
 {
     private readonly UwpDumperOptions _options;
-    private readonly string _tempWorkspacePath;
+    private readonly string _tempTestDir;
     private readonly string _tempOutputPath;
 
     public UwpDumpCommandValidatorTests()
@@ -22,20 +22,20 @@ public class UwpDumpCommandValidatorTests : IDisposable
             MaxLogBytes = 5 * 1024 * 1024
         };
 
-        _tempWorkspacePath = Path.Combine(Path.GetTempPath(), "aris-uwpdumper-validator-test-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(_tempWorkspacePath);
+        _tempTestDir = Path.Combine(Path.GetTempPath(), "aris-uwpdumper-validator-test-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(_tempTestDir);
 
-        _tempOutputPath = Path.Combine(_tempWorkspacePath, "output", "uwp");
+        _tempOutputPath = Path.Combine(_tempTestDir, "output", "uwp");
         Directory.CreateDirectory(_tempOutputPath);
     }
 
     public void Dispose()
     {
-        if (Directory.Exists(_tempWorkspacePath))
+        if (Directory.Exists(_tempTestDir))
         {
             try
             {
-                Directory.Delete(_tempWorkspacePath, recursive: true);
+                Directory.Delete(_tempTestDir, recursive: true);
             }
             catch
             {
@@ -56,7 +56,7 @@ public class UwpDumpCommandValidatorTests : IDisposable
         };
 
         var exception = Record.Exception(() =>
-            UwpDumpCommandValidator.ValidateDumpCommand(command, _options, _tempWorkspacePath));
+            UwpDumpCommandValidator.ValidateDumpCommand(command, _options));
 
         Assert.Null(exception);
     }
@@ -72,7 +72,7 @@ public class UwpDumpCommandValidatorTests : IDisposable
         };
 
         var ex = Assert.Throws<ValidationError>(() =>
-            UwpDumpCommandValidator.ValidateDumpCommand(command, _options, _tempWorkspacePath));
+            UwpDumpCommandValidator.ValidateDumpCommand(command, _options));
 
         Assert.Equal("PackageFamilyName", ex.FieldName);
         Assert.Contains("required", ex.Message);
@@ -89,7 +89,7 @@ public class UwpDumpCommandValidatorTests : IDisposable
         };
 
         var ex = Assert.Throws<ValidationError>(() =>
-            UwpDumpCommandValidator.ValidateDumpCommand(command, _options, _tempWorkspacePath));
+            UwpDumpCommandValidator.ValidateDumpCommand(command, _options));
 
         Assert.Equal("PackageFamilyName", ex.FieldName);
         Assert.Contains("required", ex.Message);
@@ -106,7 +106,7 @@ public class UwpDumpCommandValidatorTests : IDisposable
         };
 
         var ex = Assert.Throws<ValidationError>(() =>
-            UwpDumpCommandValidator.ValidateDumpCommand(command, _options, _tempWorkspacePath));
+            UwpDumpCommandValidator.ValidateDumpCommand(command, _options));
 
         Assert.Equal("OutputPath", ex.FieldName);
         Assert.Contains("required", ex.Message);
@@ -123,16 +123,17 @@ public class UwpDumpCommandValidatorTests : IDisposable
         };
 
         var ex = Assert.Throws<ValidationError>(() =>
-            UwpDumpCommandValidator.ValidateDumpCommand(command, _options, _tempWorkspacePath));
+            UwpDumpCommandValidator.ValidateDumpCommand(command, _options));
 
         Assert.Equal("OutputPath", ex.FieldName);
         Assert.Contains("absolute", ex.Message);
     }
 
     [Fact]
-    public void ValidateDumpCommand_OutputPathOutsideWorkspace_ThrowsValidationError()
+    public void ValidateDumpCommand_AbsoluteOutputPath_DoesNotThrow()
     {
-        var outsidePath = Path.Combine(Path.GetTempPath(), "outside-workspace", "output");
+        // After workspace removal, any absolute output path is valid
+        var outsidePath = Path.Combine(Path.GetTempPath(), "output-anywhere", "uwp");
         Directory.CreateDirectory(outsidePath);
 
         try
@@ -144,13 +145,10 @@ public class UwpDumpCommandValidatorTests : IDisposable
                 Mode = UwpDumpMode.FullDump
             };
 
-            var ex = Assert.Throws<ValidationError>(() =>
-                UwpDumpCommandValidator.ValidateDumpCommand(command, _options, _tempWorkspacePath));
+            var exception = Record.Exception(() =>
+                UwpDumpCommandValidator.ValidateDumpCommand(command, _options));
 
-            Assert.Equal("OutputPath", ex.FieldName);
-            Assert.Contains("within workspace", ex.Message);
-            Assert.NotNull(ex.RemediationHint);
-            Assert.Contains("workspace root", ex.RemediationHint);
+            Assert.Null(exception);
         }
         finally
         {
@@ -174,7 +172,7 @@ public class UwpDumpCommandValidatorTests : IDisposable
         };
 
         var exception = Record.Exception(() =>
-            UwpDumpCommandValidator.ValidateDumpCommand(command, _options, _tempWorkspacePath));
+            UwpDumpCommandValidator.ValidateDumpCommand(command, _options));
 
         Assert.Null(exception);
     }
@@ -195,7 +193,7 @@ public class UwpDumpCommandValidatorTests : IDisposable
         };
 
         var ex = Assert.Throws<ValidationError>(() =>
-            UwpDumpCommandValidator.ValidateDumpCommand(command, restrictedOptions, _tempWorkspacePath));
+            UwpDumpCommandValidator.ValidateDumpCommand(command, restrictedOptions));
 
         Assert.Equal("Mode", ex.FieldName);
         Assert.Contains("not allowed", ex.Message);
@@ -216,7 +214,7 @@ public class UwpDumpCommandValidatorTests : IDisposable
         };
 
         var ex = Assert.Throws<ValidationError>(() =>
-            UwpDumpCommandValidator.ValidateDumpCommand(command, _options, _tempWorkspacePath));
+            UwpDumpCommandValidator.ValidateDumpCommand(command, _options));
 
         Assert.Equal("TimeoutSeconds", ex.FieldName);
         Assert.Contains("greater than 0", ex.Message);
@@ -234,7 +232,7 @@ public class UwpDumpCommandValidatorTests : IDisposable
         };
 
         var ex = Assert.Throws<ValidationError>(() =>
-            UwpDumpCommandValidator.ValidateDumpCommand(command, _options, _tempWorkspacePath));
+            UwpDumpCommandValidator.ValidateDumpCommand(command, _options));
 
         Assert.Equal("TimeoutSeconds", ex.FieldName);
         Assert.Contains("greater than 0", ex.Message);
@@ -252,38 +250,9 @@ public class UwpDumpCommandValidatorTests : IDisposable
         };
 
         var exception = Record.Exception(() =>
-            UwpDumpCommandValidator.ValidateDumpCommand(command, _options, _tempWorkspacePath));
+            UwpDumpCommandValidator.ValidateDumpCommand(command, _options));
 
         Assert.Null(exception);
-    }
-
-    [Fact]
-    public void ValidateDumpCommand_NoWorkspaceRoot_DoesNotValidatePathBoundary()
-    {
-        var outsidePath = Path.Combine(Path.GetTempPath(), "outside-workspace-2", "output");
-        Directory.CreateDirectory(outsidePath);
-
-        try
-        {
-            var command = new UwpDumpCommand
-            {
-                PackageFamilyName = "Microsoft.MinecraftUWP_8wekyb3d8bbwe",
-                OutputPath = outsidePath,
-                Mode = UwpDumpMode.FullDump
-            };
-
-            var exception = Record.Exception(() =>
-                UwpDumpCommandValidator.ValidateDumpCommand(command, _options, workspaceRoot: null));
-
-            Assert.Null(exception);
-        }
-        finally
-        {
-            if (Directory.Exists(outsidePath))
-            {
-                Directory.Delete(outsidePath, recursive: true);
-            }
-        }
     }
 
     [Fact]
@@ -301,7 +270,7 @@ public class UwpDumpCommandValidatorTests : IDisposable
             };
 
             var exception = Record.Exception(() =>
-                UwpDumpCommandValidator.ValidateDumpCommand(command, _options, _tempWorkspacePath));
+                UwpDumpCommandValidator.ValidateDumpCommand(command, _options));
 
             Assert.Null(exception);
         }

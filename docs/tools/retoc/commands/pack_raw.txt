@@ -1,0 +1,10 @@
+Packs directory of raw chunks into container
+
+Usage: retoc.exe pack-raw <INPUT> <UTOC>
+
+Arguments:
+  <INPUT>
+  <UTOC>
+
+Options:
+  -h, --help  Print help

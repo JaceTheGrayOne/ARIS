@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -c \"import os,runpy; p=os.path.join(os.environ.get('CLAUDE_PROJECT_DIR','.'),'.claude','hooks','docs_only_guard.py'); runpy.run_path(p, run_name='__main__')\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -c \"import os,runpy; p=os.path.join(os.environ.get('CLAUDE_PROJECT_DIR','.'),'.claude','hooks','prompt_lint_after_prompt_write.py'); runpy.run_path(p, run_name='__main__')\""
+          }
+        ]
+      }
+    ]
+  }
+}
